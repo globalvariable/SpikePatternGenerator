@@ -1,4 +1,4 @@
-#include "StimulusGenerator.h"
+#include "SpikePatternGenerator.h"
 
 
 int main( int argc, char *argv[])

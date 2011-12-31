@@ -2,8 +2,8 @@
 #define PATTERN_H
 
 
-#include "../../../NeuroSim/Library/Network/Network.h"
-#include "../../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.h"
+#include "../../NeuroSim/Library/Network/Network.h"
+#include "../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.h"
 #include "Graphs.h"
 #include <gtkdatabox.h>
 #include <gtkdatabox_ruler.h>

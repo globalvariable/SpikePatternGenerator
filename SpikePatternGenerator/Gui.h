@@ -4,9 +4,9 @@
 #include <gtk/gtk.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include "../../../NeuroSim/Library/Network/Network.h"
-#include "../../../NeuroSim/Library/IzNeuron/Neuron.h"
-#include "../../../NeuroSim/Library/IzNeuron/NeuronTypes.h"
+#include "../../NeuroSim/Library/Network/Network.h"
+#include "../../NeuroSim/Library/IzNeuron/Neuron.h"
+#include "../../NeuroSim/Library/IzNeuron/NeuronTypes.h"
 #include "Graphs.h"
 #include "Pattern.h"
 
