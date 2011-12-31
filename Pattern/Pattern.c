@@ -1,5 +1,10 @@
 #include "Pattern.h"
 
+double injected_current_noise_variance = 0;
+int injected_current_noise_addition_interval_ms = 1;
+
+double initial_neuron_membrane_voltage_mean = 0;
+double initial_neuron_membrane_voltage_variance = 0;	
 
 bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns)
 {

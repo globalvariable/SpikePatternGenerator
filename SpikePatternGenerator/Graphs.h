@@ -6,7 +6,7 @@
 #include <gtkdatabox_lines.h>
 #include <gtkdatabox_grid.h>
 #include <gtk/gtk.h>
-#include "Pattern.h"
+#include "../Pattern/Pattern.h"
 
 GtkWidget *stimulus_box;
 GtkWidget *stimulus_databox;

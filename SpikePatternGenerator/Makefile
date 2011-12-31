@@ -12,8 +12,8 @@ GTK_FLAGS = $(shell pkg-config --cflags --libs gtk+-2.0 gtkdatabox)
 
 all: SpikePatternGenerator
 
-SpikePatternGenerator: SpikePatternGenerator.c Gui.o Graphs.o Pattern.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o
-	$(CC) $(LXRT_CFLAGS) -o $@ $< Gui.o Graphs.o Pattern.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o $(LXRT_LDFLAGS) $(MATH_FLAGS) $(GTK_FLAGS) 
+SpikePatternGenerator: SpikePatternGenerator.c Gui.o Graphs.o ../Pattern/Pattern.o ../Randn/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o 
+	$(CC) $(LXRT_CFLAGS) -o $@ $< Gui.o Graphs.o ../Pattern/Pattern.o ../Randn/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o $(LXRT_LDFLAGS) $(MATH_FLAGS) $(GTK_FLAGS) 
 	
 Gui.o: Gui.c 
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 	
@@ -21,8 +21,11 @@ Gui.o: Gui.c
 Graphs.o: Graphs.c
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 
 	
-Pattern.o: Pattern.c
-	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 		
+../Pattern/Pattern.o: ../Pattern/Pattern.c
+	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 
+	
+../Randn/Randn.o: ../Randn/Randn.c
+	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 			
 	
 ../../NeuroSim/Library/Network/Network.o: ../../NeuroSim/Library/Network/Network.c
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 		
@@ -44,7 +47,7 @@ Pattern.o: Pattern.c
 	
 	
 clean:
-	rm -f *.o SpikePatternGenerator ../../NeuroSim/Library/IzNeuron/*.o ../../NeuroSim/Library/ParkerSochacki/*.o ../../NeuroSim/Library/Event/*.o ../../NeuroSim/Library/Synapse/*.o ../../NeuroSim/Library/Network/*.o
+	rm -f *.o SpikePatternGenerator ../../NeuroSim/Library/IzNeuron/*.o ../../NeuroSim/Library/ParkerSochacki/*.o ../../NeuroSim/Library/Event/*.o ../../NeuroSim/Library/Synapse/*.o ../../NeuroSim/Library/Network/*.o ../Pattern/*.o ../Randn/*o
 
 .PHONY: clean
 

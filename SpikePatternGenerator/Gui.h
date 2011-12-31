@@ -8,7 +8,8 @@
 #include "../../NeuroSim/Library/IzNeuron/Neuron.h"
 #include "../../NeuroSim/Library/IzNeuron/NeuronTypes.h"
 #include "Graphs.h"
-#include "Pattern.h"
+#include "../Pattern/Pattern.h"
+#include "../Randn/Randn.h"
 
 #define LINE 0
 #define SIN 1
@@ -64,11 +65,11 @@ GtkWidget *entry_initial_current;
 GtkWidget *btn_draw_stimuli;
 GtkWidget *btn_copy_drawn_to_raw_stimuli;
 GtkWidget *btn_add_noise;
-GtkWidget *entry_noise_range;
+GtkWidget *entry_noise_variance;
 GtkWidget *entry_noise_period;
 GtkWidget *btn_submit_initial_neuron_voltage;
 GtkWidget *entry_initial_neuron_voltage;
-GtkWidget *entry_initial_neuron_voltage_range;
+GtkWidget *entry_initial_neuron_voltage_variance;
 GtkWidget *btn_simulate;
 GtkWidget *btn_display_neuron_dynamics;
 GtkWidget *combo_dynamics_type;

@@ -20,6 +20,6 @@ int (*load_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
 int (*read_spike_time_stamp[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
 
 int initialize_data_read_write_handlers(void);
-int is_pattern_generator_data(char *pattern_generator_data_path);
-int get_format_version(int *version, char *stimulus_generator_data_path);
+int is_spike_pattern_generator_data(char *spike_pattern_generator_data_path);
+int get_format_version(int *version, char *spike_pattern_generator_data_path);
 #endif

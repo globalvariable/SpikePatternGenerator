@@ -13,7 +13,7 @@ int create_main_directory_v0(int num, ...)
 	va_end ( arguments );
 	
 	strcpy(temp_dir_path, path_chooser);	
-	strcat(temp_dir_path, "/SpikeGeneratorData");
+	strcat(temp_dir_path, "/SpikePatternGeneratorData");
 	if ((dir_main_folder = opendir(temp_dir_path)) != NULL)
         {
         	printf ("DataFormat_v0: ERROR: path: %s already has BlueSpikeData folder.\n", path_chooser);		
@@ -23,8 +23,8 @@ int create_main_directory_v0(int num, ...)
  	strcpy(main_directory_path, temp_dir_path);	
 	mkdir(main_directory_path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH | S_IWOTH);
 
-        printf ("DataFormat_v0: Created SpikeGeneratorData folder in: %s.\n", path_chooser);
-        printf ("DataFormat_v0: SpikeGeneratorData path is: %s.\n\n", main_directory_path); 
+        printf ("DataFormat_v0: Created SpikePatternGeneratorData folder in: %s.\n", path_chooser);
+        printf ("DataFormat_v0: SpikePatternGeneratorData path is: %s.\n\n", main_directory_path); 
         
 	if (!create_main_meta_file())
 		return 0;
@@ -39,6 +39,54 @@ int create_main_directory_v0(int num, ...)
 	return 1;
 }
 
+int create_main_meta_file(void)
+{
+	char  temp_path[600];
+	time_t rawtime;
+	struct tm * timeinfo;
+	FILE *fp;
+	int i,j,k;
+	Layer		*ptr_layer;
+	NeuronGroup	*ptr_neuron_group;
+	Neuron		*ptr_neuron;
+		
+ 	strcpy(temp_path, main_directory_path);
+ 	strcat(temp_path, "/meta");
+	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }
+		
+	fprintf(fp,"----------SpikeGenerator - Main Meta File----------\n");
+	fprintf(fp,"DATA_FORMAT_VERSION\t%d\n", 0);	
+	time ( &rawtime );
+	timeinfo = localtime (&rawtime);
+	fprintf(fp,"CREATION_DATE\t%s", asctime (timeinfo)); 	
+	fprintf(fp,"NUM_OF_LAYERS\t%d\n",	all_network->layer_count);
+	for (i=0; i<all_network->layer_count; i++)
+	{
+		ptr_layer = all_network->layers[i];
+		fprintf(fp,"NUM_OF_NEURON_GROUPS_IN_LAYER_%d\t%d\n",	i, ptr_layer->neuron_group_count);		
+	}
+	for (i=0; i<all_network->layer_count; i++)
+	{
+		ptr_layer = all_network->layers[i];
+		for (j=0; j<ptr_layer->neuron_group_count; j++)
+		{
+			ptr_neuron_group = ptr_layer->neuron_groups[j];
+			fprintf(fp,"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n", i, j, ptr_neuron_group->neuron_count);					
+		}
+	}
+	fprintf(fp,"MAX_PATTERN_LENGTH\t%d\n", all_stimulus_patterns.max_pattern_length);
+	fprintf(fp,"MIN_PATTERN_LENGTH\t%d\n", all_stimulus_patterns.min_pattern_length);	
+	fprintf(fp,"NUM_OF_PATTERNS\t%d\n", all_stimulus_patterns.num_of_patterns);		
+	fprintf(fp,"INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS\t%d\n", INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS);
+	fprintf(fp,"MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS\t%d\n",  MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS);
+	fprintf(fp,"INJECTED_CURRENT_NOISE_VARIANCE\t%f\n", injected_current_noise_variance);
+	fprintf(fp,"INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS\t%f\n", injected_current_noise_addition_interval_ms;
+	fprintf(fp,"INITIAL_NEURON_MEMBRANE_VOLTAGE_MEAN\t%f\n", initial_neuron_membrane_voltage_mean);
+	fprintf(fp,"INITIAL_NEURON_MEMBRANE_VOLTAGE_VARIANCE\t%f\n", initial_neuron_membrane_voltage_variance);	
+	fprintf(fp,"----------SpikeGenerator - End of Main Meta File----------\n");
+	fclose(fp);
+	return 1;
+}
 
 int create_data_directory_v0(int num, ...)
 {
@@ -644,49 +692,7 @@ int fclose_all_data_files_v0(int num, ...)
 	return 1;
 }
 
-int create_main_meta_file(void)
-{
-	char  temp_path[600];
-	time_t rawtime;
-	struct tm * timeinfo;
-	FILE *fp;
 
- 	strcpy(temp_path, main_directory_path);
- 	strcat(temp_path, "/meta");
-	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }
-		
-	fprintf(fp,"----------SpikeGenerator - Main Meta File----------\n");
-	fprintf(fp,"DATA_FORMAT_VERSION\t%d\n", 0);	
-	time ( &rawtime );
-	timeinfo = localtime (&rawtime);
-	fprintf(fp,"CREATION_DATE\t%s", asctime (timeinfo)); 	
-	fprintf(fp,"MAX_NUM_OF_MWA\t%d\n", MAX_NUM_OF_MWA);
-	fprintf(fp,"MAX_NUM_OF_CHAN_PER_MWA\t%d\n",MAX_NUM_OF_CHAN_PER_MWA);
-	fprintf(fp,"MAX_NUM_OF_UNIT_PER_CHAN\t%d\n",MAX_NUM_OF_UNIT_PER_CHAN);
-	fprintf(fp,"NUM_OF_SAMP_PER_SPIKE\t%d\n",NUM_OF_SAMP_PER_SPIKE);
-	fprintf(fp,"MAX_NUM_OF_DAQ_CARD\t%d\n",MAX_NUM_OF_DAQ_CARD);
-	fprintf(fp,"MAX_NUM_OF_CHANNEL_PER_DAQ_CARD\t%d\n",MAX_NUM_OF_CHANNEL_PER_DAQ_CARD);	
-	fprintf(fp,"SAMPLING_INTERVAL\t%d\tNANOSECONDS\n", SAMPLING_INTERVAL);
-	fprintf(fp,"LOWEST_VOLTAGE_MV\t%f\tMILLIVOLTS\n",LOWEST_VOLTAGE_MV);
-	fprintf(fp,"HIGHEST_VOLTAGE_MV\t%f\tMILLIVOLTS\n",HIGHEST_VOLTAGE_MV);	
-	fprintf(fp,"DAQ_0_MODEL\t%s\n",DAQ_0_MODEL);	
-	fprintf(fp,"KERNELSPIKE_TICK_PERIOD\t%d\n", KERNELSPIKE_TICK_PERIOD);
-	fprintf(fp,"KERNELSPIKE_CPUID\t%d\n", KERNELSPIKE_CPUID);
-	fprintf(fp,"KERNELSPIKE_TASK_PRIORITY\t%d\n", KERNELSPIKE_TASK_PRIORITY);
-	fprintf(fp,"MAX_NUM_OF_EXP_ENVI_ITEMS\t%d\n",MAX_NUM_OF_EXP_ENVI_ITEMS);
-	fprintf(fp,"MAX_NUM_OF_MOVING_OBJECTS\t%d\n",MAX_NUM_OF_MOVING_OBJECTS);
-	fprintf(fp,"MAX_NUM_OF_COMPONENT_PER_MOVING_OBJECT\t%d\n",MAX_NUM_OF_COMPONENT_PER_MOVING_OBJECT); 		
-	fprintf(fp,"RECORDING_DATA_BUFF_SIZE\t%d\n",RECORDING_DATA_BUFF_SIZE);
-	fprintf(fp,"BLUE_SPIKE_TIME_STAMP_BUFF_SIZE\t%d\n",BLUE_SPIKE_TIME_STAMP_BUFF_SIZE);
-	fprintf(fp,"SPIKE_TIME_STAMP_BUFF_SIZE\t%d\n", SPIKE_TIME_STAMP_BUFF_SIZE);	
-	fprintf(fp,"EXP_ENVI_EVENT_TIMESTAMP_BUFF_SIZE\t%d\n",EXP_ENVI_EVENT_TIMESTAMP_BUFF_SIZE);
-	fprintf(fp,"EXP_ENVI_COMMAND_TIMESTAMP_BUFF_SIZE\t%d\n",EXP_ENVI_COMMAND_TIMESTAMP_BUFF_SIZE);
-	fprintf(fp,"MOVING_OBJ_EVENT_TIMESTAMP_BUFF_SIZE\t%d\n",MOVING_OBJ_EVENT_TIMESTAMP_BUFF_SIZE);		
-	fprintf(fp,"MOVING_OBJ_COMMAND_TIMESTAMP_BUFF_SIZE\t%d\n",MOVING_OBJ_COMMAND_TIMESTAMP_BUFF_SIZE);	
-	fprintf(fp,"----------BlueSpike - End of Main Meta File----------\n");
-	fclose(fp);
-	return 1;
-}
 
 int write_notes_to_files_v0(int num, ...)
 {

@@ -10,8 +10,17 @@
 #include <gtkdatabox_lines.h>
 #include <gtkdatabox_grid.h>
 
-#define MAX_CURRENT_VALUE 500
-#define MIN_CURRENT_VALUE	-100
+#define INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS 			1
+#define MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS 			INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS
+
+#define MAX_CURRENT_VALUE 				500
+#define MIN_CURRENT_VALUE					-100
+
+extern double injected_current_noise_variance;
+extern int injected_current_noise_addition_interval_ms;
+
+extern double initial_neuron_membrane_voltage_mean;
+extern double initial_neuron_membrane_voltage_variance;	
 
 struct AllStimulusPatterns
 {

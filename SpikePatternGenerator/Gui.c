@@ -9,7 +9,7 @@ void create_gui(void)
  	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   	gtk_window_set_default_size(GTK_WINDOW(window), 1920, 1020);
-  	gtk_window_set_title(GTK_WINDOW(window), "StimGenerator");
+  	gtk_window_set_title(GTK_WINDOW(window), "SpikePatternGenerator");
   	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 
 
@@ -396,13 +396,13 @@ void create_gui(void)
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	lbl = gtk_label_new("Noise Range:");
+	lbl = gtk_label_new("Noise Variance:");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
 
-        entry_noise_range = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX(hbox),entry_noise_range, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_noise_range), "0");
-	gtk_widget_set_size_request(entry_noise_range, 50, 25) ;
+        entry_noise_variance = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(hbox),entry_noise_variance, FALSE,FALSE,0);
+	gtk_entry_set_text(GTK_ENTRY(entry_noise_variance), "0");
+	gtk_widget_set_size_request(entry_noise_variance, 50, 25) ;
 
 	lbl = gtk_label_new("Period:");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
@@ -436,10 +436,10 @@ void create_gui(void)
 
 	lbl = gtk_label_new("Rng:");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
-        entry_initial_neuron_voltage_range = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX(hbox),entry_initial_neuron_voltage_range , FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_initial_neuron_voltage_range ), "0");
-	gtk_widget_set_size_request(entry_initial_neuron_voltage_range, 50, 25) ;
+        entry_initial_neuron_voltage_variance = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(hbox),entry_initial_neuron_voltage_variance , FALSE,FALSE,0);
+	gtk_entry_set_text(GTK_ENTRY(entry_initial_neuron_voltage_variance ), "0");
+	gtk_widget_set_size_request(entry_initial_neuron_voltage_variance, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
@@ -799,35 +799,34 @@ void add_noise_button_func(void)
 {
 
 	int layer, group, neuron_num;
-	float noise_range, noise;
-	int noise_period, noise_period_cntr; 
+	int noise_period_cntr = 0; 
+	double noise;
 	int i,j;
-	
+
 	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
 	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
 	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 	
-	noise_range = atof(gtk_entry_get_text(GTK_ENTRY(entry_noise_range)));
-	noise_period = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_noise_period)));
+	injected_current_noise_variance = atof(gtk_entry_get_text(GTK_ENTRY(entry_noise_variance)));
+	injected_current_noise_addition_interval_ms = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_noise_period)));
 
-	if (noise_period<1)
+	if (injected_current_noise_addition_interval_ms < MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS)
 	{
-		printf("ERROR: Noise insertion period cannot be smaller than 1 ms\n");
+		printf("ERROR: Noise insertion period cannot be smaller than %d ms\n", MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS);
 		return;
 	}
 	
 	srand ( time(NULL) );
 	
-	noise_period_cntr = 0;
-	noise = noise_range*(rand()/(double)RAND_MAX) - (noise_range/2);
+	noise = randn_notrig(0, injected_current_noise_variance);
 	
 	for (i = 0; i< all_stimulus_patterns.num_of_patterns; i++)
 	{
 		for (j = 0; j < all_stimulus_patterns.pattern_lengths_ms[i]; j++)
 		{
-			if (noise_period_cntr == noise_period)
+			if (noise_period_cntr == injected_current_noise_addition_interval_ms)
 			{
-				noise = noise_range*(rand()/(double)RAND_MAX) - (noise_range/2);			
+				noise = randn_notrig(0, injected_current_noise_variance);
 				noise_period_cntr = 0;		
 			}
 			noise_period_cntr++;				
@@ -927,22 +926,22 @@ void copy_drawn_to_raw_stimuli_button_func(void)
 void submit_initial_neuron_voltage_button_func(void)
 {
 	int layer, group, neuron_num;
-	double initial_neuron_voltage, initial_neuron_voltage_range, voltage;
+	double voltage;
 	Neuron* nrn;
 	int i;
 
 	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
 	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
 	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
-	
-	initial_neuron_voltage = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_neuron_voltage)));
-	initial_neuron_voltage_range = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_neuron_voltage_range)));
+
+	initial_neuron_membrane_voltage_mean = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_neuron_voltage)));
+	initial_neuron_membrane_voltage_variance = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_neuron_voltage_variance)));
 
 	nrn = get_neuron_address(layer, group, neuron_num);
 	if (nrn == NULL)
 		return;
 
-	if (initial_neuron_voltage > nrn->v_peak)
+	if (initial_neuron_membrane_voltage_mean > nrn->v_peak)
 	{
 		printf("Initial neuron voltage cannot be larger than peak voltage %f\n",  nrn->v_peak);
 		return;
@@ -950,7 +949,7 @@ void submit_initial_neuron_voltage_button_func(void)
 			
 	for (i = 0; i< all_stimulus_patterns.num_of_patterns; i++)
 	{
-		voltage = initial_neuron_voltage_range*(rand()/(double)RAND_MAX) - (initial_neuron_voltage_range/2) + initial_neuron_voltage;
+		voltage = initial_neuron_membrane_voltage_mean + randn_notrig(0, initial_neuron_membrane_voltage_variance);
 		if (voltage < 0)
 			voltage = 0;
 		if (voltage > nrn->v_peak)	
