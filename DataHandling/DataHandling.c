@@ -44,7 +44,7 @@ int get_format_version(int *version, char *spike_pattern_generator_data_path)
 		if (!(get_word_in_line('\t', 1, word, line, TRUE)))
 			return 0;
 		fclose(fp);   	
-		*version = atof(word);
+		*version = (int)atof(word);
 		return 1;
 	}
 	return 0;

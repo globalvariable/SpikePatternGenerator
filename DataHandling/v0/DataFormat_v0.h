@@ -28,7 +28,16 @@ int save_raw_stimulus_current(char *data_directory_path, int pattern_num);
 int save_noisy_stimulus_current(char *data_directory_path, int pattern_num);
 int save_spike_timestamps(char *data_directory_path, int pattern_num);
 
-
+int read_main_meta_file(char * main_dir_path);
+int read_notes(char* main_dir_path, GtkWidget *text_view);
+int read_drawn_stimulus_current(char *main_dir_path);
+int read_neuron_params(char *main_dir_path);
+int read_data_directory(char *main_dir_path, int pattern_num);
+int read_data_files(char  *data_directory_path, int pattern_num);
+int read_meta_data(char *data_directory_path, int pattern_num);
+int read_raw_stimulus_current(char *data_directory_path, int pattern_num);
+int read_noisy_stimulus_current(char *data_directory_path, int pattern_num);
+int read_spike_timestamps(char *data_directory_path, int pattern_num);
 
 
 

@@ -17,11 +17,11 @@
 #define MAX_CURRENT_VALUE 				500
 #define MIN_CURRENT_VALUE					-100
 
-extern double injected_current_noise_variance;
-extern int injected_current_noise_addition_interval_ms;
+double injected_current_noise_variance;
+int injected_current_noise_addition_interval_ms;
 
-extern double initial_neuron_membrane_voltage_mean;
-extern double initial_neuron_membrane_voltage_variance;	
+double initial_neuron_membrane_voltage_mean;
+double initial_neuron_membrane_voltage_variance;	
 
 struct AllStimulusPatterns
 {
@@ -57,4 +57,6 @@ bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_l
 bool increment_time_stamp_number_of_pattern(int pattern_num);
 bool add_time_stamp_to_spike_pattern_time_stamps(int pattern_num, int layer, int neuron_group, int neuron_num, TimeStamp spike_time);
 void clear_spike_pattern_time_stamps(void);
+bool deallocate_patterns(void);
+
 #endif

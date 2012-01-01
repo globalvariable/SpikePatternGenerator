@@ -1,11 +1,5 @@
 #include "Pattern.h"
 
-double injected_current_noise_variance = 0;
-int injected_current_noise_addition_interval_ms = 1;
-
-double initial_neuron_membrane_voltage_mean = 0;
-double initial_neuron_membrane_voltage_variance = 0;	
-
 bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns)
 {
 	int i, j, k,m;
@@ -112,6 +106,93 @@ bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_l
 	return TRUE;
 }
 
+bool deallocate_patterns(void)
+{
+	int i, j, k,m;
+	Layer		*ptr_layer;
+	NeuronGroup	*ptr_neuron_group;
+
+	if (!is_network_allocated())
+		return FALSE;
+
+	g_free(all_stimulus_patterns.pattern_lengths_ms);
+	
+	for (i=0; i<all_stimulus_patterns.num_of_patterns; i++)
+	{	
+		for (j=0; j<all_network->layer_count; j++)
+		{
+			ptr_layer = all_network->layers[j];			
+			for (k=0; k<ptr_layer->neuron_group_count; k++)
+			{
+				ptr_neuron_group = ptr_layer->neuron_groups[k];			
+				for (m=0; m<ptr_neuron_group->neuron_count; m++)
+				{
+					g_free(all_stimulus_patterns.raw_stimulus_currents[i][j][k][m]); 
+					g_free(all_stimulus_patterns.noisy_stimulus_currents[i][j][k][m]); 
+					g_free(neuron_dynamics.v[i][j][k][m]); 		
+					g_free(neuron_dynamics.u[i][j][k][m]); 	
+				}
+				g_free(all_stimulus_patterns.raw_stimulus_currents[i][j][k]);
+				g_free(all_stimulus_patterns.noisy_stimulus_currents[i][j][k]);	
+				g_free(neuron_dynamics.v[i][j][k]);		
+				g_free(neuron_dynamics.u[i][j][k]);
+				g_free(initial_neuron_dynamics.v[i][j][k]);		
+				g_free(initial_neuron_dynamics.u[i][j][k]);	
+			}
+			g_free(all_stimulus_patterns.raw_stimulus_currents[i][j]);
+			g_free(all_stimulus_patterns.noisy_stimulus_currents[i][j]);	
+			g_free(neuron_dynamics.v[i][j]);
+			g_free(neuron_dynamics.u[i][j]);
+			g_free(initial_neuron_dynamics.v[i][j]);
+			g_free(initial_neuron_dynamics.u[i][j]);					
+		}
+		g_free(all_stimulus_patterns.raw_stimulus_currents[i]);
+		g_free(all_stimulus_patterns.noisy_stimulus_currents[i]);	
+		g_free(neuron_dynamics.v[i]);
+		g_free(neuron_dynamics.u[i]);	
+		g_free(initial_neuron_dynamics.v[i]);
+		g_free(initial_neuron_dynamics.u[i]);			
+	}
+	g_free(all_stimulus_patterns.raw_stimulus_currents);
+	g_free(all_stimulus_patterns.noisy_stimulus_currents);
+	g_free(neuron_dynamics.v);
+	g_free(neuron_dynamics.u);
+	g_free(initial_neuron_dynamics.v);
+	g_free(initial_neuron_dynamics.u);	
+	
+
+	for (i=0; i<all_network->layer_count; i++)
+	{
+		ptr_layer = all_network->layers[i];			
+		for (j=0; j<ptr_layer->neuron_group_count; j++)
+		{
+			ptr_neuron_group = ptr_layer->neuron_groups[j];
+			for (k=0; k<ptr_neuron_group->neuron_count; k++)
+			{
+				g_free(all_stimulus_patterns.drawn_stimulus_currents[i][j][k]);
+			}
+			g_free(all_stimulus_patterns.drawn_stimulus_currents[i][j]);			
+		}
+		g_free(all_stimulus_patterns.drawn_stimulus_currents[i]);		
+	}	
+	g_free(all_stimulus_patterns.drawn_stimulus_currents);	
+	
+	all_stimulus_patterns.max_pattern_length = 0;
+	all_stimulus_patterns.min_pattern_length = 0;	
+	all_stimulus_patterns.num_of_patterns = 0;		
+
+
+	for (i = 0; i < spike_pattern_time_stamps.num_of_patterns; i++)
+	{
+		g_free(spike_pattern_time_stamps.pattern_time_stamps[i]); 
+	}
+	g_free(spike_pattern_time_stamps.pattern_time_stamps);		
+	g_free(spike_pattern_time_stamps.num_of_time_stamps_in_pattern);		
+	spike_pattern_time_stamps.num_of_patterns = 0;		
+		
+}
+
+
 bool increment_time_stamp_number_of_pattern(int pattern_num)
 {
 	int i;
@@ -157,3 +238,5 @@ void clear_spike_pattern_time_stamps(void)
 		spike_pattern_time_stamps.num_of_time_stamps_in_pattern[i] = 0;
 	}
 }
+
+
