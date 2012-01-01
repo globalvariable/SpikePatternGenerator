@@ -2,11 +2,11 @@
 
 SPIKE_GEN_date ----> SpikePatternGeneratorData ------>	meta  ----------------------------------------------------------------------------------------------------------------------------------------------------> version
 SPIKE_GEN_date								notes																			creation_date
-GEN_date										DrawnStimulusCurrent																num_of_layers
-....											data00001																			num_of_neuron_groups_in_layer_0
+GEN_date										neuron_params																		num_of_layers
+....											DrawnStimulusCurrent																num_of_neuron_groups_in_layer_0
 ..											data00002																			num_of_neuron_groups_in_layer_1
-.											data00001																			.......
-											data00002																			...
+.											data00003																			.......
+											data00004																			...
 											.....																				num_of_neuron_groups_in_layer_x
 											..																				num_of_neurons_in_neuron_layer_0_group_0
 											dataxxxxx	----------->	meta  ------------------------------------> version									num_of_neurons_in_neuron_layer_0_group_1						

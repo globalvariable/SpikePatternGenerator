@@ -16,7 +16,6 @@ void create_gui(void)
 	table = gtk_table_new(6,8,TRUE);
 	gtk_container_add(GTK_CONTAINER(window), table);
 
-
 ///////////////////////////////////////////// FIRST COLUMN  ///////////////////////////////////////////////////////////////
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), vbox, 0,1, 0,3);  
@@ -396,7 +395,7 @@ void create_gui(void)
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	lbl = gtk_label_new("Noise Variance:");
+	lbl = gtk_label_new("Noise Var:");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
 
         entry_noise_variance = gtk_entry_new();
@@ -404,7 +403,7 @@ void create_gui(void)
 	gtk_entry_set_text(GTK_ENTRY(entry_noise_variance), "0");
 	gtk_widget_set_size_request(entry_noise_variance, 50, 25) ;
 
-	lbl = gtk_label_new("Period:");
+	lbl = gtk_label_new("Intv:");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
 
         entry_noise_period = gtk_entry_new();
@@ -475,25 +474,7 @@ void create_gui(void)
  	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), vbox, 7,8, 0,6);  
 
-  	hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
-        
- 	lbl = gtk_label_new("Folder : ");
-        gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
-
-	btn_select_directory_to_load = gtk_file_chooser_button_new ("Select Folder to Load", GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-        gtk_box_pack_start(GTK_BOX(hbox),btn_select_directory_to_load, TRUE,TRUE,0);
-	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (btn_select_directory_to_load),"/home/kocaturk/PATTERNS");
-
-  	hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
-
-	btn_load = gtk_button_new_with_label("Load");
-	gtk_box_pack_start (GTK_BOX (hbox), btn_load, TRUE, TRUE, 0);   
-	
-	gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
-        
-  	hbox = gtk_hbox_new(FALSE, 0);
+ 	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE, 0);       	
      	  	
   	lbl = gtk_label_new("Notes:");
@@ -501,39 +482,11 @@ void create_gui(void)
 	 	
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE, 0);  	      
- 	gtk_widget_set_size_request(hbox, 50, 450);
+ 	gtk_widget_set_size_request(hbox, 50, 700);
  	
 	txv_notes = gtk_text_view_new();
 	gtk_box_pack_start(GTK_BOX(hbox),txv_notes, TRUE,TRUE, 0);
 
- 	hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,5);
-        
-	btn_submit_notes = gtk_button_new_with_label("Submit Notes");
-	gtk_box_pack_start (GTK_BOX (hbox), btn_submit_notes, TRUE, TRUE, 0);   
-	
- 	hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);	
-
-  	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
-        	
-  	lbl = gtk_label_new("Additional Notes:");
-	gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE, 0);
-	 	
-  	hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE, 0);  	      
- 	gtk_widget_set_size_request(hbox, 50, 300);
- 	
-	txv_additional_notes = gtk_text_view_new();
-	gtk_box_pack_start(GTK_BOX(hbox), txv_additional_notes, TRUE,TRUE, 0);
-
- 	hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,5);
-        
-	btn_submit_additional_notes = gtk_button_new_with_label("Submit Additional Notes");
-	gtk_box_pack_start (GTK_BOX (hbox), btn_submit_additional_notes, TRUE, TRUE, 0); 
-	
 	gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);  	
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -542,9 +495,9 @@ void create_gui(void)
 	lbl = gtk_label_new("Folder : ");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
 
-	btn_select_directory_to_load= gtk_file_chooser_button_new ("Select Folder to Create", GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-        gtk_box_pack_start(GTK_BOX(hbox),btn_select_directory_to_load, TRUE,TRUE,0);
-	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (btn_select_directory_to_load),"/home/kocaturk/PATTERNS");
+	btn_select_directory = gtk_file_chooser_button_new ("Select Folder", GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+        gtk_box_pack_start(GTK_BOX(hbox),btn_select_directory, TRUE,TRUE,0);
+	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (btn_select_directory),"/home/kocaturk/PATTERNS");
 
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
@@ -558,6 +511,12 @@ void create_gui(void)
 	btn_save= gtk_button_new_with_label("Save");
 	gtk_box_pack_start (GTK_BOX (hbox), btn_save, TRUE, TRUE, 0);	
 	
+  	hbox = gtk_hbox_new(FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
+
+	btn_load = gtk_button_new_with_label("Load");
+	gtk_box_pack_start (GTK_BOX (hbox), btn_load, TRUE, TRUE, 0);   
+	
 	gtk_widget_set_sensitive(btn_allocate_patterns, FALSE);
 	gtk_widget_set_sensitive(btn_display_raw_stimuli, FALSE);
 	gtk_widget_set_sensitive(btn_display_noisy_stimuli, FALSE);
@@ -565,6 +524,8 @@ void create_gui(void)
 	gtk_widget_set_sensitive(btn_simulate, FALSE);
 	gtk_widget_set_sensitive(btn_add_noise, FALSE);
 	gtk_widget_set_sensitive(btn_submit_initial_neuron_voltage, FALSE);
+	gtk_widget_set_sensitive(btn_create_directory, FALSE);	
+	gtk_widget_set_sensitive(btn_save, FALSE);		
 
 	initialize_graphs(table);
 	
@@ -584,8 +545,6 @@ void create_gui(void)
 	g_signal_connect_swapped(G_OBJECT(btn_display_noisy_stimuli), "clicked", G_CALLBACK(display_noisy_stimuli_button_func), G_OBJECT(window));
 	g_signal_connect_swapped(G_OBJECT(btn_simulate), "clicked", G_CALLBACK(simulate_button_func), G_OBJECT(window));
 	g_signal_connect_swapped(G_OBJECT(btn_display_neuron_dynamics), "clicked", G_CALLBACK(display_neuron_dynamics_button_func), G_OBJECT(window));		
-	g_signal_connect_swapped(G_OBJECT(btn_submit_notes), "clicked", G_CALLBACK(submit_notes_button_func), G_OBJECT(window));
-	g_signal_connect_swapped(G_OBJECT(btn_submit_additional_notes), "clicked", G_CALLBACK(submit_additional_notes_button_func), G_OBJECT(window));
 	g_signal_connect_swapped(G_OBJECT(btn_create_directory), "clicked", G_CALLBACK(create_directory_button_func), G_OBJECT(window));
 	g_signal_connect_swapped(G_OBJECT(btn_save), "clicked", G_CALLBACK(load_button_func), G_OBJECT(window));		
 	g_signal_connect_swapped(G_OBJECT(btn_load), "clicked", G_CALLBACK(load_button_func), G_OBJECT(window));		     	   				
@@ -728,7 +687,9 @@ void allocate_patterns_button_func(void)
 		gtk_widget_set_sensitive(btn_draw_stimuli, TRUE);
 		gtk_widget_set_sensitive(btn_simulate, TRUE);
 		gtk_widget_set_sensitive(btn_add_noise, TRUE);
-		gtk_widget_set_sensitive(btn_submit_initial_neuron_voltage, TRUE);		
+		gtk_widget_set_sensitive(btn_submit_initial_neuron_voltage, TRUE);	
+		gtk_widget_set_sensitive(btn_create_directory, TRUE);	
+		gtk_widget_set_sensitive(btn_save, TRUE);	
 	}
 }
 
@@ -972,7 +933,8 @@ void simulate_button_func(void)
 	TimeStampMs time_ms_idx;
 	TimeStamp  spike_time;
 
-
+	clear_spike_pattern_time_stamps();
+	
 	for (i = 0; i< all_stimulus_patterns.num_of_patterns; i++)
 	{
 		start_time_ns = 0;
@@ -997,7 +959,11 @@ void simulate_button_func(void)
 						ptr_neuron -> I_inject = all_stimulus_patterns.noisy_stimulus_currents[i][k][m][n][time_ms_idx];
 						spike_time = evaluate_neuron_dyn(ptr_neuron, time_ns, time_ns+step_size);
 						if (spike_time != 0)
+						{
 							printf ("Spike time nano: %llu\n", spike_time);
+							if (!add_time_stamp_to_spike_pattern_time_stamps(i , k, m, n, spike_time))
+								return;
+						}
 						neuron_dynamics.v[i][k][m][n][time_ms_idx] = ptr_neuron->v;	
 						neuron_dynamics.u[i][k][m][n][time_ms_idx] = ptr_neuron->u;								
 					}
@@ -1045,25 +1011,27 @@ void display_neuron_dynamics(void)
 
 void create_directory_button_func(void)
 {
-
-}
-
-void submit_notes_button_func(void)
-{
-
-}
-
-void submit_additional_notes_button_func(void)
-{
-
+	char *path_temp = NULL, *path = NULL;
+	path_temp = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (btn_select_directory));
+	path = &path_temp[7];   // since     uri returns file:///home/....	
+	if ((*create_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER-1])(1, path))		// record in last format version
+	return;
 }
 
 void save_button_func(void)
 {
-
+	char *path_temp = NULL, *path = NULL;
+	path_temp = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (btn_select_directory));
+	path = &path_temp[7];   // since     uri returns file:///home/....	
+	if ((*save_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER-1])(2, path, txv_notes))		// record in last format version
+	return;
 }
 
 void load_button_func(void)
 {
-
+	char *path_temp = NULL, *path = NULL;
+	path_temp = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (btn_select_directory));
+	path = &path_temp[7];   // since     uri returns file:///home/....	
+	if ((*load_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER-1])(1, path))		// record in last format version
+	return;
 }

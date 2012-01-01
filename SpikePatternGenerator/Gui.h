@@ -10,6 +10,7 @@
 #include "Graphs.h"
 #include "../Pattern/Pattern.h"
 #include "../Randn/Randn.h"
+#include "../DataHandling/DataHandling.h"
 
 #define LINE 0
 #define SIN 1
@@ -77,15 +78,10 @@ GtkWidget *combo_dynamics_type;
 
 /// LAST COLUMN
 GtkWidget *txv_notes;
-GtkWidget *btn_submit_notes;
-GtkWidget *txv_additional_notes;
-GtkWidget *btn_submit_additional_notes;
-GtkWidget *btn_select_directory_to_create;
+GtkWidget *btn_select_directory;
 GtkWidget *btn_create_directory;
 GtkWidget *btn_save;
-GtkWidget *btn_select_directory_to_load;
 GtkWidget *btn_load;
-
 
 // THIRD COLUMN
 ///   at graphs.h
@@ -107,8 +103,6 @@ void copy_drawn_to_raw_stimuli_button_func(void);
 void simulate_button_func(void);
 void display_neuron_dynamics_button_func(void);
 void display_neuron_dynamics(void);
-void submit_notes_button_func(void);
-void submit_additional_notes_button_func(void);
 void create_directory_button_func(void);
 void save_button_func(void);
 void load_button_func(void);

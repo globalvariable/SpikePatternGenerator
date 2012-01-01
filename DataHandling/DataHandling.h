@@ -10,14 +10,8 @@
 #define DATA_FORMAT_VERSION	0	// Change this according to the intended data format/   Upper limit is MAX_NUMBER_OF_DATA_FORMAT_VER-1
 
 int (*create_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
-int (*create_data_directory[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
-int (*write_spike_time_stamp[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
-
-int (*write_notes_to_files[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
-int (*write_additional_notes_to_files[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
-
+int (*save_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
 int (*load_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
-int (*read_spike_time_stamp[MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
 
 int initialize_data_read_write_handlers(void);
 int is_spike_pattern_generator_data(char *spike_pattern_generator_data_path);

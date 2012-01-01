@@ -4,6 +4,7 @@
 
 #include "../../NeuroSim/Library/Network/Network.h"
 #include "../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.h"
+#include "../../BlueSpike/SpikeTimeStamp.h"
 #include "Graphs.h"
 #include <gtkdatabox.h>
 #include <gtkdatabox_ruler.h>
@@ -24,7 +25,7 @@ extern double initial_neuron_membrane_voltage_variance;
 
 struct AllStimulusPatterns
 {
-	double		****drawn_stimulus_currents;  // num_of_layers * num_of_neuron_groups * num_of_neurons * pattern_lengths
+	double		****drawn_stimulus_currents;  // num_of_layers * num_of_neuron_groups * num_of_neurons * max_pattern_length
 	double 		*****raw_stimulus_currents;   /// num_of_patterns * num_of_layers * num_of_neuron_groups * num_of_neurons * pattern_lengths
 	double 		*****noisy_stimulus_currents;   /// num_of_patterns * num_of_layers * num_of_neuron_groups *num_of_neurons * pattern_lengths
 	TimeStampMs	*pattern_lengths_ms;
@@ -41,11 +42,19 @@ struct NeuronDynamics
 
 struct InitialNeuronDynamics
 {
-	double ****v;   /// num_of_layers * num_of_neuron_groups * num_of_neurons 
-	double ****u;   ///  num_of_layers * num_of_neuron_groups *num_of_neurons 
+	double ****v;   /// num_of_patterns * num_of_layers * num_of_neuron_groups * num_of_neurons 
+	double ****u;   ///  num_of_patterns * num_of_layers * num_of_neuron_groups *num_of_neurons 
 } initial_neuron_dynamics;
 
+struct SpikePatternTimeStamps
+{
+	SpikeTimeStampItem	**pattern_time_stamps;		// num_of_pattern * num_of_time_stamps_in_pattern
+	int					*num_of_time_stamps_in_pattern;		// num_of_pattern 
+	int					num_of_patterns;
+} spike_pattern_time_stamps;
+
 bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns);
-
-
+bool increment_time_stamp_number_of_pattern(int pattern_num);
+bool add_time_stamp_to_spike_pattern_time_stamps(int pattern_num, int layer, int neuron_group, int neuron_num, TimeStamp spike_time);
+void clear_spike_pattern_time_stamps(void);
 #endif

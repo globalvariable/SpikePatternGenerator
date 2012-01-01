@@ -4,15 +4,9 @@
 int initialize_data_read_write_handlers(void)
 {
 	create_main_directory[0] = &create_main_directory_v0;
-	create_data_directory[0] = &create_data_directory_v0;
-	write_spike_time_stamp[0] = &write_spike_time_stamp_v0;
-	
-	write_notes_to_files[0] = &write_notes_to_files_v0;
-	write_additional_notes_to_files[0] = &write_additional_notes_to_files_v0;	
-
+	save_main_directory[0] = &save_main_directory_v0;
 	load_main_directory[0] = &load_main_directory_v0;
-	read_spike_time_stamp[0] = &ead_spike_time_stamp_v0;
-	
+		
 	return 1;
 }
 
@@ -42,7 +36,7 @@ int get_format_version(int *version, char *spike_pattern_generator_data_path)
 	FILE *fp;
 	if (is_spike_pattern_generator_data(spike_pattern_generator_data_path))
 	{
-		strcpy(path, blue_spike_data_path);
+		strcpy(path, spike_pattern_generator_data_path);
 		strcat(path, "/meta");		
 		if ((fp = fopen(path, "r")) == NULL)  { printf ("ERROR: DataHandling: Couldn't read file: %s\n\n", path); return 0; }
 		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: DataHandling: Couldn' t read %d th line of %s\n", line_cntr, path);  fclose(fp); return 0; } else {line_cntr++;}   
