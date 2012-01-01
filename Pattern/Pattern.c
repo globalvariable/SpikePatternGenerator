@@ -189,7 +189,7 @@ bool deallocate_patterns(void)
 	g_free(spike_pattern_time_stamps.pattern_time_stamps);		
 	g_free(spike_pattern_time_stamps.num_of_time_stamps_in_pattern);		
 	spike_pattern_time_stamps.num_of_patterns = 0;		
-		
+	return TRUE;	
 }
 
 
