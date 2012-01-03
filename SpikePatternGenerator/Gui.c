@@ -554,7 +554,9 @@ void create_gui(void)
 
 	btn_load = gtk_button_new_with_label("Load");
 	gtk_box_pack_start (GTK_BOX (hbox), btn_load, TRUE, TRUE, 0);   
-	
+
+
+	gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, FALSE);	
 	gtk_widget_set_sensitive(btn_allocate_patterns, FALSE);
 	gtk_widget_set_sensitive(btn_display_raw_stimuli, FALSE);
 	gtk_widget_set_sensitive(btn_display_noisy_stimuli, FALSE);
@@ -694,10 +696,16 @@ void add_neurons_to_layer_button_func(void)
 							
 	if (add_neurons_to_layer(num_of_neuron, layer, v, a, b, c, d, k, C, v_resting, v_threshold, v_peak, I_inject, inhibitory, E_excitatory, E_inhibitory, tau_excitatory, tau_inhibitory, randomize_params))
 	{
-		gtk_widget_set_sensitive(btn_allocate_patterns, TRUE);
-	
+		gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, TRUE);	
 	}
 	return;
+}
+
+void submit_parker_sochacki_params_button_func(void)
+{
+
+	if (parker_sochacki_set_order_tolerance((int)atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_max_order))), atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_err_tol)))))
+		gtk_widget_set_sensitive(btn_allocate_patterns, TRUE);
 }
 
 void interrogate_network_button_func(void)
@@ -723,6 +731,7 @@ void allocate_patterns_button_func(void)
 	{
 		allocate_graphs(max_len);
 		gtk_widget_set_sensitive(btn_add_neurons_to_layer, FALSE);
+		gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, FALSE);			
 		gtk_widget_set_sensitive(btn_allocate_patterns, FALSE);
 		gtk_widget_set_sensitive(btn_display_raw_stimuli, TRUE);
 		gtk_widget_set_sensitive(btn_display_noisy_stimuli, TRUE);
@@ -1088,9 +1097,25 @@ void load_button_func(void)
 	if (get_format_version(&version, path))
 	{	
 		if ((*load_main_directory[version])(2, path, txv_notes))
+		{
+			allocate_graphs(all_stimulus_patterns_info.max_pattern_length);
+			gtk_widget_set_sensitive(btn_add_neurons_to_layer, FALSE);
+			gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, FALSE);			
+			gtk_widget_set_sensitive(btn_allocate_patterns, FALSE);
+			gtk_widget_set_sensitive(btn_display_raw_stimuli, TRUE);
+			gtk_widget_set_sensitive(btn_display_noisy_stimuli, TRUE);
+			gtk_widget_set_sensitive(btn_draw_stimuli, TRUE);
+			gtk_widget_set_sensitive(btn_simulate, TRUE);
+			gtk_widget_set_sensitive(btn_add_noise, TRUE);
+			gtk_widget_set_sensitive(btn_submit_initial_neuron_voltage, TRUE);	
+			gtk_widget_set_sensitive(btn_create_directory, TRUE);	
+			gtk_widget_set_sensitive(btn_save, TRUE);			
 			printf("SpikePatternGenerator: INFO: SpikePatternGenerator Data load is successful\n");
+		}
 		else
-			printf("SpikePatternGenerator: ERROR: SpikePatternGenerator Data load FAILED\n");					
+		{
+			printf("SpikePatternGenerator: ERROR: SpikePatternGenerator Data load FAILED\n");
+		}					
 	}
 	return;
 }
@@ -1156,10 +1181,5 @@ void fill_notes_text_view(void)
        	}
 }
 
-void submit_parker_sochacki_params_button_func(void)
-{
 
-	parker_sochacki_set_order_tolerance((int)atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_max_order))), atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_err_tol))));
-
-}
 
