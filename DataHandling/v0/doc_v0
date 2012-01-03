@@ -1,26 +1,37 @@
 
-
-SPIKE_GEN_date ----> SpikePatternGeneratorData ------>	meta  ----------------------------------------------------------------------------------------------------------------------------------------------------> version
-SPIKE_GEN_date								notes																			creation_date
-GEN_date										neuron_params																		num_of_layers
-....											DrawnStimulusCurrent																num_of_neuron_groups_in_layer_0
-..											data00002																			num_of_neuron_groups_in_layer_1
-.											data00003																			.......
-											data00004																			...
-											.....																				num_of_neuron_groups_in_layer_x
-											..																				num_of_neurons_in_neuron_layer_0_group_0
-											dataxxxxx	----------->	meta  ------------------------------------> version									num_of_neurons_in_neuron_layer_0_group_1						
-															RawStimulusCurrent			creation_date								.....
+SPIKE_GEN_date ----> SpikePatternGeneratorData ------>	meta  ----------------------------------------------------------------------------------------------------------------------------------------------------> ----------SpikeGenerator - Main Meta File----------
+SPIKE_GEN_date								notes  																			version
+SPIKE_GEN_date								DrawnStimulusCurrent																creation_date
+SPIKE_GEN_date								NeuronParameters																	num_of_layers
+....											InjectedCurrentNoiseParams															num_of_neuron_groups_in_layer_0
+..											InitialMembraneVoltageParams															num_of_neurons_in_neuron_layer_0_group_0
+.											data00000																			num_of_neurons_in_neuron_layer_0_group_1
+											data00001																			...
+											.....																				num_of_neurons_in_neuron_layer_0_group_x
+											..																				num_of_neuron_groups_in_layer_1
+											dataxxxxx	----------->	meta  ------------------------------------> version									num_of_neurons_in_neuron_layer_1_group_0						
+															RawStimulusCurrent			creation_date								num_of_neurons_in_neuron_layer_1_group_1
 															NoisyStimulusCurrent		pattern_length_milliseconds					..	
-															SpikeTimeStamp			neuron_initial_membrane_voltage				num_of_neurons_in_neuron_layer_1_group_0		
-																					(as many as num of all neurons in network)			num_of_neurons_in_neuron_layer_1_group_1
+															SpikeTimeStamp			num_of_spikes_in_pattern						num_of_neurons_in_neuron_layer_1_group_x		
+																					neuron_initial_membrane_voltage				num_of_neurons_in_neuron_layer_x_group_0
+																					(as many as num of all neurons in network)			....
+																															num_of_neurons_in_neuron_layer_x_group_x
 																															maximum_pattern_length_milliseconds
 																															minimum_pattern_length_milliseconds
-																															injected_current_pattern_sampling_interval
-																															injected_current_noise_variance  (as many as num of all neurons in network)
-																															injected_current_noise_addition_interval_ms	 (as many as num of all neurons in network)
-																															initial_neuron_membrane_voltage_mean	 (as many as num of all neurons in network)
-																															initial_neuron_membrane_voltage_variance	 (as many as num of all neurons in network)
+																															num_of_patterns
+																															pattern_0_length_ms
+																															pattern_1_length_ms
+																															...
+																															pattern_x_length_ms
+																															pattern_0_num_of_spikes
+																															pattern_1_num_of_spikes
+																															...
+																															pattern_x_num_of_spikes
+																															INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS
+																															MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS
+																															PARKER_SOCHACKI_ERROR_TOLERANCE
+																															PARKER_SOCHACKI_MAX_ORDER
+																															----------SpikeGenerator - End of Main Meta File----------
 																														
 								
 																				

@@ -17,46 +17,48 @@
 #define MAX_CURRENT_VALUE 				500
 #define MIN_CURRENT_VALUE					-100
 
-double injected_current_noise_variance;
-int injected_current_noise_addition_interval_ms;
+struct StimulusPatternsInfo
+{
+	TimeStampMs	*pattern_lengths_ms;
+	TimeStampMs	max_pattern_length;
+	TimeStampMs	min_pattern_length;
+	int			num_of_patterns;	
+} all_stimulus_patterns_info;
 
-double initial_neuron_membrane_voltage_mean;
-double initial_neuron_membrane_voltage_variance;	
-
-struct AllStimulusPatterns
+struct StimulusCurrents
 {
 	double		****drawn_stimulus_currents;  // num_of_layers * num_of_neuron_groups * num_of_neurons * max_pattern_length
 	double 		*****raw_stimulus_currents;   /// num_of_patterns * num_of_layers * num_of_neuron_groups * num_of_neurons * pattern_lengths
 	double 		*****noisy_stimulus_currents;   /// num_of_patterns * num_of_layers * num_of_neuron_groups *num_of_neurons * pattern_lengths
-	TimeStampMs	*pattern_lengths_ms;
-	TimeStampMs	max_pattern_length;
-	TimeStampMs	min_pattern_length;
-	int			num_of_patterns;		
-} all_stimulus_patterns;
+	double 		***noise_variances;   ///num_of_layers * num_of_neuron_groups *num_of_neurons
+	TimeStampMs	***noise_addition_ms_intervals;   ///num_of_layers * num_of_neuron_groups *num_of_neurons	
+} all_stimulus_currents;
 
 struct NeuronDynamics
 {
 	double *****v;   /// num_of_patterns * num_of_layers * num_of_neuron_groups * num_of_neurons * pattern_length
 	double *****u;   /// num_of_patterns * num_of_layers * num_of_neuron_groups *num_of_neurons  * pattern_length
+	double ****initial_v;   /// num_of_patterns * num_of_layers * num_of_neuron_groups * num_of_neurons 
+	double ****initial_u;   ///  num_of_patterns * num_of_layers * num_of_neuron_groups *num_of_neurons 
+	double ***initial_v_means;   	///  num_of_layers * num_of_neuron_groups *num_of_neurons 
+	double ***initial_v_variances;   	///  num_of_layers * num_of_neuron_groups *num_of_neurons 	
 } neuron_dynamics;
-
-struct InitialNeuronDynamics
-{
-	double ****v;   /// num_of_patterns * num_of_layers * num_of_neuron_groups * num_of_neurons 
-	double ****u;   ///  num_of_patterns * num_of_layers * num_of_neuron_groups *num_of_neurons 
-} initial_neuron_dynamics;
 
 struct SpikePatternTimeStamps
 {
 	SpikeTimeStampItem	**pattern_time_stamps;		// num_of_pattern * num_of_time_stamps_in_pattern
 	int					*num_of_time_stamps_in_pattern;		// num_of_pattern 
-	int					num_of_patterns;
-} spike_pattern_time_stamps;
+} all_spike_patterns;
 
 bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns);
+bool allocate_stimulus_currents(void);
+bool allocate_neuron_dynamics(void);
+bool allocate_spike_patterns(void);
 bool increment_time_stamp_number_of_pattern(int pattern_num);
 bool add_time_stamp_to_spike_pattern_time_stamps(int pattern_num, int layer, int neuron_group, int neuron_num, TimeStamp spike_time);
 void clear_spike_pattern_time_stamps(void);
 bool deallocate_patterns(void);
-
+bool deallocate_stimulus_currents(void);
+bool deallocate_neuron_dynamics(void);
+bool deallocate_spike_patterns(void);
 #endif

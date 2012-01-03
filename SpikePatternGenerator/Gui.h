@@ -40,6 +40,9 @@ GtkWidget *entry_add_neurons_to_layer;
 
 
 // SECOND COLUMN
+GtkWidget *entry_parker_sochacki_err_tol;
+GtkWidget *entry_parker_sochacki_max_order;
+GtkWidget *btn_submit_parker_sochacki_params;
 GtkWidget *entry_num_of_patterns;
 GtkWidget *entry_min_length_of_pattern;
 GtkWidget *entry_max_length_of_pattern;
@@ -93,6 +96,7 @@ void combo_neuron_type_func(void);
 void add_neurons_to_layer_button_func(void);
 void interrogate_network_button_func(void); 		
 void interrogate_neuron_button_func(void);
+void submit_parker_sochacki_params_button_func(void);
 void allocate_patterns_button_func(void);
 void draw_stimuli_button_func(void);
 void add_noise_button_func(void);
@@ -106,4 +110,6 @@ void display_neuron_dynamics(void);
 void create_directory_button_func(void);
 void save_button_func(void);
 void load_button_func(void);
+void fill_notes_text_view(void);
+void set_directory_btn_select_directory(void);
 #endif
