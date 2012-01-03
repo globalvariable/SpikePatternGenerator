@@ -92,10 +92,10 @@ bool add_time_stamp_to_spike_pattern_time_stamps(int pattern_num, int layer, int
 
 	 if (increment_time_stamp_number_of_pattern(pattern_num))
 	{
-		all_spike_patterns.pattern_time_stamps[pattern_num][all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]].peak_time = spike_time;
-		all_spike_patterns.pattern_time_stamps[pattern_num][all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]].mwa_or_layer = layer;
-		all_spike_patterns.pattern_time_stamps[pattern_num][all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]].channel_or_neuron_group = neuron_group;	
-		all_spike_patterns.pattern_time_stamps[pattern_num][all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]].unit_or_neuron = neuron_num;	
+		all_spike_patterns.pattern_time_stamps[pattern_num][all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]-1].peak_time = spike_time;
+		all_spike_patterns.pattern_time_stamps[pattern_num][all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]-1].mwa_or_layer = layer;
+		all_spike_patterns.pattern_time_stamps[pattern_num][all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]-1].channel_or_neuron_group = neuron_group;	
+		all_spike_patterns.pattern_time_stamps[pattern_num][all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]-1].unit_or_neuron = neuron_num;	
 		return TRUE;					
 	}
 	return FALSE;
