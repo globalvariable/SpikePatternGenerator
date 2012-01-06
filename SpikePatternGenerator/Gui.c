@@ -223,8 +223,8 @@ void create_gui(void)
                 
         entry_parker_sochacki_err_tol= gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_parker_sochacki_err_tol, FALSE,FALSE,0);
-	char temp_str[20];
-      	sprintf(temp_str, "%E", 0.0);	
+	char temp_str[40];
+      	sprintf(temp_str, "%.16E", 0.0);	
 	gtk_entry_set_text(GTK_ENTRY(entry_parker_sochacki_err_tol), temp_str);
 	gtk_widget_set_size_request(entry_parker_sochacki_err_tol, 50, 25) ;
 
@@ -362,7 +362,7 @@ void create_gui(void)
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	lbl = gtk_label_new("amp:");
+	lbl = gtk_label_new("amp/slop:");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_amplifier = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_amplifier, FALSE,FALSE,0);
@@ -414,6 +414,7 @@ void create_gui(void)
 	gtk_combo_box_append_text(GTK_COMBO_BOX(combo_signal_type), "Line");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(combo_signal_type), "Sin");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(combo_signal_type), "Cos");
+	gtk_combo_box_append_text(GTK_COMBO_BOX(combo_signal_type), "Clear");	
  	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_signal_type), 0);
  	
 	btn_draw_stimuli = gtk_button_new_with_label("Draw Stimuli");
@@ -440,7 +441,7 @@ void create_gui(void)
 	gtk_entry_set_text(GTK_ENTRY(entry_noise_variance), "0");
 	gtk_widget_set_size_request(entry_noise_variance, 50, 25) ;
 
-	lbl = gtk_label_new("Intv:");
+	lbl = gtk_label_new("Interval:");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
 
         entry_noise_period = gtk_entry_new();
@@ -470,7 +471,7 @@ void create_gui(void)
 	gtk_entry_set_text(GTK_ENTRY(entry_initial_neuron_voltage ), "0");
 	gtk_widget_set_size_request(entry_initial_neuron_voltage, 50, 25) ;
 
-	lbl = gtk_label_new("Rng:");
+	lbl = gtk_label_new("Var:");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_initial_neuron_voltage_variance = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_initial_neuron_voltage_variance , FALSE,FALSE,0);
@@ -794,6 +795,13 @@ void draw_stimuli_button_func(void)
 				all_stimulus_currents.drawn_stimulus_currents[layer][group][neuron_num][i] = amplifier * cos (2*pi*freq* ((i-start_time)/1000.0) ) + initial_current + starting_curr_val;
 			}
 		}
+		else if (combo_idx == CLEAR)
+		{
+			for (i=start_time; i<end_time; i++)
+			{
+				all_stimulus_currents.drawn_stimulus_currents[layer][group][neuron_num][i] = 0;
+			}
+		}		
 		for (i=0; i<all_stimulus_patterns_info.max_pattern_length; i++)
 		{
 			stimulus_graph_y_axis[i] = (float)all_stimulus_currents.drawn_stimulus_currents[layer][group][neuron_num][i];
@@ -844,7 +852,9 @@ void add_noise_button_func(void)
 			noise_period_cntr++;				
 			all_stimulus_currents.noisy_stimulus_currents[i][layer][group][neuron_num][j] = all_stimulus_currents.raw_stimulus_currents[i][layer][group][neuron_num][j] + noise;
 			if (all_stimulus_currents.noisy_stimulus_currents[i][layer][group][neuron_num][j] < MIN_CURRENT_VALUE)
-				all_stimulus_currents.noisy_stimulus_currents[i][layer][group][neuron_num][j] = MIN_CURRENT_VALUE;			
+				all_stimulus_currents.noisy_stimulus_currents[i][layer][group][neuron_num][j] = MIN_CURRENT_VALUE;
+			if (all_stimulus_currents.noisy_stimulus_currents[i][layer][group][neuron_num][j] > MAX_CURRENT_VALUE)
+				all_stimulus_currents.noisy_stimulus_currents[i][layer][group][neuron_num][j] = MAX_CURRENT_VALUE;							
 		}			
 	}	
 }
@@ -1009,7 +1019,7 @@ void simulate_button_func(void)
 						} 
 						ptr_neuron -> I_inject = all_stimulus_currents.noisy_stimulus_currents[i][k][m][n][time_ms_idx];
 						spike_time = evaluate_neuron_dyn(ptr_neuron, time_ns, time_ns+step_size);
-						if (spike_time != 0)
+						if (spike_time != MAX_TIME_STAMP)
 						{
 							printf ("Spike time nano: %llu\n", spike_time);
 							if (!add_time_stamp_to_spike_pattern_time_stamps(i , k, m, n, spike_time))

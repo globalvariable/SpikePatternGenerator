@@ -106,9 +106,11 @@ void clear_spike_pattern_time_stamps(void)
 	int i;
 	for (i = 0; i < all_stimulus_patterns_info.num_of_patterns; i++)
 	{
-		g_free(all_spike_patterns.pattern_time_stamps[i]);		
+		g_free(all_spike_patterns.pattern_time_stamps[i]);	
+		all_spike_patterns.pattern_time_stamps[i] = NULL;	// g_free does not make this register null 
 		all_spike_patterns.num_of_time_stamps_in_pattern[i] = 0;
 	}
+	printf("Pattern: INFO: Cleared spike timestamps in memory.\n");
 }
 
 bool allocate_stimulus_currents(void)

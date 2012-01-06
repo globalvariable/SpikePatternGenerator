@@ -15,6 +15,7 @@
 #define LINE 0
 #define SIN 1
 #define COS 2
+#define CLEAR 3
 #define pi 3.141592653589793
 
 // FIRST COLUMN
