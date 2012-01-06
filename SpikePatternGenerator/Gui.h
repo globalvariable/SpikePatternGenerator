@@ -11,6 +11,8 @@
 #include "../Pattern/Pattern.h"
 #include "../Randn/Randn.h"
 #include "../DataHandling/DataHandling.h"
+#include "../DataHandling/DataHandling.h"
+#include "../../BlueSpike/Library/NeuroStats/FiringRate.h"
 
 #define LINE 0
 #define SIN 1
