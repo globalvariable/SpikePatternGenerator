@@ -39,7 +39,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_v = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_v, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_v), "-65");
 	gtk_widget_set_size_request(entry_v, 50, 25) ;
  
  	hbox = gtk_hbox_new(FALSE, 0);
@@ -49,7 +48,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_a = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_a, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_a), "0.03");
 	gtk_widget_set_size_request(entry_a, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -59,7 +57,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_b = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_b, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_b), "-9.5");
 	gtk_widget_set_size_request(entry_b, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -69,7 +66,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_c = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_c, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_c), "-85");
 	gtk_widget_set_size_request(entry_c, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -79,7 +75,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_d = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_d, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_d), "0");
 	gtk_widget_set_size_request(entry_d, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -89,7 +84,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_k = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_k, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_k), "1.3");
 	gtk_widget_set_size_request(entry_k, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -99,7 +93,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_C = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_C, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_C), "200");
 	gtk_widget_set_size_request(entry_C, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -109,7 +102,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_v_threshold = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_v_threshold, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_v_threshold), "-50");
 	gtk_widget_set_size_request(entry_v_threshold, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -119,7 +111,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_v_peak = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_v_peak, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_v_peak), "48");
 	gtk_widget_set_size_request(entry_v_peak, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -129,7 +120,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_v_resting = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_v_resting, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_v_resting), "-65");
 	gtk_widget_set_size_request(entry_v_resting, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -140,7 +130,6 @@ void create_gui(void)
         entry_inhibitory = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_inhibitory, FALSE,FALSE,0);
 	gtk_entry_set_max_length (GTK_ENTRY(entry_inhibitory), 1);
-	gtk_entry_set_text(GTK_ENTRY(entry_inhibitory), "0");
 	gtk_widget_set_size_request(entry_inhibitory, 50, 25) ;
 	
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -150,7 +139,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_E_excitatory = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_E_excitatory, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_E_excitatory), "-65");
 	gtk_widget_set_size_request(entry_E_excitatory, 50, 25) ;	
 	
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -160,7 +148,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_E_inhibitory = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_E_inhibitory, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_E_inhibitory), "-65");
 	gtk_widget_set_size_request(entry_E_inhibitory, 50, 25) ;	
 	
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -170,7 +157,6 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_tau_excitatory = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_tau_excitatory, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_tau_excitatory), "5");
 	gtk_widget_set_size_request(entry_tau_excitatory, 50, 25) ;	
 	
   	hbox = gtk_hbox_new(FALSE, 0);
@@ -180,8 +166,9 @@ void create_gui(void)
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
         entry_tau_inhibitory = gtk_entry_new();
         gtk_box_pack_start(GTK_BOX(hbox),entry_tau_inhibitory, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_tau_inhibitory), "10");
-	gtk_widget_set_size_request(entry_tau_inhibitory, 50, 25) ;			
+	gtk_widget_set_size_request(entry_tau_inhibitory, 50, 25) ;	
+	
+	set_neuron_param_entries(0);			
 
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
@@ -598,59 +585,9 @@ void create_gui(void)
 
 void combo_neuron_type_func (void)
 {
-	char str[20];
-	
-	double v;
-	double a;
-	double b;
-	double c;
-	double d;
-	double k;
-	double C;
-	double v_resting;
-	double v_threshold;
-	double v_peak;
-//	double I_inject;
-	bool inhibitory;
-	double E_excitatory;
-	double E_inhibitory;
-	double tau_excitatory;
-	double tau_inhibitory;
-
-	int neuron_type = gtk_combo_box_get_active (GTK_COMBO_BOX(combo_neuron_type));
-	
-	get_neuron_type_parameters(neuron_type, &v, &a, &b, &c, &d, &k, &C, &v_resting, &v_threshold, &v_peak, &inhibitory, &E_excitatory, &E_inhibitory, &tau_excitatory, &tau_inhibitory);
-
-	sprintf(str, "%.2f", v);	
-	gtk_entry_set_text(GTK_ENTRY(entry_v), str);
-	sprintf(str, "%.2f", a);	
-	gtk_entry_set_text(GTK_ENTRY(entry_a), str);
-	sprintf(str, "%.2f", b);		
-	gtk_entry_set_text(GTK_ENTRY(entry_b), str);
-	sprintf(str, "%.2f", c);	
-	gtk_entry_set_text(GTK_ENTRY(entry_c), str);
-	sprintf(str, "%.2f", d);
-	gtk_entry_set_text(GTK_ENTRY(entry_d), str);
-	sprintf(str, "%.2f", C);
-	gtk_entry_set_text(GTK_ENTRY(entry_C), str);
-	sprintf(str, "%.2f", k);
-	gtk_entry_set_text(GTK_ENTRY(entry_k), str);
-	sprintf(str, "%.2f", v_resting);
-	gtk_entry_set_text(GTK_ENTRY(entry_v_resting), str);
-	sprintf(str, "%.2f", v_threshold);
-	gtk_entry_set_text(GTK_ENTRY(entry_v_threshold), str);
-	sprintf(str, "%.2f", v_peak);
-	gtk_entry_set_text(GTK_ENTRY(entry_v_peak), str);
-	sprintf(str, "%d", inhibitory);
-	gtk_entry_set_text(GTK_ENTRY(entry_inhibitory), str);
-	sprintf(str, "%.2f", E_excitatory);
-	gtk_entry_set_text(GTK_ENTRY(entry_E_excitatory), str);
-	sprintf(str, "%.2f", E_inhibitory);
-	gtk_entry_set_text(GTK_ENTRY(entry_E_inhibitory), str);
-	sprintf(str, "%.2f", tau_excitatory);
-	gtk_entry_set_text(GTK_ENTRY(entry_tau_excitatory), str);
-	sprintf(str, "%.2f", tau_inhibitory);
-	gtk_entry_set_text(GTK_ENTRY(entry_tau_inhibitory), str);	
+	int neuron_type;
+	neuron_type = gtk_combo_box_get_active (GTK_COMBO_BOX(combo_neuron_type));
+	set_neuron_param_entries(neuron_type);	
 }
 
 void add_neurons_to_layer_button_func(void)
@@ -1192,4 +1129,60 @@ void fill_notes_text_view(void)
 }
 
 
+void set_neuron_param_entries(int neuron_type)
+{
+	char str[20];
+	
+	double v;
+	double a;
+	double b;
+	double c;
+	double d;
+	double k;
+	double C;
+	double v_resting;
+	double v_threshold;
+	double v_peak;
+//	double I_inject;
+	bool inhibitory;
+	double E_excitatory;
+	double E_inhibitory;
+	double tau_excitatory;
+	double tau_inhibitory;
 
+
+	
+	get_neuron_type_parameters(neuron_type, &v, &a, &b, &c, &d, &k, &C, &v_resting, &v_threshold, &v_peak, &inhibitory, &E_excitatory, &E_inhibitory, &tau_excitatory, &tau_inhibitory);
+
+	sprintf(str, "%.2f", v);	
+	gtk_entry_set_text(GTK_ENTRY(entry_v), str);
+	sprintf(str, "%.2f", a);	
+	gtk_entry_set_text(GTK_ENTRY(entry_a), str);
+	sprintf(str, "%.2f", b);		
+	gtk_entry_set_text(GTK_ENTRY(entry_b), str);
+	sprintf(str, "%.2f", c);	
+	gtk_entry_set_text(GTK_ENTRY(entry_c), str);
+	sprintf(str, "%.2f", d);
+	gtk_entry_set_text(GTK_ENTRY(entry_d), str);
+	sprintf(str, "%.2f", C);
+	gtk_entry_set_text(GTK_ENTRY(entry_C), str);
+	sprintf(str, "%.2f", k);
+	gtk_entry_set_text(GTK_ENTRY(entry_k), str);
+	sprintf(str, "%.2f", v_resting);
+	gtk_entry_set_text(GTK_ENTRY(entry_v_resting), str);
+	sprintf(str, "%.2f", v_threshold);
+	gtk_entry_set_text(GTK_ENTRY(entry_v_threshold), str);
+	sprintf(str, "%.2f", v_peak);
+	gtk_entry_set_text(GTK_ENTRY(entry_v_peak), str);
+	sprintf(str, "%d", inhibitory);
+	gtk_entry_set_text(GTK_ENTRY(entry_inhibitory), str);
+	sprintf(str, "%.2f", E_excitatory);
+	gtk_entry_set_text(GTK_ENTRY(entry_E_excitatory), str);
+	sprintf(str, "%.2f", E_inhibitory);
+	gtk_entry_set_text(GTK_ENTRY(entry_E_inhibitory), str);
+	sprintf(str, "%.2f", tau_excitatory);
+	gtk_entry_set_text(GTK_ENTRY(entry_tau_excitatory), str);
+	sprintf(str, "%.2f", tau_inhibitory);
+	gtk_entry_set_text(GTK_ENTRY(entry_tau_inhibitory), str);	
+
+}
