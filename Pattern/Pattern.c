@@ -9,10 +9,15 @@ bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_l
 	printf("Pattern: INFO: Allocating patterns...\n");	
 	if (min_pattern_length>max_pattern_length)
 	{
-		printf("Pattern: ERROR: Minimum pattern length cannot be smaller than maximum pattern length\n");
+		printf("Pattern: ERROR: Minimum pattern length cannot be larger than maximum pattern length\n");
 		return FALSE;
 	}
-	
+	if ((min_pattern_length <= 0) || (max_pattern_length <= 0) )
+	{
+		printf("Pattern: ERROR: Any pattern length cannot be smaller than or equal to zero\n");
+		return FALSE;
+	}
+		
 	if (!is_network_allocated())
 		return FALSE;
 
@@ -274,7 +279,9 @@ bool deallocate_stimulus_currents(void)
 	g_free(all_stimulus_currents.drawn_stimulus_currents);
 	g_free(all_stimulus_currents.noise_variances);
 	g_free(all_stimulus_currents.noise_addition_ms_intervals);		
-	
+	all_stimulus_currents.drawn_stimulus_currents = NULL;
+	all_stimulus_currents.noise_variances = NULL;
+	all_stimulus_currents.noise_addition_ms_intervals = NULL;		
 
 	for (i=0; i<all_stimulus_patterns_info.num_of_patterns; i++)
 	{
@@ -302,7 +309,9 @@ bool deallocate_stimulus_currents(void)
 	}
 	g_free(all_stimulus_currents.raw_stimulus_currents);
 	g_free(all_stimulus_currents.noisy_stimulus_currents);	
-	
+	all_stimulus_currents.raw_stimulus_currents = NULL;
+	all_stimulus_currents.noisy_stimulus_currents = NULL;
+			
 	printf ("Pattern: INFO: De-Allocated stimulus current struct\n");
 	return TRUE;
 }
@@ -348,7 +357,10 @@ bool deallocate_neuron_dynamics(void)
 	g_free(neuron_dynamics.u);
 	g_free(neuron_dynamics.initial_v);
 	g_free(neuron_dynamics.initial_u);
-	
+	neuron_dynamics.v = NULL;
+	neuron_dynamics.u = NULL;
+	neuron_dynamics.initial_v = NULL;
+	neuron_dynamics.initial_u = NULL;	
 
 	for (i=0; i<all_network->layer_count; i++)
 	{
@@ -363,8 +375,9 @@ bool deallocate_neuron_dynamics(void)
 		g_free(neuron_dynamics.initial_v_variances[i]);		
 	}	
 	g_free(neuron_dynamics.initial_v_means);
-	g_free(neuron_dynamics.initial_v_variances);		
-	
+	g_free(neuron_dynamics.initial_v_variances);	
+	neuron_dynamics.initial_v_means = NULL;	
+	neuron_dynamics.initial_v_variances = NULL;
 	printf ("Pattern: INFO: De-Allocated neuron dynamics struct\n");	
 	return TRUE;	
 }
@@ -382,7 +395,8 @@ bool deallocate_spike_patterns(void)
 	}
 	g_free(all_spike_patterns.pattern_time_stamps);
 	g_free(all_spike_patterns.num_of_time_stamps_in_pattern);
-	
+	all_spike_patterns.pattern_time_stamps = NULL;
+	all_spike_patterns.num_of_time_stamps_in_pattern = NULL;
 	printf ("Pattern: INFO: De-Allocated spike time stamps\n");		
 	return TRUE;	
 }

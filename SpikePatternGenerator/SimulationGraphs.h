@@ -1,5 +1,5 @@
-#ifndef GRAPHS_H
-#define GRAPHS_H
+#ifndef SIMULATION_GRAPHS_H
+#define SIMULATION_GRAPHS_H
 
 #include <gtkdatabox.h>
 #include <gtkdatabox_ruler.h>

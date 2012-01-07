@@ -1,4 +1,4 @@
-#include "Graphs.h"
+#include "SimulationGraphs.h"
 
 
 void initialize_graphs(GtkWidget * table)
