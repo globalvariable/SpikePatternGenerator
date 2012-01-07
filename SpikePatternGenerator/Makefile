@@ -12,11 +12,14 @@ GTK_FLAGS = $(shell pkg-config --cflags --libs gtk+-2.0 gtkdatabox)
 
 all: SpikePatternGenerator
 
-SpikePatternGenerator: SpikePatternGenerator.c Gui.o Graphs.o ../Pattern/Pattern.o ../Randn/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate.o
-	$(CC) $(LXRT_CFLAGS) -o $@ $< Gui.o Graphs.o ../Pattern/Pattern.o ../Randn/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate.o $(LXRT_LDFLAGS) $(MATH_FLAGS) $(GTK_FLAGS) 
+SpikePatternGenerator: SpikePatternGenerator.c Gui.o FiringRateView.o Graphs.o ../Pattern/Pattern.o ../Randn/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate.o
+	$(CC) $(LXRT_CFLAGS) -o $@ $< Gui.o FiringRateView.o Graphs.o ../Pattern/Pattern.o ../Randn/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate.o $(LXRT_LDFLAGS) $(MATH_FLAGS) $(GTK_FLAGS) 
 	
 Gui.o: Gui.c 
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 	
+	
+FiringRateView.o: FiringRateView.c 
+	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 		
 
 Graphs.o: Graphs.c
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 

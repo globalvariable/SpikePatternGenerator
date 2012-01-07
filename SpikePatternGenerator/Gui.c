@@ -4,7 +4,10 @@
 void create_gui(void)
 {
 
-	GtkWidget *window, *table, *vbox, *hbox, *lbl;
+	GtkWidget *window, *table, *vbox, *hbox, *lbl, *tabs;
+
+	GtkWidget *frame_main_view;
+	GtkWidget *frame_label_main_view;
 
  	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
@@ -12,8 +15,35 @@ void create_gui(void)
   	gtk_window_set_title(GTK_WINDOW(window), "SpikePatternGenerator");
   	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 
+  	vbox = gtk_vbox_new(TRUE, 5);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+
+  	hbox = gtk_hbox_new(TRUE, 0);
+  	gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 10);
+
+	tabs = gtk_notebook_new ();
+	gtk_notebook_set_tab_pos (GTK_NOTEBOOK (tabs), GTK_POS_TOP);
+        gtk_box_pack_start(GTK_BOX(hbox),tabs, TRUE, TRUE, 0);
+
+        frame_main_view = gtk_frame_new ("Main View");
+        frame_label_main_view = gtk_label_new ("Main View");
+        
+        gtk_notebook_append_page (GTK_NOTEBOOK (tabs), frame_main_view, frame_label_main_view);  		
+	if (!create_firing_rate_view_gui(tabs))
+		return;
+
+//////////  SIMULATIONS
+
+  	hbox = gtk_hbox_new(TRUE, 0);
+        gtk_container_add (GTK_CONTAINER (frame_main_view), hbox);
+
+ 	vbox = gtk_vbox_new(FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(hbox),vbox, FALSE,FALSE,0);
+        
 	table = gtk_table_new(6,8,TRUE);
-	gtk_container_add(GTK_CONTAINER(window), table);
+	gtk_box_pack_start(GTK_BOX(vbox),table, FALSE,FALSE,0);
+	
+
 
 ///////////////////////////////////////////// FIRST COLUMN  ///////////////////////////////////////////////////////////////
 	vbox = gtk_vbox_new(FALSE, 0);
