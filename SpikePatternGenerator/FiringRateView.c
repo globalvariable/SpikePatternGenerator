@@ -165,6 +165,30 @@ void display_firing_rates_button_func(void)
 	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
 	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
+	
+	if ((layer >= firing_rate_get_number_of_mwas()) ||  layer < 0)
+	{
+		printf("FiringRateView: ERROR: Inconvenient layer(mwa) number submmited.\n");
+		return;
+	}
+
+	if ((group >= firing_rate_get_number_of_channels_in_mwa(layer)) ||  (group < 0))
+	{
+		printf("FiringRateView: ERROR: Inconvenient neuron group (mwa channel) number submmited.\n");
+		return;
+	}
+
+	if ((neuron_num >= firing_rate_get_number_of_units_in_mwa_channel(layer,group)) ||  (neuron_num < 0))
+	{
+		printf("FiringRateView: ERROR: Inconvenient neuron number (unit number) submmited.\n");
+		return;
+	}
+	
+	if ((pattern >=  firing_rate_get_num_of_patterns()) ||  (pattern < 0))
+	{
+		printf("FiringRateView: ERROR: Inconvenient pattern number submmited.\n");
+		return;
+	}
 
 	refresh_neuron_firing_rate_means_graph(layer, group, neuron_num );
 	refresh_neuron_firing_rate_variances_graph(layer, group, neuron_num );
@@ -192,6 +216,30 @@ void calculate_firing_rates_button_func(void)
 	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
 	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
+
+	if ((layer >= firing_rate_get_number_of_mwas()) ||  layer < 0)
+	{
+		printf("FiringRateView: ERROR: Inconvenient layer(mwa) number submmited.\n");
+		return;
+	}
+
+	if ((group >= firing_rate_get_number_of_channels_in_mwa(layer)) ||  (group < 0))
+	{
+		printf("FiringRateView: ERROR: Inconvenient neuron group (mwa channel) number submmited.\n");
+		return;
+	}
+
+	if ((neuron_num >= firing_rate_get_number_of_units_in_mwa_channel(layer,group)) ||  (neuron_num < 0))
+	{
+		printf("FiringRateView: ERROR: Inconvenient neuron number (unit number) submmited.\n");
+		return;
+	}
+	
+	if ((pattern >=  firing_rate_get_num_of_patterns()) ||  (pattern < 0))
+	{
+		printf("FiringRateView: ERROR: Inconvenient pattern number submmited.\n");
+		return;
+	}
 
 	firing_rate_clear_all_statistics();
 	
