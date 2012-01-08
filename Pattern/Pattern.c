@@ -61,7 +61,8 @@ bool deallocate_patterns(void)
 	if (!deallocate_spike_patterns())		
 		return FALSE;		
 		
-	g_free(all_stimulus_patterns_info.pattern_lengths_ms);		
+	g_free(all_stimulus_patterns_info.pattern_lengths_ms);
+	all_stimulus_patterns_info.pattern_lengths_ms = NULL;		
 	all_stimulus_patterns_info.max_pattern_length = 0;
 	all_stimulus_patterns_info.min_pattern_length = 0;	
 	all_stimulus_patterns_info.num_of_patterns = 0;		

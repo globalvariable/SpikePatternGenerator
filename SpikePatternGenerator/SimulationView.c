@@ -662,7 +662,7 @@ bool create_simulation_view_gui(void)
 	g_signal_connect(G_OBJECT(btn_simulate), "clicked", G_CALLBACK(simulate_button_func), NULL);
 	g_signal_connect(G_OBJECT(btn_display_neuron_dynamics), "clicked", G_CALLBACK(display_neuron_dynamics_button_func), NULL);		
 	g_signal_connect(G_OBJECT(btn_create_directory), "clicked", G_CALLBACK(create_directory_button_func), NULL);
-	g_signal_connect(G_OBJECT(btn_save), "clicked", G_CALLBACK(load_button_func), NULL);		
+	g_signal_connect(G_OBJECT(btn_save), "clicked", G_CALLBACK(save_button_func), NULL);		
 	g_signal_connect(G_OBJECT(btn_load), "clicked", G_CALLBACK(load_button_func), NULL);	
 	
 	gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, FALSE);	
@@ -1166,9 +1166,13 @@ void save_button_func(void)
 	if (is_spike_pattern_generator_data(path)) 		// First check if data directory was created previously
 	{			
 		if ((*save_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER-1])(2, path, txv_notes))		// record in last format version
-			printf("SpikePatternGenerator: INFO: SpikePatternGenerator Data save is successful\n");
+			printf("SimulationView: INFO: SpikePatternGenerator Data save is successful\n");
 		else
-			printf("SpikePatternGenerator: ERROR: SpikePatternGenerator Data save FAILED\n");
+			printf("SimulationView: ERROR: SpikePatternGenerator Data save FAILED\n");
+	}
+	else
+	{
+			printf("SimulationView: ERROR: Not a SpikePatternGenerator Data\n");		
 	}		
 	return;
 }

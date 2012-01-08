@@ -15,8 +15,8 @@ int create_main_directory_v0(int num, ...)
 	strcat(main_dir_path, "/SpikePatternGeneratorData");
 	if ((dir_main_folder = opendir(main_dir_path)) != NULL)
         {
-        	printf ("DataFormat_v0: ERROR: path: %s already has SpikeGeneratorData folder.\n", path_chooser);		
-        	printf ("DataFormat_v0: ERROR: Select another folder or delete SpikeGeneratorData directory.\n\n");		        		
+        	printf ("DataFormat_v0: ERROR: path: %s already has SpikePatternGeneratorData folder.\n", path_chooser);		
+        	printf ("DataFormat_v0: ERROR: Select another folder or delete SpikePatternGeneratorData directory.\n\n");		        		
                 return 0;
         }
 
@@ -46,7 +46,7 @@ int create_main_meta_file(char * main_dir_path)
  	strcat(temp_path, "/meta");
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }
 		
-	fprintf(fp,"----------SpikeGenerator - Main Meta File----------\n");
+	fprintf(fp,"----------SpikePatternGenerator - Main Meta File----------\n");
 	fprintf(fp,"DATA_FORMAT_VERSION\t%d\n", 0);	
 	time ( &rawtime );
 	timeinfo = localtime (&rawtime);
@@ -77,7 +77,7 @@ int create_main_meta_file(char * main_dir_path)
 	fprintf(fp,"MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS\t%d\n",  MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS);
 	fprintf(fp,"PARKER_SOCHACKI_ERROR_TOLERANCE\t%.16E\n", get_maximum_parker_sochacki_error_tolerance() );
 	fprintf(fp,"PARKER_SOCHACKI_MAX_ORDER\t%d\n", get_maximum_parker_sochacki_order());	
-	fprintf(fp,"----------SpikeGenerator - End of Main Meta File----------\n");
+	fprintf(fp,"----------SpikePatternGenerator - End of Main Meta File----------\n");
 	fclose(fp);
 	printf("Saving main meta file...complete\n");				
 	return 1;
@@ -97,11 +97,11 @@ int save_main_directory_v0(int num, ...)
     	text_view = va_arg ( arguments, GtkWidget *);   	
 	va_end ( arguments );
 	
-	strcpy(main_dir_path, path_chooser);						// SpikeGeneratorData should be selected to save 
+	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to save 
 	if ((dir_main_folder = opendir(main_dir_path)) == NULL)
         {
-        	printf ("DataFormat_v0: ERROR: path: %s has no SpikeGeneratorData folder.\n", path_chooser);		
-        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikeGeneratorData directory.\n\n");		        		
+        	printf ("DataFormat_v0: ERROR: path: %s has no SpikePatternGeneratorData folder.\n", path_chooser);		
+        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikePatternGeneratorData directory.\n\n");		        		
                 return 0;
         }
         
@@ -185,7 +185,7 @@ int save_drawn_stimulus_current(char *main_dir_path)
  	strcat(temp_path, "/DrawnStimulusCurrent");
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	
-	fprintf(fp,"----------SpikeGenerator - DrawnStimulusCurrent File----------\n");		
+	fprintf(fp,"----------SpikePatternGenerator - DrawnStimulusCurrent File----------\n");		
 	for (k=0; k<all_network->layer_count; k++)
 	{
 		ptr_layer = all_network->layers[k];			
@@ -202,7 +202,7 @@ int save_drawn_stimulus_current(char *main_dir_path)
 			}
 		}			
 	}
-	fprintf(fp,"----------SpikeGenerator - End of DrawnStimulusCurrent File----------\n");			
+	fprintf(fp,"----------SpikePatternGenerator - End of DrawnStimulusCurrent File----------\n");			
 	fclose(fp);
 
 	printf("Saving DrawnStimulusCurrent file...complete\n");					
@@ -240,7 +240,7 @@ int save_neuron_params(char *main_dir_path)
  	strcat(temp_path, "/NeuronParameters");
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	
-	fprintf(fp,"----------SpikeGenerator - NeuronParameters File----------\n");		
+	fprintf(fp,"----------SpikePatternGenerator - NeuronParameters File----------\n");		
 	for (i=0; i<all_network->layer_count; i++)
 	{
 		ptr_layer = all_network->layers[i];			
@@ -269,7 +269,7 @@ int save_neuron_params(char *main_dir_path)
 			}
 		}			
 	}
-	fprintf(fp,"----------SpikeGenerator - End of NeuronParameters File----------\n");			
+	fprintf(fp,"----------SpikePatternGenerator - End of NeuronParameters File----------\n");			
 	fclose(fp);
 	printf("Saving NeuronParameters file...complete\n");						
 	return 1;
@@ -289,7 +289,7 @@ int save_injected_current_noise_params(char *main_dir_path)
  	strcat(temp_path, "/InjectedCurrentNoiseParams");
  	
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
-	fprintf(fp,"----------SpikeGenerator - InjectedCurrentNoiseParams File----------\n");		
+	fprintf(fp,"----------SpikePatternGenerator - InjectedCurrentNoiseParams File----------\n");		
 	fprintf(fp,"INJECTED_CURRENT_NOISE_VARIANCES\n");	
 	for (i=0; i<all_network->layer_count; i++)
 	{
@@ -316,7 +316,7 @@ int save_injected_current_noise_params(char *main_dir_path)
 			}	
 		}			
 	}
-	fprintf(fp,"----------SpikeGenerator - End of InjectedCurrentNoiseParams File----------\n");			
+	fprintf(fp,"----------SpikePatternGenerator - End of InjectedCurrentNoiseParams File----------\n");			
 	fclose(fp);
 	
 	printf("Saving InjectedCurrentNoiseParams file...complete\n");							
@@ -336,7 +336,7 @@ int save_initial_membrane_voltage_params(char *main_dir_path)
  	strcpy(temp_path, main_dir_path);
  	strcat(temp_path, "/InitialMembraneVoltageParams");
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
-	fprintf(fp,"----------SpikeGenerator - InitialMembraneVoltageParams File----------\n");		
+	fprintf(fp,"----------SpikePatternGenerator - InitialMembraneVoltageParams File----------\n");		
 	fprintf(fp,"INITIAL_NEURON_MEMBRANE_VOLTAGE_MEANS\n");
 	for (i=0; i<all_network->layer_count; i++)
 	{
@@ -363,7 +363,7 @@ int save_initial_membrane_voltage_params(char *main_dir_path)
 			}	
 		}			
 	}	
-	fprintf(fp,"----------SpikeGenerator - End of InitialMembraneVoltageParams File----------\n");			
+	fprintf(fp,"----------SpikePatternGenerator - End of InitialMembraneVoltageParams File----------\n");			
 	fclose(fp);
 
 	printf("Saving InitialMembraneVoltageParams file...complete\n");								
@@ -461,13 +461,13 @@ int save_meta_data(char *data_directory_path, int pattern_num)
  	strcat(temp_path, "/meta");
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }
 		
-	fprintf(fp,"----------SpikeGenerator - Meta Data File----------\n");
+	fprintf(fp,"----------SpikePatternGenerator - Meta Data File----------\n");
 	fprintf(fp,"DATA_FORMAT_VERSION\t%d\n", 0);	
 	time ( &rawtime );
 	timeinfo = localtime (&rawtime);
 	fprintf(fp,"CREATION_DATE\t%s", asctime (timeinfo)); 	
-	fprintf(fp,"PATTERN_LENGTH_MS\t%d", all_stimulus_patterns_info.pattern_lengths_ms[pattern_num]);	
-	fprintf(fp,"NUM_OF_SPIKES_IN_PATTERN\t%d", all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]);		
+	fprintf(fp,"PATTERN_LENGTH_MS\t%d\n", all_stimulus_patterns_info.pattern_lengths_ms[pattern_num]);	
+	fprintf(fp,"NUM_OF_SPIKES_IN_PATTERN\t%d\n", all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]);		
 	fprintf(fp,"INITIAL_NEURON_MEMBRANE_VOLTAGES\n"); 	
 	for (i=0; i<all_network->layer_count; i++)
 	{
@@ -482,7 +482,7 @@ int save_meta_data(char *data_directory_path, int pattern_num)
 		}
 	}	
 
-	fprintf(fp,"----------SpikeGenerator - End of Meta Data File----------\n");
+	fprintf(fp,"----------SpikePatternGenerator - End of Meta Data File----------\n");
 	fclose(fp);	
 	
 	printf("Saving meta data file...complete\n");								
@@ -504,7 +504,7 @@ int save_raw_stimulus_current(char *data_directory_path, int pattern_num)
  	strcat(temp_path, "/RawStimulusCurrent");
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	
-	fprintf(fp,"----------SpikeGenerator - RawStimulusCurrent File----------\n");		
+	fprintf(fp,"----------SpikePatternGenerator - RawStimulusCurrent File----------\n");		
 		
 	for (k=0; k<all_network->layer_count; k++)
 	{
@@ -522,7 +522,7 @@ int save_raw_stimulus_current(char *data_directory_path, int pattern_num)
 		}
 	}			
 
-	fprintf(fp,"----------SpikeGenerator - End of RawStimulusCurrent File----------\n");			
+	fprintf(fp,"----------SpikePatternGenerator - End of RawStimulusCurrent File----------\n");			
 	fclose(fp);
 	
 	printf("Saving RawStimulusCurrent file...complete\n");									
@@ -543,7 +543,7 @@ int save_noisy_stimulus_current(char *data_directory_path, int pattern_num)
  	strcat(temp_path, "/NoisyStimulusCurrent");
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	
-	fprintf(fp,"----------SpikeGenerator - NoisyStimulusCurrent File----------\n");		
+	fprintf(fp,"----------SpikePatternGenerator - NoisyStimulusCurrent File----------\n");		
 		
 	for (k=0; k<all_network->layer_count; k++)
 	{
@@ -561,7 +561,7 @@ int save_noisy_stimulus_current(char *data_directory_path, int pattern_num)
 		}
 	}			
 
-	fprintf(fp,"----------SpikeGenerator - End of NoisyStimulusCurrent File----------\n");			
+	fprintf(fp,"----------SpikePatternGenerator - End of NoisyStimulusCurrent File----------\n");			
 	fclose(fp);
 	
 	printf("Saving NoisyStimulusCurrent file...complete\n");			
@@ -581,7 +581,7 @@ int save_spike_timestamps(char *data_directory_path, int pattern_num)
  	strcat(temp_path, "/SpikeTimeStamp");
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	
-	fprintf(fp,"----------SpikeGenerator - SpikeTimeStamp File----------\n");		
+	fprintf(fp,"----------SpikePatternGenerator - SpikeTimeStamp File----------\n");		
 	
 	for (i=0; i<all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]; i++)
 	{
@@ -591,7 +591,7 @@ int save_spike_timestamps(char *data_directory_path, int pattern_num)
 		fprintf(fp,"%d\n", all_spike_patterns.pattern_time_stamps[pattern_num][i].unit_or_neuron);									
 	}			
 
-	fprintf(fp,"----------SpikeGenerator - End of SpikeTimeStamp File----------\n");			
+	fprintf(fp,"----------SpikePatternGenerator - End of SpikeTimeStamp File----------\n");			
 	fclose(fp);
 	
 	printf("Saving SpikeTimeStamp file...complete\n");									
@@ -612,19 +612,14 @@ int load_main_directory_v0(int num, ...)
     	text_view = va_arg ( arguments, GtkWidget *);   	
 	va_end ( arguments );
 	
-	
-	if (!deallocate_patterns())		// do this before destroying network since this is allocated according to network
-		return 0;
-	if (!destroy_network())
-		return 0;
-	
+
+	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to load 
 	printf("Loading %s...\n",main_dir_path);
-											
-	strcpy(main_dir_path, path_chooser);						// SpikeGeneratorData should be selected to load 
+	
 	if ((dir_main_folder = opendir(main_dir_path)) == NULL)
         {
-        	printf ("DataFormat_v0: ERROR: path: %s has no SpikeGeneratorData folder.\n", path_chooser);		
-        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikeGeneratorData directory.\n\n");		        		
+        	printf ("DataFormat_v0: ERROR: path: %s has no SpikePatternGeneratorData folder.\n", path_chooser);		
+        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikePatternGeneratorData directory.\n\n");		        		
                 return 0;
         }
 
@@ -672,9 +667,9 @@ int read_main_meta_file(char * main_dir_path)
 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }
 
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
-	if (strcmp(line, "----------SpikeGenerator - Main Meta File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - Main Meta File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - Main Meta File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Main Meta File\n");
 		fclose(fp);
 		return 0;
 	}  		
@@ -697,7 +692,7 @@ int read_main_meta_file(char * main_dir_path)
 			if(!get_word_in_line('\t', 1, word, line, TRUE))
 				return 0;	
 			num_of_neurons_in_neuron_group = (int)atof(word);
-			if (!add_neurons_to_layer(num_of_neurons_in_neuron_group, i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0))	// create neurons and neuron groups with no parameter.
+			if (!add_neurons_to_layer(num_of_neurons_in_neuron_group, i, 0, 0, 0, 0, 0, 0, 100.0, 0, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 0))	// create neurons and neuron groups with no parameter.
 				return 0;
 		}			
 	}
@@ -752,9 +747,9 @@ int read_main_meta_file(char * main_dir_path)
 	if (!parker_sochacki_set_order_tolerance(ps_order, ps_tol))
 		return 0;
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
-	if (strcmp(line, "----------SpikeGenerator - End of Main Meta File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - End of Main Meta File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - Main Meta File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Main Meta File\n");
 		fclose(fp);
 		return 0;
 	}  
@@ -825,9 +820,9 @@ int read_drawn_stimulus_current(char *main_dir_path)
 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't read file: %s\n\n", temp_path); return 0; }	
 
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
-	if (strcmp(line, "----------SpikeGenerator - DrawnStimulusCurrent File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - DrawnStimulusCurrent File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - DrawnStimulusCurrent File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - DrawnStimulusCurrent File\n");
 		fclose(fp);
 		return 0;
 	}
@@ -850,9 +845,9 @@ int read_drawn_stimulus_current(char *main_dir_path)
 		}			
 	}
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
-	if (strcmp(line, "----------SpikeGenerator - End of DrawnStimulusCurrent File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - End of DrawnStimulusCurrent File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - DrawnStimulusCurrent File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - DrawnStimulusCurrent File\n");
 		fclose(fp);
 		return 0;
 	}	
@@ -895,11 +890,11 @@ int read_neuron_params(char *main_dir_path)
 	
  	strcpy(temp_path, main_dir_path);
  	strcat(temp_path, "/NeuronParameters");
-	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
+	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line, "----------SpikeGenerator - NeuronParameters File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - NeuronParameters File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - NeuronParameters File\n");
 		fclose(fp);
 		return 0;
 	}	
@@ -947,9 +942,9 @@ int read_neuron_params(char *main_dir_path)
 		}			
 	}
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line, "----------SpikeGenerator - End of NeuronParameters File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - End of NeuronParameters File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - NeuronParameters File\n");
 		fclose(fp);
 		return 0;
 	}					
@@ -975,9 +970,9 @@ int read_injected_current_noise_params(char *main_dir_path)
  	strcat(temp_path, "/InjectedCurrentNoiseParams");
 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line, "----------SpikeGenerator - InjectedCurrentNoiseParams File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - InjectedCurrentNoiseParams File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - InjectedCurrentNoiseParams File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - InjectedCurrentNoiseParams File\n");
 		fclose(fp);
 		return 0;
 	}	
@@ -1010,9 +1005,9 @@ int read_injected_current_noise_params(char *main_dir_path)
 		}			
 	}
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line, "----------SpikeGenerator - End of InjectedCurrentNoiseParams File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - End of InjectedCurrentNoiseParams File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - InjectedCurrentNoiseParams File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - InjectedCurrentNoiseParams File\n");
 		fclose(fp);
 		return 0;
 	}
@@ -1039,9 +1034,9 @@ int read_initial_membrane_voltage_params(char *main_dir_path)
  	strcat(temp_path, "/InitialMembraneVoltageParams");
 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line, "----------SpikeGenerator - InitialMembraneVoltageParams File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - InitialMembraneVoltageParams File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - InitialMembraneVoltageParams File\n");
 		fclose(fp);
 		return 0;
 	}		
@@ -1059,7 +1054,7 @@ int read_initial_membrane_voltage_params(char *main_dir_path)
 			}	
 		}			
 	}	
-	fprintf(fp,"INITIAL_NEURON_MEMBRANE_VOLTAGE_VARIANCES\n");
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
 	for (i=0; i<all_network->layer_count; i++)
 	{
 		ptr_layer = all_network->layers[i];
@@ -1074,13 +1069,12 @@ int read_initial_membrane_voltage_params(char *main_dir_path)
 		}			
 	}	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line, "----------SpikeGenerator - End of InitialMembraneVoltageParams File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - End of InitialMembraneVoltageParams File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - InitialMembraneVoltageParams File\n");
 		fclose(fp);
 		return 0;
 	}	
-	fprintf(fp,"----------SpikeGenerator - End of InitialMembraneVoltageParams File----------\n");			
 	fclose(fp);
 	
        	printf("Reading InitialMembraneVoltageParams file...complete\n");							
@@ -1179,9 +1173,9 @@ int read_meta_data(char *data_directory_path, int pattern_num)
 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't open file: %s\n\n", temp_path); return 0; }
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
 	
-	if (strcmp(line, "----------SpikeGenerator - Meta Data File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - Meta Data File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Meta Data File\n");
 		fclose(fp);
 		return 0;
 	}		
@@ -1204,9 +1198,9 @@ int read_meta_data(char *data_directory_path, int pattern_num)
 		}
 	}	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line, "----------SpikeGenerator - End of Meta Data File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - End of Meta Data File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Meta Data File\n");
 		fclose(fp);
 		return 0;
 	}
@@ -1233,9 +1227,9 @@ int read_raw_stimulus_current(char *data_directory_path, int pattern_num)
  	strcat(temp_path, "/RawStimulusCurrent");
 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line, "----------SpikeGenerator - RawStimulusCurrent File----------\n") != 0)
+	if (strcmp(line, "----------SpikePatternGenerator - RawStimulusCurrent File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - RawStimulusCurrent File\n");
 		fclose(fp);
 		return 0;
 	}		
@@ -1257,9 +1251,9 @@ int read_raw_stimulus_current(char *data_directory_path, int pattern_num)
 	}			
 
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line,"----------SpikeGenerator - End of RawStimulusCurrent File----------\n") != 0)
+	if (strcmp(line,"----------SpikePatternGenerator - End of RawStimulusCurrent File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - RawStimulusCurrent File\n");
 		fclose(fp);
 		return 0;
 	}		
@@ -1286,9 +1280,9 @@ int read_noisy_stimulus_current(char *data_directory_path, int pattern_num)
  	strcat(temp_path, "/NoisyStimulusCurrent");
 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line,"----------SpikeGenerator - NoisyStimulusCurrent File----------\n") != 0)
+	if (strcmp(line,"----------SpikePatternGenerator - NoisyStimulusCurrent File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - NoisyStimulusCurrent File\n");
 		fclose(fp);
 		return 0;
 	}		
@@ -1310,7 +1304,13 @@ int read_noisy_stimulus_current(char *data_directory_path, int pattern_num)
 		}
 	}			
 
-	fprintf(fp,"----------SpikeGenerator - End of NoisyStimulusCurrent File----------\n");			
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
+	if (strcmp(line,"----------SpikePatternGenerator - End of NoisyStimulusCurrent File----------\n") != 0)
+	{
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - NoisyStimulusCurrent File\n");
+		fclose(fp);
+		return 0;
+	}			
 	fclose(fp);
 	
        	printf("Reading NoisyStimulusCurrent file...complete\n");									
@@ -1333,9 +1333,9 @@ int read_spike_timestamps(char *data_directory_path, int pattern_num)
  	strcat(temp_path, "/SpikeTimeStamp");
 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line,"----------SpikeGenerator - SpikeTimeStamp File----------\n") != 0)
+	if (strcmp(line,"----------SpikePatternGenerator - SpikeTimeStamp File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - SpikeTimeStamp File\n");
 		fclose(fp);
 		return 0;
 	}		
@@ -1343,6 +1343,7 @@ int read_spike_timestamps(char *data_directory_path, int pattern_num)
 
 	for (i=0; i<all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]; i++)
 	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  	
 		if(!get_word_in_line('\t', 0, word, line, TRUE))
 			return 0;	
 		all_spike_patterns.pattern_time_stamps[pattern_num][i].peak_time = strtoull(word, &end_ptr, 10);	// tested with llu max: 18446744073709551615
@@ -1358,9 +1359,9 @@ int read_spike_timestamps(char *data_directory_path, int pattern_num)
 	}			
 
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	if (strcmp(line,"----------SpikeGenerator - End of SpikeTimeStamp File----------\n") != 0)
+	if (strcmp(line,"----------SpikePatternGenerator - End of SpikeTimeStamp File----------\n") != 0)
 	{
-		printf("DataFormat_v0: ERROR: Not a valid SpikeGenerator - NeuronParameters File\n");
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - SpikeTimeStamp File\n");
 		fclose(fp);
 		return 0;
 	}					
