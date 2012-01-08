@@ -252,7 +252,7 @@ int save_neuron_params(char *main_dir_path)
 				ptr_neuron = &(ptr_neuron_group->neurons[n]);	
 				a = ptr_neuron->a;
 				b = ptr_neuron->b;
-				c = ptr_neuron->c;
+				c = ptr_neuron->c + ptr_neuron->v_resting;
 				d = ptr_neuron->d;
 				k = ptr_neuron->k;
 				C = 1.0/ptr_neuron->E;
@@ -739,11 +739,11 @@ int read_main_meta_file(char * main_dir_path)
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	PARKER_SOCHACKI_ERROR_TOLERANCE
 	if(!get_word_in_line('\t', 1, word, line, TRUE))
 		return 0;	
-	double ps_tol = atof(line);
+	double ps_tol = atof(word);
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	PARKER_SOCHACKI_MAX_ORDER
 	if(!get_word_in_line('\t', 1, word, line, TRUE))
 		return 0;	
-	int ps_order = (int)atof(line);	
+	int ps_order = (int)atof(word);	
 	if (!parker_sochacki_set_order_tolerance(ps_order, ps_tol))
 		return 0;
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
