@@ -774,7 +774,10 @@ int read_notes(char* main_dir_path, GtkWidget *text_view)
 	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));	
        	gtk_text_buffer_get_start_iter ( buffer, &start);
         gtk_text_buffer_get_end_iter ( buffer, &end);
-        
+	gtk_text_buffer_delete (buffer, &start, &end);
+       	gtk_text_buffer_get_start_iter ( buffer, &start);
+        gtk_text_buffer_get_end_iter ( buffer, &end);
+                
         if ((fp = fopen(temp_path, "r")) == NULL)  
        	{ 
        		printf ("ERROR: SpikePatternGenerator: Couldn't find file %s\n", temp_path); 
