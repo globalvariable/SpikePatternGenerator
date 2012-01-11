@@ -12,8 +12,8 @@ GTK_FLAGS = $(shell pkg-config --cflags --libs gtk+-2.0 gtkdatabox)
 
 all: SpikePatternGenerator
 
-SpikePatternGenerator: SpikePatternGenerator.c Gui.o SimulationView.o FiringRateView.o SimulationGraphs.o ../Pattern/Pattern.o ../Randn/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRate.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.o
-	$(CC) $(LXRT_CFLAGS) -o $@ $< Gui.o SimulationView.o FiringRateView.o SimulationGraphs.o ../Pattern/Pattern.o ../Randn/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRate.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.o $(LXRT_LDFLAGS) $(MATH_FLAGS) $(GTK_FLAGS) 
+SpikePatternGenerator: SpikePatternGenerator.c Gui.o SimulationView.o FiringRateView.o SimulationGraphs.o ../Pattern/Pattern.o ../../BlueSpike/Library/Misc/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Library/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRate.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.o
+	$(CC) $(LXRT_CFLAGS) -o $@ $< Gui.o SimulationView.o FiringRateView.o SimulationGraphs.o ../Pattern/Pattern.o ../../BlueSpike/Library/Misc/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Library/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRate.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.o $(LXRT_LDFLAGS) $(MATH_FLAGS) $(GTK_FLAGS) 
 	
 Gui.o: Gui.c 
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 	
@@ -30,7 +30,7 @@ SimulationGraphs.o: SimulationGraphs.c
 ../Pattern/Pattern.o: ../Pattern/Pattern.c
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 
 	
-../Randn/Randn.o: ../Randn/Randn.c
+../../BlueSpike/Library/Misc/Randn.o: ../../BlueSpike/Library/Misc/Randn.c
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 
 	
 ../DataHandling/DataHandling.o: ../DataHandling/DataHandling.c
@@ -63,11 +63,11 @@ SimulationGraphs.o: SimulationGraphs.c
 ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.o: ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.c
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 		
 		
-../../BlueSpike/Misc/Misc.o: ../../BlueSpike/Misc/Misc.c
+../../BlueSpike/Library/Misc/Misc.o: ../../BlueSpike/Library/Misc/Misc.c
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 		# to see warnings
 		
 clean:
-	rm -f *.o SpikePatternGenerator ../../NeuroSim/Library/IzNeuron/*.o ../../NeuroSim/Library/ParkerSochacki/*.o ../../NeuroSim/Library/Event/*.o ../../NeuroSim/Library/Synapse/*.o ../../NeuroSim/Library/Network/*.o ../Pattern/*.o ../Randn/*o ../DataHandling/*.o ../DataHandling/v0/*.o ../../BlueSpike/Misc/*.o ../../BlueSpike/Library/NeuroStats/FiringRate/*.o
+	rm -f *.o SpikePatternGenerator ../../NeuroSim/Library/IzNeuron/*.o ../../NeuroSim/Library/ParkerSochacki/*.o ../../NeuroSim/Library/Event/*.o ../../NeuroSim/Library/Synapse/*.o ../../NeuroSim/Library/Network/*.o ../Pattern/*.o ../DataHandling/*.o ../DataHandling/v0/*.o ../../BlueSpike/Library/Misc/*.o ../../BlueSpike/Library/NeuroStats/FiringRate/*.o
 
 .PHONY: clean
 

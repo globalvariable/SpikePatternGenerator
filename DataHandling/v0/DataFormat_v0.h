@@ -10,7 +10,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 
-#include "./../../BlueSpike/Misc/Misc.h"
+#include "./../../BlueSpike/Library/Misc/Misc.h"
 #include "./../../NeuroSim/Library/Network/Network.h"
 #include "./../Pattern/Pattern.h"
 

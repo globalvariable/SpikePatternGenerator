@@ -10,7 +10,7 @@
 #include "../../NeuroSim/Library/IzNeuron/NeuronTypes.h"
 #include "SimulationGraphs.h"
 #include "../Pattern/Pattern.h"
-#include "../Randn/Randn.h"
+#include "../../BlueSpike/Library/Misc/Randn.h"
 #include "../DataHandling/DataHandling.h"
 #include "../DataHandling/DataHandling.h"
 #include "FiringRateView.h"
