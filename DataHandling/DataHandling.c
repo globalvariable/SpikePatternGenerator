@@ -1,11 +1,11 @@
 #include "DataHandling.h"
 
 
-int initialize_data_read_write_handlers(void)
+int initialize_spike_pattern_generator_data_read_write_handlers(void)
 {
-	create_main_directory[0] = &create_main_directory_v0;
-	save_main_directory[0] = &save_main_directory_v0;
-	load_main_directory[0] = &load_main_directory_v0;
+	create_spike_pattern_generator_data_directory[0] = &create_spike_pattern_generator_data_directory_v0;
+	save_spike_pattern_generator_data_directory[0] = &save_spike_pattern_generator_data_directory_v0;
+	load_spike_pattern_generator_data_directory[0] = &load_spike_pattern_generator_data_directory_v0;
 		
 	return 1;
 }
@@ -27,7 +27,7 @@ int is_spike_pattern_generator_data(char *spike_pattern_generator_data_path)
 		return 0;	
 }
 
-int get_format_version(int *version, char *spike_pattern_generator_data_path)
+int get_spike_pattern_generator_data_format_version(int *version, char *spike_pattern_generator_data_path)
 {
 	char path[600];
 	char line[200];

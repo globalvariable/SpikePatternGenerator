@@ -27,7 +27,7 @@ void create_gui(void)
 
 	gtk_widget_show_all(window);
 
-	initialize_data_read_write_handlers();
+	initialize_spike_pattern_generator_data_read_write_handlers();
 	
   	g_signal_connect (GTK_OBJECT (window), "destroy", G_CALLBACK (gtk_main_quit), NULL);
   		   				

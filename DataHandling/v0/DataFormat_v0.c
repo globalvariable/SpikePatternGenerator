@@ -1,7 +1,34 @@
 #include "DataFormat_v0.h"
 
 
-int create_main_directory_v0(int num, ...)
+static int create_main_meta_file(char * main_dir_path);
+static int save_notes(char* main_dir_path, GtkWidget *text_view);
+static int save_drawn_stimulus_current(char *main_dir_path);
+static int save_neuron_params(char *main_dir_path);
+static int save_injected_current_noise_params(char *main_dir_path);
+static int save_initial_membrane_voltage_params(char *main_dir_path);
+static int create_data_directory(char *main_dir_path, int pattern_num);
+static int save_data_files(char  *data_directory_path, int pattern_num);
+static int save_meta_data(char *data_directory_path, int pattern_num);
+static int save_raw_stimulus_current(char *data_directory_path, int pattern_num);
+static int save_noisy_stimulus_current(char *data_directory_path, int pattern_num);
+static int save_spike_timestamps(char *data_directory_path, int pattern_num);
+
+static int read_main_meta_file(char * main_dir_path);
+static int read_notes(char* main_dir_path, GtkWidget *text_view);
+static int read_drawn_stimulus_current(char *main_dir_path);
+static int read_neuron_params(char *main_dir_path);
+static int read_injected_current_noise_params(char *main_dir_path);
+static int read_initial_membrane_voltage_params(char *main_dir_path);
+static int read_data_directory(char *main_dir_path, int pattern_num);
+static int read_data_files(char  *data_directory_path, int pattern_num);
+static int read_meta_data(char *data_directory_path, int pattern_num);
+static int read_raw_stimulus_current(char *data_directory_path, int pattern_num);
+static int read_noisy_stimulus_current(char *data_directory_path, int pattern_num);
+static int read_spike_timestamps(char *data_directory_path, int pattern_num);
+
+
+int create_spike_pattern_generator_data_directory_v0(int num, ...)
 {
 	char *path_chooser;
 	DIR	*dir_main_folder;
@@ -83,7 +110,7 @@ int create_main_meta_file(char * main_dir_path)
 	return 1;
 }
 
-int save_main_directory_v0(int num, ...)
+int save_spike_pattern_generator_data_directory_v0(int num, ...)
 {
 	int i;
 	char *path_chooser;
@@ -599,7 +626,7 @@ int save_spike_timestamps(char *data_directory_path, int pattern_num)
 }
 
 
-int load_main_directory_v0(int num, ...)
+int load_spike_pattern_generator_data_directory_v0(int num, ...)
 {
 	int i;
 	char *path_chooser;

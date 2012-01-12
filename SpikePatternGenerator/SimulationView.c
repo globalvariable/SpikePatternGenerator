@@ -1151,7 +1151,7 @@ void create_directory_button_func(void)
 	char *path_temp = NULL, *path = NULL;
 	path_temp = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (btn_select_directory));
 	path = &path_temp[7];   // since     uri returns file:///home/....	
-	if ((*create_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER-1])(1, path))		// record in last format version
+	if ((*create_spike_pattern_generator_data_directory[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER-1])(1, path))		// record in last format version
 		printf("SpikePatternGenerator: INFO: SpikePatternGenerator Data directory creation is successful\n");
 	else
 		printf("SpikePatternGenerator: ERROR: SpikePatternGenerator Data directory creation FAILED\n");	
@@ -1165,7 +1165,7 @@ void save_button_func(void)
 	path = &path_temp[7];   // since     uri returns file:///home/....
 	if (is_spike_pattern_generator_data(path)) 		// First check if data directory was created previously
 	{			
-		if ((*save_main_directory[MAX_NUMBER_OF_DATA_FORMAT_VER-1])(2, path, txv_notes))		// record in last format version
+		if ((*save_spike_pattern_generator_data_directory[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER-1])(2, path, txv_notes))		// record in last format version
 			printf("SimulationView: INFO: SpikePatternGenerator Data save is successful\n");
 		else
 			printf("SimulationView: ERROR: SpikePatternGenerator Data save FAILED\n");
@@ -1184,9 +1184,9 @@ void load_button_func(void)
 	path_temp = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (btn_select_directory));
 	path = &path_temp[7];   // since     uri returns file:///home/....
 		
-	if (get_format_version(&version, path))
+	if (get_spike_pattern_generator_data_format_version(&version, path))
 	{	
-		if ((*load_main_directory[version])(2, path, txv_notes))
+		if ((*load_spike_pattern_generator_data_directory[version])(2, path, txv_notes))
 		{
 			allocate_graphs(all_stimulus_patterns_info.max_pattern_length);
 			gtk_widget_set_sensitive(btn_add_neurons_to_layer, FALSE);
