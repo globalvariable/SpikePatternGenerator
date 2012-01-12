@@ -37,41 +37,41 @@ static GtkWidget *btn_allocate_patterns;
 
 // SECOND COLUMN
 // First Row
-GtkWidget *entry_layer_num;
-GtkWidget *entry_neuron_group_num;
-GtkWidget *entry_neuron_num;
-GtkWidget *entry_pattern_num;
-GtkWidget *btn_interrogate_network;
-GtkWidget *btn_interrogate_neuron;
-GtkWidget *btn_display_drawn_stimuli;
-GtkWidget *btn_display_raw_stimuli;
-GtkWidget *btn_display_noisy_stimuli;
-GtkWidget *combo_signal_type;
-GtkWidget *entry_amplifier;
-GtkWidget *entry_freq;
-GtkWidget *entry_start_time;
-GtkWidget *entry_end_time;
-GtkWidget *entry_initial_current;
-GtkWidget *btn_draw_stimuli;
-GtkWidget *btn_clear_stimuli;
-GtkWidget *btn_copy_drawn_to_raw_stimuli;
-GtkWidget *btn_add_noise;
-GtkWidget *entry_noise_variance;
-GtkWidget *entry_noise_period;
-GtkWidget *btn_submit_initial_neuron_voltage;
-GtkWidget *entry_initial_neuron_voltage;
-GtkWidget *entry_initial_neuron_voltage_variance;
-GtkWidget *btn_simulate;
-GtkWidget *btn_display_neuron_dynamics;
-GtkWidget *combo_dynamics_type;
+static GtkWidget *entry_layer_num;
+static GtkWidget *entry_neuron_group_num;
+static GtkWidget *entry_neuron_num;
+static GtkWidget *entry_pattern_num;
+static GtkWidget *btn_interrogate_network;
+static GtkWidget *btn_interrogate_neuron;
+static GtkWidget *btn_display_drawn_stimuli;
+static GtkWidget *btn_display_raw_stimuli;
+static GtkWidget *btn_display_noisy_stimuli;
+static GtkWidget *combo_signal_type;
+static GtkWidget *entry_amplifier;
+static GtkWidget *entry_freq;
+static GtkWidget *entry_start_time;
+static GtkWidget *entry_end_time;
+static GtkWidget *entry_initial_current;
+static GtkWidget *btn_draw_stimuli;
+static GtkWidget *btn_clear_stimuli;
+static GtkWidget *btn_copy_drawn_to_raw_stimuli;
+static GtkWidget *btn_add_noise;
+static GtkWidget *entry_noise_variance;
+static GtkWidget *entry_noise_period;
+static GtkWidget *btn_submit_initial_neuron_voltage;
+static GtkWidget *entry_initial_neuron_voltage;
+static GtkWidget *entry_initial_neuron_voltage_variance;
+static GtkWidget *btn_simulate;
+static GtkWidget *btn_display_neuron_dynamics;
+static GtkWidget *combo_dynamics_type;
 
 
 /// LAST COLUMN
-GtkWidget *txv_notes;
-GtkWidget *btn_select_directory;
-GtkWidget *btn_create_directory;
-GtkWidget *btn_save;
-GtkWidget *btn_load;
+static GtkWidget *txv_notes;
+static GtkWidget *btn_select_directory;
+static GtkWidget *btn_create_directory;
+static GtkWidget *btn_save;
+static GtkWidget *btn_load;
 
 // THIRD COLUMN
 ///   at graphs.h
