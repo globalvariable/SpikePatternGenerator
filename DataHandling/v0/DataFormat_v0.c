@@ -691,7 +691,7 @@ int read_main_meta_file(char * main_dir_path)
 	printf("Loading main meta file...\n");		
  	strcpy(temp_path, main_dir_path);
  	strcat(temp_path, "/meta");
-	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }
+	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't read file: %s\n\n", temp_path); return 0; }
 
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
 	if (strcmp(line, "----------SpikePatternGenerator - Main Meta File----------\n") != 0)
@@ -703,44 +703,37 @@ int read_main_meta_file(char * main_dir_path)
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"DATA_FORMAT_VERSION\t%d\n"	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"CREATION_DATE\t%s" 	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_LAYERS\t%d\n",
-	if(!get_word_in_line('\t', 1, word, line, TRUE))
-		return 0;	
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 	num_of_layers = (int)atof(word);
 	
 	for (i=0; i<num_of_layers; i++)
 	{
 		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURON_GROUPS_IN_LAYER_%d\t%d\n"
-		if(!get_word_in_line('\t', 1, word, line, TRUE))
-			return 0;	
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 		num_of_neuron_groups_in_layer = (int)atof(word);
 		for (j=0; j<num_of_neuron_groups_in_layer; j++)
 		{
 			if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n"
-			if(!get_word_in_line('\t', 1, word, line, TRUE))
-				return 0;	
+			if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 			num_of_neurons_in_neuron_group = (int)atof(word);
 			if (!add_neurons_to_layer(num_of_neurons_in_neuron_group, i, 0, 0, 0, 0, 0, 0, 100.0, 0, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 0))	// create neurons and neuron groups with no parameter.
 				return 0;
 		}			
 	}
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"MAX_PATTERN_LENGTH\t%d\n"
-	if(!get_word_in_line('\t', 1, word, line, TRUE))
-		return 0;	
-	all_stimulus_patterns_info.max_pattern_length = (int)atof(word);
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	all_stimulus_patterns_info.max_pattern_length = (TimeStampMs)atof(word);
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"MIN_PATTERN_LENGTH\t%d\n"
-	if(!get_word_in_line('\t', 1, word, line, TRUE))
-		return 0;	
-	all_stimulus_patterns_info.min_pattern_length = (int)atof(word);
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	all_stimulus_patterns_info.min_pattern_length = (TimeStampMs)atof(word);
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_PATTERNS\t%d\n"
-	if(!get_word_in_line('\t', 1, word, line, TRUE))
-		return 0;	
-	all_stimulus_patterns_info.num_of_patterns = (int)atof(word);
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	all_stimulus_patterns_info.num_of_patterns = atoi(word);
 	all_stimulus_patterns_info.pattern_lengths_ms = g_new0(TimeStampMs, all_stimulus_patterns_info.num_of_patterns);
 	for (i = 0 ; i < all_stimulus_patterns_info.num_of_patterns; i++)
 	{
 		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	
-		if(!get_word_in_line('\t', 1, word, line, TRUE))
-			return 0;	
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 		all_stimulus_patterns_info.pattern_lengths_ms[i] = (TimeStampMs)atof(word);		
 	}
 
@@ -756,20 +749,17 @@ int read_main_meta_file(char * main_dir_path)
 	for (i = 0 ; i < all_stimulus_patterns_info.num_of_patterns; i++)
 	{
 		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //
-		if(!get_word_in_line('\t', 1, word, line, TRUE))
-			return 0;	
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 		all_spike_patterns.num_of_time_stamps_in_pattern[i] = (int)atof(word);	
 		all_spike_patterns.pattern_time_stamps[i] = g_new0(SpikeTimeStampItem, all_spike_patterns.num_of_time_stamps_in_pattern[i]);		
 	}	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS\t%d\n"	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS\t%d\n"
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	PARKER_SOCHACKI_ERROR_TOLERANCE
-	if(!get_word_in_line('\t', 1, word, line, TRUE))
-		return 0;	
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 	double ps_tol = atof(word);
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	PARKER_SOCHACKI_MAX_ORDER
-	if(!get_word_in_line('\t', 1, word, line, TRUE))
-		return 0;	
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 	int ps_order = (int)atof(word);	
 	if (!parker_sochacki_set_order_tolerance(ps_order, ps_tol))
 		return 0;
@@ -1162,7 +1152,7 @@ int read_data_directory(char *main_dir_path, int pattern_num)
 	strcat(data_directory_path, data_directory_name);	
 	if ((dir_data_directory = opendir(data_directory_path)) == NULL)
         {
-        	printf ("DataFormat_v0: ERROR: path: %s already has no %s folder.\n", main_dir_path, data_directory_name);		
+        	printf ("DataFormat_v0: ERROR: path: %s has no %s folder.\n", main_dir_path, data_directory_name);		
                 return 0;
         }
 
@@ -1374,18 +1364,14 @@ int read_spike_timestamps(char *data_directory_path, int pattern_num)
 	for (i=0; i<all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]; i++)
 	{
 		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  	
-		if(!get_word_in_line('\t', 0, word, line, TRUE))
-			return 0;	
+		if(!get_word_in_line('\t', 0, word, line, TRUE)) { fclose(fp); return 0; }
 		all_spike_patterns.pattern_time_stamps[pattern_num][i].peak_time = strtoull(word, &end_ptr, 10);	// tested with llu max: 18446744073709551615
-		if(!get_word_in_line('\t', 1, word, line, TRUE))
-			return 0;	
-		all_spike_patterns.pattern_time_stamps[pattern_num][i].mwa_or_layer = (int)atof(word);	
-		if(!get_word_in_line('\t', 2, word, line, TRUE))
-			return 0;			
-		all_spike_patterns.pattern_time_stamps[pattern_num][i].channel_or_neuron_group = (int)atof(word);	
-		if(!get_word_in_line('\t', 3, word, line, TRUE))
-			return 0;				
-		all_spike_patterns.pattern_time_stamps[pattern_num][i].unit_or_neuron = (int)atof(word);									
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+		all_spike_patterns.pattern_time_stamps[pattern_num][i].mwa_or_layer = atoi(word);	
+		if(!get_word_in_line('\t', 2, word, line, TRUE)) { fclose(fp); return 0; }
+		all_spike_patterns.pattern_time_stamps[pattern_num][i].channel_or_neuron_group = atoi(word);	
+		if(!get_word_in_line('\t', 3, word, line, TRUE)) { fclose(fp); return 0; }
+		all_spike_patterns.pattern_time_stamps[pattern_num][i].unit_or_neuron = atoi(word);									
 	}			
 
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
@@ -1401,4 +1387,543 @@ int read_spike_timestamps(char *data_directory_path, int pattern_num)
 	return 1;
 }
 
+int spike_pattern_generator_data_get_num_of_layers_v0(int num, ...)
+{
+	char *path_chooser;
+	int *num_of_layers;
+	FILE *fp;	
+	DIR	*dir_main_folder;
+	char main_dir_path[600];
+	char temp_path[600];	
+	char  line[1000];
+	int line_cntr = 0;
+	char word[100];				
+  	va_list arguments;
+	va_start ( arguments, num );   
+    	path_chooser = va_arg ( arguments, char *);   
+    	num_of_layers = va_arg ( arguments, int *);      		
+	va_end ( arguments );
+	
+	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to save 
+	if ((dir_main_folder = opendir(main_dir_path)) == NULL)
+        {
+        	printf ("DataFormat_v0: ERROR: path: %s has no SpikePatternGeneratorData folder.\n", path_chooser);		
+        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikePatternGeneratorData directory.\n\n");		        		
+                return 0;
+        }
+        
+        strcpy(temp_path, main_dir_path);
+        strcat(temp_path, "/meta");
+        
+ 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't read file: %s\n\n", temp_path); return 0; }
 
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
+	if (strcmp(line, "----------SpikePatternGenerator - Main Meta File----------\n") != 0)
+	{
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Main Meta File\n");
+		fclose(fp);
+		return 0;
+	}                
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"DATA_FORMAT_VERSION\t%d\n"	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"CREATION_DATE\t%s" 	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_LAYERS\t%d\n",
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	*num_of_layers = atoi(word);    
+	fclose(fp);    		
+	return 1;			
+
+}
+
+int spike_pattern_generator_data_get_num_of_neuron_groups_in_layer_v0(int num, ...)
+{
+	int i, j, num_of_layers, num_of_neuron_groups_in_layer, num_of_neurons_in_neuron_group;
+	char *path_chooser;
+	int layer;
+	int *num_of_neuron_groups;	
+	FILE *fp;	
+	DIR	*dir_main_folder;
+	char main_dir_path[600];
+	char temp_path[600];
+	char  line[1000];
+	int line_cntr = 0;
+	char word[100];					
+  	va_list arguments;
+	va_start ( arguments, num );   
+    	path_chooser = va_arg ( arguments, char *);   
+     	layer = va_arg ( arguments, int);    	
+      	num_of_neuron_groups = va_arg ( arguments, int *);    	    		
+	va_end ( arguments );
+	
+	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to save 
+	if ((dir_main_folder = opendir(main_dir_path)) == NULL)
+        {
+        	printf ("DataFormat_v0: ERROR: path: %s has no SpikePatternGeneratorData folder.\n", path_chooser);		
+        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikePatternGeneratorData directory.\n\n");		        		
+                return 0;
+        }
+        
+        strcpy(temp_path, main_dir_path);
+        strcat(temp_path, "/meta");
+        
+ 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't read file: %s\n\n", temp_path); return 0; }
+
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
+	if (strcmp(line, "----------SpikePatternGenerator - Main Meta File----------\n") != 0)
+	{
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Main Meta File\n");
+		fclose(fp);
+		return 0;
+	}                
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"DATA_FORMAT_VERSION\t%d\n"	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"CREATION_DATE\t%s" 	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_LAYERS\t%d\n",
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	num_of_layers = atoi(word);
+	
+	if (layer >= num_of_layers)
+	{
+		fclose(fp);    		
+		printf("DataFormat_v0: spike_pattern_generator_data_get_num_of_neuron_groups_in_layer_v0: ERROR: Inconvenient layer number %d.\n", layer);		
+		return 0;
+	}
+	
+	for (i=0; i<num_of_layers; i++)
+	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURON_GROUPS_IN_LAYER_%d\t%d\n"
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+		if (i == layer)
+		{
+			*num_of_neuron_groups = atoi(word);
+			fclose(fp);    		
+			return 1;
+		}	
+		num_of_neuron_groups_in_layer = atoi(word);
+		for (j=0; j<num_of_neuron_groups_in_layer; j++)
+		{
+			if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n"
+			if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+			num_of_neurons_in_neuron_group = atoi(word);
+		}			
+	}
+	fclose(fp);    		
+	printf("DataFormat_v0: spike_pattern_generator_data_get_num_of_neuron_groups_in_layer_v0: ERROR: Couldn' t find the specified layer %d in meta file\n", layer);
+	return 0;	
+
+}
+int spike_pattern_generator_data_get_num_of_neurons_in_neuron_group_v0(int num, ...)
+{
+	int i, j, num_of_layers, num_of_neuron_groups_in_layer, num_of_neurons_in_neuron_group;
+	char *path_chooser;
+	int layer, nrn_grp;
+	int *num_of_neurons;	
+	FILE *fp;	
+	DIR	*dir_main_folder;
+	char main_dir_path[600];
+	char temp_path[600];
+	char  line[1000];
+	int line_cntr = 0;
+	char word[100];					
+  	va_list arguments;
+	va_start ( arguments, num );   
+    	path_chooser = va_arg ( arguments, char *);   
+     	layer = va_arg ( arguments, int);    
+      	nrn_grp = va_arg ( arguments, int);      		
+      	num_of_neurons = va_arg ( arguments, int *);    	    		
+	va_end ( arguments );
+	
+	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to save 
+	if ((dir_main_folder = opendir(main_dir_path)) == NULL)
+        {
+        	printf ("DataFormat_v0: ERROR: path: %s has no SpikePatternGeneratorData folder.\n", path_chooser);		
+        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikePatternGeneratorData directory.\n\n");		        		
+                return 0;
+        }
+        
+        strcpy(temp_path, main_dir_path);
+        strcat(temp_path, "/meta");
+        
+ 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't read file: %s\n\n", temp_path); return 0; }
+
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
+	if (strcmp(line, "----------SpikePatternGenerator - Main Meta File----------\n") != 0)
+	{
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Main Meta File\n");
+		fclose(fp);
+		return 0;
+	}                
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"DATA_FORMAT_VERSION\t%d\n"	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"CREATION_DATE\t%s" 	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_LAYERS\t%d\n",
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	num_of_layers = atoi(word);
+	
+	if (layer >= num_of_layers)
+	{
+		fclose(fp);    		
+		printf("DataFormat_v0: spike_pattern_generator_data_get_num_of_neuron_groups_in_layer_v0: ERROR: Inconvenient layer number %d.\n", layer);		
+		return 0;
+	}
+	
+	for (i=0; i<num_of_layers; i++)
+	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURON_GROUPS_IN_LAYER_%d\t%d\n"
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+		num_of_neuron_groups_in_layer = atoi(word);
+		for (j=0; j<num_of_neuron_groups_in_layer; j++)
+		{
+			if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n"
+			if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+			if ((i == layer) && (j == nrn_grp))
+			{
+				*num_of_neurons = atoi(word);
+				fclose(fp);    		
+				return 1;
+			}						
+			num_of_neurons_in_neuron_group = atoi(word);
+		}			
+	}
+	fclose(fp);    		
+	printf("DataFormat_v0: spike_pattern_generator_data_get_num_of_neurons_in_neuron_group_v0: ERROR: Couldn' t find the specified neuron group %d in layer %d in meta file\n", nrn_grp, layer);
+	return 0;	
+}
+int spike_pattern_generator_data_get_num_of_patterns_v0(int num, ...)
+{
+	int i, j, num_of_layers, num_of_neuron_groups_in_layer;
+	char *path_chooser;
+	int *num_of_patterns;	
+	FILE *fp;	
+	DIR	*dir_main_folder;
+	char main_dir_path[600];
+	char temp_path[600];
+	char  line[1000];
+	int line_cntr = 0;
+	char word[100];					
+  	va_list arguments;
+	va_start ( arguments, num );   
+    	path_chooser = va_arg ( arguments, char *);   
+      	num_of_patterns = va_arg ( arguments, int *);    	    		
+	va_end ( arguments );
+	
+	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to save 
+	if ((dir_main_folder = opendir(main_dir_path)) == NULL)
+        {
+        	printf ("DataFormat_v0: ERROR: path: %s has no SpikePatternGeneratorData folder.\n", path_chooser);		
+        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikePatternGeneratorData directory.\n\n");		        		
+                return 0;
+        }
+        
+        strcpy(temp_path, main_dir_path);
+        strcat(temp_path, "/meta");
+        
+ 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't read file: %s\n\n", temp_path); return 0; }
+
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
+	if (strcmp(line, "----------SpikePatternGenerator - Main Meta File----------\n") != 0)
+	{
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Main Meta File\n");
+		fclose(fp);
+		return 0;
+	}                
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"DATA_FORMAT_VERSION\t%d\n"	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"CREATION_DATE\t%s" 	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_LAYERS\t%d\n",
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	num_of_layers = atoi(word);
+	
+	for (i=0; i<num_of_layers; i++)
+	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURON_GROUPS_IN_LAYER_%d\t%d\n"
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+		num_of_neuron_groups_in_layer = atoi(word);
+		for (j=0; j<num_of_neuron_groups_in_layer; j++)
+		{
+			if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n"
+		}			
+	}
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	MAX_PATTERN_LENGTH	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	MIN_PATTERN_LENGTH 		
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	NUM_OF_PATTERNS
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	*num_of_patterns = atoi(word);	
+	fclose(fp);    		
+	return 1;
+}
+int spike_pattern_generator_data_get_pattern_length_v0(int num, ...)
+{
+	int i, j, num_of_layers, num_of_neuron_groups_in_layer;
+	char *path_chooser;
+	int pattern_num;
+	int num_of_patterns;	
+	TimeStampMs *pattern_length;	
+	FILE *fp;	
+	DIR	*dir_main_folder;
+	char main_dir_path[600];
+	char temp_path[600];
+	char  line[1000];
+	int line_cntr = 0;
+	char word[100];					
+  	va_list arguments;
+	va_start ( arguments, num );   
+    	path_chooser = va_arg ( arguments, char *);
+    	pattern_num = va_arg ( arguments, int);   
+       	pattern_length = va_arg ( arguments, TimeStampMs *);    	    		
+	va_end ( arguments );
+	
+	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to save 
+	if ((dir_main_folder = opendir(main_dir_path)) == NULL)
+        {
+        	printf ("DataFormat_v0: ERROR: path: %s has no SpikePatternGeneratorData folder.\n", path_chooser);		
+        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikePatternGeneratorData directory.\n\n");		        		
+                return 0;
+        }
+        
+        strcpy(temp_path, main_dir_path);
+        strcat(temp_path, "/meta");
+        
+ 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't read file: %s\n\n", temp_path); return 0; }
+
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
+	if (strcmp(line, "----------SpikePatternGenerator - Main Meta File----------\n") != 0)
+	{
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Main Meta File\n");
+		fclose(fp);
+		return 0;
+	}                
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"DATA_FORMAT_VERSION\t%d\n"	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"CREATION_DATE\t%s" 	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_LAYERS\t%d\n",
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	num_of_layers = atoi(word);
+	
+	for (i=0; i<num_of_layers; i++)
+	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURON_GROUPS_IN_LAYER_%d\t%d\n"
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+		num_of_neuron_groups_in_layer = atoi(word);
+		for (j=0; j<num_of_neuron_groups_in_layer; j++)
+		{
+			if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n"
+		}			
+	}
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	MAX_PATTERN_LENGTH	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	MIN_PATTERN_LENGTH 		
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	NUM_OF_PATTERNS
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	num_of_patterns = atoi(word);		
+	for (i=0; i<num_of_patterns; i++ )
+	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	PATTERN_LENGTH_MS
+		if (i == pattern_num)
+		{
+			if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+			*pattern_length = (TimeStampMs)atof(word);
+			fclose(fp);
+			return 1;
+		}		
+	}
+	printf("DataFormat_v0: spike_pattern_generator_data_get_pattern_length_v0: ERROR: Requested pattern_num(%d) is invalid.\n", pattern_num);	
+	fclose(fp);    		
+	return 0;
+}
+int spike_pattern_generator_data_get_num_of_spikes_in_pattern_v0(int num, ...)
+{
+	int i, j, num_of_layers, num_of_neuron_groups_in_layer;
+	char *path_chooser;
+	int pattern_num;
+	int num_of_patterns;
+	int *num_of_spikes;		
+	FILE *fp;	
+	DIR	*dir_main_folder;
+	char main_dir_path[600];
+	char temp_path[600];
+	char  line[1000];
+	int line_cntr = 0;
+	char word[100];					
+  	va_list arguments;
+	va_start ( arguments, num );   
+    	path_chooser = va_arg ( arguments, char *);
+    	pattern_num = va_arg ( arguments, int);   
+       	num_of_spikes = va_arg ( arguments, int *);    	    		
+	va_end ( arguments );
+	
+	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to save 
+	if ((dir_main_folder = opendir(main_dir_path)) == NULL)
+        {
+        	printf ("DataFormat_v0: ERROR: path: %s has no SpikePatternGeneratorData folder.\n", path_chooser);		
+        	printf ("DataFormat_v0: ERROR: Select another folder that includes SpikePatternGeneratorData directory.\n\n");		        		
+                return 0;
+        }
+        
+        strcpy(temp_path, main_dir_path);
+        strcat(temp_path, "/meta");
+        
+ 	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't read file: %s\n\n", temp_path); return 0; }
+
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
+	if (strcmp(line, "----------SpikePatternGenerator - Main Meta File----------\n") != 0)
+	{
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - Main Meta File\n");
+		fclose(fp);
+		return 0;
+	}                
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"DATA_FORMAT_VERSION\t%d\n"	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	"CREATION_DATE\t%s" 	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_LAYERS\t%d\n",
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	num_of_layers = atoi(word);
+	
+	for (i=0; i<num_of_layers; i++)
+	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURON_GROUPS_IN_LAYER_%d\t%d\n"
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+		num_of_neuron_groups_in_layer = atoi(word);
+		for (j=0; j<num_of_neuron_groups_in_layer; j++)
+		{
+			if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n"
+		}			
+	}
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	MAX_PATTERN_LENGTH	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	MIN_PATTERN_LENGTH 		
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	NUM_OF_PATTERNS
+	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+	num_of_patterns = atoi(word);		
+	for (i=0; i<num_of_patterns; i++ )
+	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	PATTERN_LENGTH_MS
+	}	
+	for (i=0; i<num_of_patterns; i++ )
+	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   // 	PATTERN_LENGTH_MS
+		if (i == pattern_num)
+		{
+			if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+			*num_of_spikes = atoi(word);
+			fclose(fp);
+			return 1;
+		}		
+	}
+	printf("DataFormat_v0: spike_pattern_generator_data_get_num_of_spikes_in_pattern_v0: ERROR: Requested pattern_num(%d) is invalid.\n", pattern_num);	
+	fclose(fp);    		
+	return 0;
+}
+int spike_pattern_generator_data_get_next_spike_time_stamp_in_pattern_v0(int num, ...)
+{
+	char  temp_path[600];
+	char main_dir_path[600];	
+	char  *end_ptr;	
+	static FILE *fp = NULL;    // hold it to use later
+	char  line[1000];	
+	static int line_cntr = 0;
+	char word[100];	
+
+	char data_directory_name[10];
+	char data_directory_num[10];
+	char  data_directory_path[600];	
+	DIR	*dir_data_directory;	
+
+	char *path_chooser;
+	int pattern_num;
+	int fopen_request;
+	int fclose_request;
+	SpikeTimeStampItem *spike_stime_stamp;
+
+  	va_list arguments;
+	va_start ( arguments, num );   
+    	path_chooser = va_arg ( arguments, char *);
+    	pattern_num = va_arg ( arguments, int);   
+       	spike_stime_stamp = va_arg ( arguments, SpikeTimeStampItem *); 
+       	fopen_request =  va_arg ( arguments, int); 	        	 
+       	fclose_request =  va_arg ( arguments, int); 	    		
+	va_end ( arguments );
+
+	if (fopen_request)
+	{	
+		if (pattern_num <10)
+		{	
+			strcpy(data_directory_name, "dat0000");
+			sprintf(data_directory_num, "%d" , pattern_num);
+			strcat(data_directory_name, data_directory_num);
+		}
+		else if (pattern_num <100)
+		{
+			strcpy(data_directory_name, "dat000");
+			sprintf(data_directory_num, "%d" , pattern_num);
+			strcat(data_directory_name, data_directory_num);		
+		}
+		else if (pattern_num <1000)
+		{
+			strcpy(data_directory_name, "dat00");
+			sprintf(data_directory_num, "%d" , pattern_num);
+			strcat(data_directory_name, data_directory_num);		
+		}	
+		else if (pattern_num <10000)
+		{
+			strcpy(data_directory_name, "dat0");
+			sprintf(data_directory_num, "%d" , pattern_num);
+			strcat(data_directory_name, data_directory_num);		
+		}	
+		else if (pattern_num <100000)
+		{
+			strcpy(data_directory_name, "dat");
+			sprintf(data_directory_num, "%d" , pattern_num);
+			strcat(data_directory_name, data_directory_num);			
+		}	
+		else
+		{
+			printf("DataFormat_v0: ERROR: bumber of patterns %d.\n", pattern_num);
+			printf("DataFormat_v0: ERROR: Supported range is 0<= x <100000.\n\n");		
+			return 0;
+		}
+	
+		strcpy(data_directory_path, main_dir_path);	
+		strcat(data_directory_path, "/");
+		strcat(data_directory_path, data_directory_name);	
+		if ((dir_data_directory = opendir(data_directory_path)) == NULL)
+        	{	
+        		printf ("DataFormat_v0: ERROR: path: %s has no %s folder.\n", main_dir_path, data_directory_name);		
+                	return 0;
+        	}
+
+       		printf("Successful opendir for data directory: %s\n", data_directory_name);		
+
+	 	strcpy(temp_path, data_directory_path);
+	 	strcat(temp_path, "/SpikeTimeStamp");
+		if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
+		if (strcmp(line,"----------SpikePatternGenerator - SpikeTimeStamp File----------\n") != 0)
+		{
+			printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - SpikeTimeStamp File\n");
+			fclose(fp);
+			return 0;
+		}
+       		printf("Reading SpikeTimeStamp file : %s\n", temp_path);				
+		return 1; // do not fclose, read later on		
+	}
+	else if (fclose_request)
+	{	
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
+		if (strcmp(line,"----------SpikePatternGenerator - End of SpikeTimeStamp File----------\n") != 0)
+		{
+			printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - SpikeTimeStamp File\n");
+			fclose(fp);
+			return 0;
+		}					
+		fclose(fp);
+		line_cntr = 0;
+       		printf("Reading SpikeTimeStamp file...complete\n");	
+       		return 1;								
+	}
+	else
+	{
+		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
+		if(!get_word_in_line('\t', 0, word, line, TRUE)) { fclose(fp); return 0; }
+		spike_stime_stamp->peak_time = strtoull(word, &end_ptr, 10);	// tested with llu max: 18446744073709551615
+		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
+		spike_stime_stamp->mwa_or_layer = atoi(word);	
+		if(!get_word_in_line('\t', 2, word, line, TRUE)) { fclose(fp); return 0; }
+		spike_stime_stamp->channel_or_neuron_group = atoi(word);	
+		if(!get_word_in_line('\t', 3, word, line, TRUE)) { fclose(fp); return 0; }
+		spike_stime_stamp->unit_or_neuron = atoi(word);
+		return 1;									
+	}			
+}

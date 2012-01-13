@@ -13,6 +13,14 @@ int (*create_spike_pattern_generator_data_directory[SPIKEPATTERNGENERATOR_MAX_NU
 int (*save_spike_pattern_generator_data_directory[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
 int (*load_spike_pattern_generator_data_directory[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
 
+int (*spike_pattern_generator_data_get_num_of_layers[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
+int (*spike_pattern_generator_data_get_num_of_neuron_groups_in_layer[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
+int (*spike_pattern_generator_data_get_num_of_neurons_in_neuron_group[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
+int (*spike_pattern_generator_data_get_num_of_patterns[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
+int (*spike_pattern_generator_data_get_pattern_length[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
+int (*spike_pattern_generator_data_get_num_of_spikes_in_pattern[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
+int (*spike_pattern_generator_data_get_next_spike_time_stamp_in_pattern[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
+
 int initialize_spike_pattern_generator_data_read_write_handlers(void);
 int is_spike_pattern_generator_data(char *spike_pattern_generator_data_path);
 int get_spike_pattern_generator_data_format_version(int *version, char *spike_pattern_generator_data_path);
