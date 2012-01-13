@@ -1565,7 +1565,7 @@ int spike_pattern_generator_data_get_num_of_neurons_in_neuron_group_v0(int num, 
 	if (layer >= num_of_layers)
 	{
 		fclose(fp);    		
-		printf("DataFormat_v0: spike_pattern_generator_data_get_num_of_neuron_groups_in_layer_v0: ERROR: Inconvenient layer number %d.\n", layer);		
+		printf("DataFormat_v0: spike_pattern_generator_data_get_num_of_neurons_in_neuron_group_v0: ERROR: Inconvenient layer number %d.\n", layer);		
 		return 0;
 	}
 	
@@ -1817,17 +1817,17 @@ int spike_pattern_generator_data_get_num_of_spikes_in_pattern_v0(int num, ...)
 	fclose(fp);    		
 	return 0;
 }
-int spike_pattern_generator_data_get_next_spike_time_stamp_in_pattern_v0(int num, ...)
+int spike_pattern_generator_data_get_all_spike_time_stamps_in_pattern_v0(int num, ...)
 {
-//	Input Parameters   	char *path_chooser, int pattern_num, SpikeTimeStampItem *spike_stime_stamp, int fopen_request, int fclose_request  (send &spike_stime_stamp)
+//	Input Parameters   	char *path_chooser, int pattern_num, int num_of_spikes_in_pattern, SpikeTimeStampItem *spike_stime_stamps, (send &spike_stime_stamps)
 
-
+	int i;
 	char  temp_path[600];
 	char main_dir_path[600];	
 	char  *end_ptr;	
-	static FILE *fp = NULL;    // hold it to use later
+	FILE *fp;   
 	char  line[1000];	
-	static int line_cntr = 0;
+	int line_cntr = 0;
 	char word[100];	
 
 	char data_directory_name[10];
@@ -1837,107 +1837,104 @@ int spike_pattern_generator_data_get_next_spike_time_stamp_in_pattern_v0(int num
 
 	char *path_chooser;
 	int pattern_num;
-	int fopen_request;
-	int fclose_request;
-	SpikeTimeStampItem *spike_stime_stamp;
+	int num_of_spikes_in_pattern;
+	SpikeTimeStampItem *spike_time_stamps;
 
   	va_list arguments;
 	va_start ( arguments, num );   
     	path_chooser = va_arg ( arguments, char *);
     	pattern_num = va_arg ( arguments, int);   
-       	spike_stime_stamp = va_arg ( arguments, SpikeTimeStampItem *); 
-       	fopen_request =  va_arg ( arguments, int); 	        	 
-       	fclose_request =  va_arg ( arguments, int); 	    		
+	num_of_spikes_in_pattern = va_arg ( arguments, int);   	
+       	spike_time_stamps = va_arg ( arguments, SpikeTimeStampItem *); 
 	va_end ( arguments );
 
-	if (fopen_request)
-	{	
-		if (pattern_num <10)
-		{	
-			strcpy(data_directory_name, "dat0000");
-			sprintf(data_directory_num, "%d" , pattern_num);
-			strcat(data_directory_name, data_directory_num);
-		}
-		else if (pattern_num <100)
-		{
-			strcpy(data_directory_name, "dat000");
-			sprintf(data_directory_num, "%d" , pattern_num);
-			strcat(data_directory_name, data_directory_num);		
-		}
-		else if (pattern_num <1000)
-		{
-			strcpy(data_directory_name, "dat00");
-			sprintf(data_directory_num, "%d" , pattern_num);
-			strcat(data_directory_name, data_directory_num);		
-		}	
-		else if (pattern_num <10000)
-		{
-			strcpy(data_directory_name, "dat0");
-			sprintf(data_directory_num, "%d" , pattern_num);
-			strcat(data_directory_name, data_directory_num);		
-		}	
-		else if (pattern_num <100000)
-		{
-			strcpy(data_directory_name, "dat");
-			sprintf(data_directory_num, "%d" , pattern_num);
-			strcat(data_directory_name, data_directory_num);			
-		}	
-		else
-		{
-			printf("DataFormat_v0: ERROR: bumber of patterns %d.\n", pattern_num);
-			printf("DataFormat_v0: ERROR: Supported range is 0<= x <100000.\n\n");		
-			return 0;
-		}
-	
-		strcpy(data_directory_path, main_dir_path);	
-		strcat(data_directory_path, "/");
-		strcat(data_directory_path, data_directory_name);	
-		if ((dir_data_directory = opendir(data_directory_path)) == NULL)
-        	{	
-        		printf ("DataFormat_v0: ERROR: path: %s has no %s folder.\n", main_dir_path, data_directory_name);		
-                	return 0;
-        	}
-
-       		printf("Successful opendir for data directory: %s\n", data_directory_name);		
-
-	 	strcpy(temp_path, data_directory_path);
-	 	strcat(temp_path, "/SpikeTimeStamp");
-		if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
-		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-		if (strcmp(line,"----------SpikePatternGenerator - SpikeTimeStamp File----------\n") != 0)
-		{
-			printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - SpikeTimeStamp File\n");
-			fclose(fp);
-			return 0;
-		}
-       		printf("Reading SpikeTimeStamp file : %s\n", temp_path);				
-		return 1; // do not fclose, read later on		
+	if (spike_time_stamps == NULL)
+	{
+		printf("DataFormat_v0: spike_pattern_generator_data_get_all_spike_time_stamps_in_pattern_v0: ERROR: spike_time_stamps == NULL\n");		
+		return 0;
 	}
-	else if (fclose_request)
+
+	if (pattern_num <10)
 	{	
-		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-		if (strcmp(line,"----------SpikePatternGenerator - End of SpikeTimeStamp File----------\n") != 0)
-		{
-			printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - SpikeTimeStamp File\n");
-			fclose(fp);
-			return 0;
-		}					
-		fclose(fp);
-		line_cntr = 0;
-       		printf("Reading SpikeTimeStamp file...complete\n");	
-       		return 1;								
+		strcpy(data_directory_name, "dat0000");
+		sprintf(data_directory_num, "%d" , pattern_num);
+		strcat(data_directory_name, data_directory_num);
 	}
+	else if (pattern_num <100)
+	{
+		strcpy(data_directory_name, "dat000");
+		sprintf(data_directory_num, "%d" , pattern_num);
+		strcat(data_directory_name, data_directory_num);		
+	}
+	else if (pattern_num <1000)
+	{
+		strcpy(data_directory_name, "dat00");
+		sprintf(data_directory_num, "%d" , pattern_num);
+		strcat(data_directory_name, data_directory_num);		
+	}	
+	else if (pattern_num <10000)
+	{
+		strcpy(data_directory_name, "dat0");
+		sprintf(data_directory_num, "%d" , pattern_num);
+		strcat(data_directory_name, data_directory_num);		
+	}	
+	else if (pattern_num <100000)
+	{
+		strcpy(data_directory_name, "dat");
+		sprintf(data_directory_num, "%d" , pattern_num);
+		strcat(data_directory_name, data_directory_num);			
+	}	
 	else
+	{
+		printf("DataFormat_v0: ERROR: bumber of patterns %d.\n", pattern_num);
+		printf("DataFormat_v0: ERROR: Supported range is 0<= x <100000.\n\n");		
+		return 0;
+	}
+	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to save 	
+	strcpy(data_directory_path, main_dir_path);	
+	strcat(data_directory_path, "/");
+	strcat(data_directory_path, data_directory_name);	
+	if ((dir_data_directory = opendir(data_directory_path)) == NULL)
+       	{	
+       		printf ("DataFormat_v0: ERROR: path: %s has no %s folder.\n", main_dir_path, data_directory_name);		
+               	return 0;
+       	}
+
+	printf("Successful opendir for data directory: %s\n", data_directory_name);		
+
+ 	strcpy(temp_path, data_directory_path);
+ 	strcat(temp_path, "/SpikeTimeStamp");
+	if ((fp = fopen(temp_path, "r")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
+	if (strcmp(line,"----------SpikePatternGenerator - SpikeTimeStamp File----------\n") != 0)
+	{
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - SpikeTimeStamp File\n");
+		fclose(fp);
+		return 0;
+	}
+	printf("Reading SpikeTimeStamp file : %s\n", temp_path);	
+				
+	for (i = 0; i < num_of_spikes_in_pattern; i++)
 	{
 		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
 		if(!get_word_in_line('\t', 0, word, line, TRUE)) { fclose(fp); return 0; }
-		spike_stime_stamp->peak_time = strtoull(word, &end_ptr, 10);	// tested with llu max: 18446744073709551615
+		spike_time_stamps[i].peak_time = strtoull(word, &end_ptr, 10);	// tested with llu max: 18446744073709551615
 		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
-		spike_stime_stamp->mwa_or_layer = atoi(word);	
+		spike_time_stamps[i].mwa_or_layer = atoi(word);	
 		if(!get_word_in_line('\t', 2, word, line, TRUE)) { fclose(fp); return 0; }
-		spike_stime_stamp->channel_or_neuron_group = atoi(word);	
+		spike_time_stamps[i].channel_or_neuron_group = atoi(word);	
 		if(!get_word_in_line('\t', 3, word, line, TRUE)) { fclose(fp); return 0; }
-		spike_stime_stamp->unit_or_neuron = atoi(word);
-		return 1;									
-	}			
+		spike_time_stamps[i].unit_or_neuron = atoi(word);
+	}
+	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
+	if (strcmp(line,"----------SpikePatternGenerator - End of SpikeTimeStamp File----------\n") != 0)
+	{
+		printf("DataFormat_v0: ERROR: Not a valid SpikePatternGenerator - SpikeTimeStamp File\n");
+		fclose(fp);
+		return 0;
+	}					
+	fclose(fp);
+	printf("Reading SpikeTimeStamp file...complete\n");	
+	return 1;								
 }
+

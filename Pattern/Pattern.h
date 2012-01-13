@@ -5,7 +5,7 @@
 #include "../../NeuroSim/Library/Network/Network.h"
 #include "../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.h"
 #include "../../BlueSpike/SpikeTimeStamp.h"
-#include "SimulationGraphs.h"
+#include "../SpikePatternGenerator/SimulationGraphs.h"
 #include <gtkdatabox.h>
 #include <gtkdatabox_ruler.h>
 #include <gtkdatabox_lines.h>

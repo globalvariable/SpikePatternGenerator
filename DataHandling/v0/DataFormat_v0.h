@@ -12,7 +12,7 @@
 
 #include "./../../BlueSpike/Library/Misc/Misc.h"
 #include "./../../NeuroSim/Library/Network/Network.h"
-#include "./../Pattern/Pattern.h"
+#include "../../Pattern/Pattern.h"
 
 int create_spike_pattern_generator_data_directory_v0(int num, ...);
 int save_spike_pattern_generator_data_directory_v0(int num, ...);
@@ -24,7 +24,7 @@ int spike_pattern_generator_data_get_num_of_neurons_in_neuron_group_v0(int num, 
 int spike_pattern_generator_data_get_num_of_patterns_v0(int num, ...);
 int spike_pattern_generator_data_get_pattern_length_v0(int num, ...);
 int spike_pattern_generator_data_get_num_of_spikes_in_pattern_v0(int num, ...);
-int spike_pattern_generator_data_get_next_spike_time_stamp_in_pattern_v0(int num, ...);
+int spike_pattern_generator_data_get_all_spike_time_stamps_in_pattern_v0(int num, ...);
 
 
 

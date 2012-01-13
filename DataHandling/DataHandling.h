@@ -19,7 +19,7 @@ int (*spike_pattern_generator_data_get_num_of_neurons_in_neuron_group[SPIKEPATTE
 int (*spike_pattern_generator_data_get_num_of_patterns[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
 int (*spike_pattern_generator_data_get_pattern_length[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
 int (*spike_pattern_generator_data_get_num_of_spikes_in_pattern[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
-int (*spike_pattern_generator_data_get_next_spike_time_stamp_in_pattern[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
+int (*spike_pattern_generator_data_get_all_spike_time_stamps_in_pattern[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER]) (int num, ... );
 
 int initialize_spike_pattern_generator_data_read_write_handlers(void);
 int is_spike_pattern_generator_data(char *spike_pattern_generator_data_path);
