@@ -1389,6 +1389,8 @@ int read_spike_timestamps(char *data_directory_path, int pattern_num)
 
 int spike_pattern_generator_data_get_num_of_layers_v0(int num, ...)
 {
+//	Input Parameters   	char *path_chooser, int *num_of_layers (send &num_of_layers to update)
+
 	char *path_chooser;
 	int *num_of_layers;
 	FILE *fp;	
@@ -1436,6 +1438,8 @@ int spike_pattern_generator_data_get_num_of_layers_v0(int num, ...)
 
 int spike_pattern_generator_data_get_num_of_neuron_groups_in_layer_v0(int num, ...)
 {
+//	Input Parameters   	char *path_chooser, int layer, int *num_of_neuron_groups (send &num_of_neuron_groups to update)
+
 	int i, j, num_of_layers, num_of_neuron_groups_in_layer, num_of_neurons_in_neuron_group;
 	char *path_chooser;
 	int layer;
@@ -1512,6 +1516,7 @@ int spike_pattern_generator_data_get_num_of_neuron_groups_in_layer_v0(int num, .
 }
 int spike_pattern_generator_data_get_num_of_neurons_in_neuron_group_v0(int num, ...)
 {
+//	Input Parameters   	char *path_chooser, int layer, int nrn_grp, int *num_of_neurons (send &num_of_neurons to update)
 	int i, j, num_of_layers, num_of_neuron_groups_in_layer, num_of_neurons_in_neuron_group;
 	char *path_chooser;
 	int layer, nrn_grp;
@@ -1588,6 +1593,8 @@ int spike_pattern_generator_data_get_num_of_neurons_in_neuron_group_v0(int num, 
 }
 int spike_pattern_generator_data_get_num_of_patterns_v0(int num, ...)
 {
+//	Input Parameters   	char *path_chooser, int *num_of_patterns (send &num_of_patterns to update)
+
 	int i, j, num_of_layers, num_of_neuron_groups_in_layer;
 	char *path_chooser;
 	int *num_of_patterns;	
@@ -1650,6 +1657,8 @@ int spike_pattern_generator_data_get_num_of_patterns_v0(int num, ...)
 }
 int spike_pattern_generator_data_get_pattern_length_v0(int num, ...)
 {
+//	Input Parameters   	char *path_chooser, int pattern_num, TimeStampMs *pattern_length (send &pattern_length to update)
+
 	int i, j, num_of_layers, num_of_neuron_groups_in_layer;
 	char *path_chooser;
 	int pattern_num;
@@ -1727,6 +1736,8 @@ int spike_pattern_generator_data_get_pattern_length_v0(int num, ...)
 }
 int spike_pattern_generator_data_get_num_of_spikes_in_pattern_v0(int num, ...)
 {
+//	Input Parameters   	char *path_chooser, int pattern_num, int *num_of_spikes (send &num_of_spikes)
+
 	int i, j, num_of_layers, num_of_neuron_groups_in_layer;
 	char *path_chooser;
 	int pattern_num;
@@ -1808,6 +1819,9 @@ int spike_pattern_generator_data_get_num_of_spikes_in_pattern_v0(int num, ...)
 }
 int spike_pattern_generator_data_get_next_spike_time_stamp_in_pattern_v0(int num, ...)
 {
+//	Input Parameters   	char *path_chooser, int pattern_num, SpikeTimeStampItem *spike_stime_stamp, int fopen_request, int fclose_request  (send &spike_stime_stamp)
+
+
 	char  temp_path[600];
 	char main_dir_path[600];	
 	char  *end_ptr;	
