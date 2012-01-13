@@ -1819,7 +1819,7 @@ int spike_pattern_generator_data_get_num_of_spikes_in_pattern_v0(int num, ...)
 }
 int spike_pattern_generator_data_get_all_spike_time_stamps_in_pattern_v0(int num, ...)
 {
-//	Input Parameters   	char *path_chooser, int pattern_num, int num_of_spikes_in_pattern, SpikeTimeStampItem *spike_stime_stamps, (send &spike_stime_stamps)
+//	Input Parameters   	char *path_chooser, int pattern_num, int num_of_spikes_in_pattern, SpikeTimeStampItem *spike_stime_stamps, (send spike_stime_stamps)
 
 	int i;
 	char  temp_path[600];
