@@ -12,8 +12,8 @@ GTK_FLAGS = $(shell pkg-config --cflags --libs gtk+-2.0 gtkdatabox)
 
 all: SpikePatternGenerator
 
-SpikePatternGenerator: SpikePatternGenerator.c Gui.o SimulationView.o FiringRateView.o SimulationGraphs.o ../Pattern/Pattern.o ../../BlueSpike/Library/Misc/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Library/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRate.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.o
-	$(CC) $(LXRT_CFLAGS) -o $@ $< Gui.o SimulationView.o FiringRateView.o SimulationGraphs.o ../Pattern/Pattern.o ../../BlueSpike/Library/Misc/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Library/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRate.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.o $(LXRT_LDFLAGS) $(MATH_FLAGS) $(GTK_FLAGS) 
+SpikePatternGenerator: SpikePatternGenerator.c Gui.o SimulationView.o FiringRateView.o SimulationGraphs.o SpikePatternGeneratorNetwork.o ../Pattern/Pattern.o ../../BlueSpike/Library/Misc/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Library/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRate.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.o
+	$(CC) $(LXRT_CFLAGS) -o $@ $< Gui.o SimulationView.o FiringRateView.o SimulationGraphs.o SpikePatternGeneratorNetwork.o ../Pattern/Pattern.o ../../BlueSpike/Library/Misc/Randn.o ../../NeuroSim/Library/IzNeuron/Neuron.o ../../NeuroSim/Library/ParkerSochacki/ParkerSochacki.o ../../NeuroSim/Library/Event/Event.o ../../NeuroSim/Library/Synapse/Synapse.o ../../NeuroSim/Library/Network/Network.o ../../NeuroSim/Library/IzNeuron/NeuronTypes.o ../DataHandling/DataHandling.o ../DataHandling/v0/DataFormat_v0.o ../../BlueSpike/Library/Misc/Misc.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRate.o ../../BlueSpike/Library/NeuroStats/FiringRate/FiringRateGraph.o $(LXRT_LDFLAGS) $(MATH_FLAGS) $(GTK_FLAGS) 
 	
 Gui.o: Gui.c 
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 	
@@ -25,6 +25,9 @@ FiringRateView.o: FiringRateView.c
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 		
 
 SimulationGraphs.o: SimulationGraphs.c
+	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 
+	
+SpikePatternGeneratorNetwork.o: SpikePatternGeneratorNetwork.c	
 	$(CC) $(LXRT_CFLAGS) -c -o $@ $< $(LXRT_LDFLAGS) $(GTK_FLAGS) 
 	
 ../Pattern/Pattern.o: ../Pattern/Pattern.c

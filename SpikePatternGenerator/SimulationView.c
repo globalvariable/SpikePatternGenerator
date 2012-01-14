@@ -677,7 +677,8 @@ bool create_simulation_view_gui(void)
 	gtk_widget_set_sensitive(btn_save, FALSE);		
 
  	initialize_graphs(table);
- 	
+ 	spike_pattern_generator_set_network(allocate_network(spike_pattern_generator_get_network()));   // deallocates previously allocated external network and brings a new one.
+ 		
 	return TRUE;
 
 }
@@ -690,7 +691,7 @@ void combo_neuron_type_func (void)
 	set_neuron_param_entries(neuron_type);	
 }
 
-void add_neurons_to_layer_button_func(void)
+void add_neurons_to_layer_button_func()
 {
 	int num_of_neuron;
 	int layer; 
@@ -732,7 +733,7 @@ void add_neurons_to_layer_button_func(void)
 	tau_inhibitory = atof(gtk_entry_get_text(GTK_ENTRY(entry_tau_inhibitory)));
 	randomize_params = 0;
 							
-	if (add_neurons_to_layer(num_of_neuron, layer, v, a, b, c, d, k, C, v_resting, v_threshold, v_peak, I_inject, inhibitory, E_excitatory, E_inhibitory, tau_excitatory, tau_inhibitory, randomize_params))
+	if (add_neurons_to_layer(spike_pattern_generator_get_network(), num_of_neuron, layer, v, a, b, c, d, k, C, v_resting, v_threshold, v_peak, I_inject, inhibitory, E_excitatory, E_inhibitory, tau_excitatory, tau_inhibitory, randomize_params))
 	{
 		gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, TRUE);	
 	}
@@ -741,19 +742,18 @@ void add_neurons_to_layer_button_func(void)
 
 void submit_parker_sochacki_params_button_func(void)
 {
-
-	if (parker_sochacki_set_order_tolerance((int)atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_max_order))), atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_err_tol)))))
+	if (parker_sochacki_set_order_tolerance(spike_pattern_generator_get_network(), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_max_order))), atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_err_tol)))))
 		gtk_widget_set_sensitive(btn_allocate_patterns, TRUE);
 }
 
 void interrogate_network_button_func(void)
 {
-	interrogate_network();
+	interrogate_network(spike_pattern_generator_get_network());
 } 		
 
 void interrogate_neuron_button_func(void)
 {
-	interrogate_neuron((int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num))), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num))), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num))));
+	interrogate_neuron(spike_pattern_generator_get_network(), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num))), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num))), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num))));
 }
 
 void allocate_patterns_button_func(void)
@@ -765,7 +765,7 @@ void allocate_patterns_button_func(void)
 
 	patterns = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_num_of_patterns)));	
 
-	if (allocate_patterns(min_len,max_len, patterns))
+	if (allocate_patterns(spike_pattern_generator_get_network(), min_len,max_len, patterns))
 	{
 		allocate_graphs(max_len);
 		gtk_widget_set_sensitive(btn_add_neurons_to_layer, FALSE);
@@ -944,7 +944,7 @@ void display_drawn_stimuli_button_func(void)
 	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
 	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 
-	if (is_neuron(layer, group, neuron_num))
+	if (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num))
 	{
 		for (i=0; i<all_stimulus_patterns_info.max_pattern_length; i++)
 		{
@@ -963,7 +963,7 @@ void display_raw_stimuli_button_func(void)
 	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
 
-	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(layer, group, neuron_num)))
+	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
 	{
 		for (i=0; i<all_stimulus_patterns_info.pattern_lengths_ms[pattern]; i++)
 		{
@@ -982,7 +982,7 @@ void display_noisy_stimuli_button_func(void)
 	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
 
-	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(layer, group, neuron_num)))
+	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
 	{
 		for (i=0; i<all_stimulus_patterns_info.pattern_lengths_ms[pattern]; i++)
 		{
@@ -994,7 +994,6 @@ void display_noisy_stimuli_button_func(void)
 
 void copy_drawn_to_raw_stimuli_button_func(void)
 {
-
 	int i,j, k, m, n;
 	Layer		*ptr_layer;
 	NeuronGroup	*ptr_neuron_group;
@@ -1003,9 +1002,9 @@ void copy_drawn_to_raw_stimuli_button_func(void)
 	{
 		for (j = 0; j < all_stimulus_patterns_info.pattern_lengths_ms[i]; j++)
 		{
-			for (k=0; k<all_network->layer_count; k++)
+			for (k=0; k<spike_pattern_generator_get_network()->layer_count; k++)
 			{
-				ptr_layer = all_network->layers[k];			
+				ptr_layer = spike_pattern_generator_get_network()->layers[k];			
 				for (m=0; m<ptr_layer->neuron_group_count; m++)
 				{
 					ptr_neuron_group = ptr_layer->neuron_groups[m];
@@ -1035,7 +1034,7 @@ void submit_initial_neuron_voltage_button_func(void)
 	neuron_dynamics.initial_v_means[layer][group][neuron_num] = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_neuron_voltage)));
 	neuron_dynamics.initial_v_variances[layer][group][neuron_num] = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_neuron_voltage_variance)));
 
-	nrn = get_neuron_address(layer, group, neuron_num);
+	nrn = get_neuron_address(spike_pattern_generator_get_network(), layer, group, neuron_num);
 	if (nrn == NULL)
 		return;
 
@@ -1079,9 +1078,9 @@ void simulate_button_func(void)
 		for (time_ns = start_time_ns; time_ns < end_time_ns; time_ns+=step_size)
 		{	
 			time_ms_idx = (TimeStampMs)(time_ns/1000000); // milliseconds scale
-			for (k=0; k<all_network->layer_count; k++)
+			for (k=0; k<spike_pattern_generator_get_network()->layer_count; k++)
 			{
-				ptr_layer = all_network->layers[k];			
+				ptr_layer = spike_pattern_generator_get_network()->layers[k];			
 				for (m=0; m<ptr_layer->neuron_group_count; m++)
 				{
 					ptr_neuron_group = ptr_layer->neuron_groups[m];
@@ -1127,7 +1126,7 @@ void display_neuron_dynamics(void)
 	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
 	
 	active_neuron_dyn_to_disp = gtk_combo_box_get_active (GTK_COMBO_BOX(combo_dynamics_type));
-	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(layer, group, neuron_num)))
+	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
 	{
 		for (i=0; i<all_stimulus_patterns_info.pattern_lengths_ms[pattern]; i++)
 		{
@@ -1151,7 +1150,7 @@ void create_directory_button_func(void)
 	char *path_temp = NULL, *path = NULL;
 	path_temp = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (btn_select_directory));
 	path = &path_temp[7];   // since     uri returns file:///home/....	
-	if ((*create_spike_pattern_generator_data_directory[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER-1])(1, path))		// record in last format version
+	if ((*create_spike_pattern_generator_data_directory[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER-1])(2, path, spike_pattern_generator_get_network()))		// record in last format version
 		printf("SpikePatternGenerator: INFO: SpikePatternGenerator Data directory creation is successful\n");
 	else
 		printf("SpikePatternGenerator: ERROR: SpikePatternGenerator Data directory creation FAILED\n");	
@@ -1165,7 +1164,7 @@ void save_button_func(void)
 	path = &path_temp[7];   // since     uri returns file:///home/....
 	if (is_spike_pattern_generator_data(path)) 		// First check if data directory was created previously
 	{			
-		if ((*save_spike_pattern_generator_data_directory[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER-1])(2, path, txv_notes))		// record in last format version
+		if ((*save_spike_pattern_generator_data_directory[SPIKEPATTERNGENERATOR_MAX_NUMBER_OF_DATA_FORMAT_VER-1])(3, path, spike_pattern_generator_get_network(), txv_notes))		// record in last format version
 			printf("SimulationView: INFO: SpikePatternGenerator Data save is successful\n");
 		else
 			printf("SimulationView: ERROR: SpikePatternGenerator Data save FAILED\n");
@@ -1186,7 +1185,7 @@ void load_button_func(void)
 		
 	if (get_spike_pattern_generator_data_format_version(&version, path))
 	{	
-		if ((*load_spike_pattern_generator_data_directory[version])(2, path, txv_notes))
+		if ((*load_spike_pattern_generator_data_directory[version])(3, path, spike_pattern_generator_get_network(), txv_notes))
 		{
 			allocate_graphs(all_stimulus_patterns_info.max_pattern_length);
 			gtk_widget_set_sensitive(btn_add_neurons_to_layer, FALSE);

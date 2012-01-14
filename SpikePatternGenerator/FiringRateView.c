@@ -119,13 +119,14 @@ bool create_firing_rate_view_gui(TimeStamp bin_size, int num_of_patterns, TimeSt
         gtk_box_pack_start(GTK_BOX(hbox),lbl_variance_of_num_of_spikes_per_neuron, FALSE,FALSE,0);     
         
 	///////////////////////////// GRAPHS /////////////////////////////////////////
+	
 	Layer		*ptr_layer;
 	NeuronGroup	*ptr_neuron_group;
 
-	firing_rate_submit_number_of_mwas(all_network->layer_count);
-	for (i=0; i<all_network->layer_count; i++)
+	firing_rate_submit_number_of_mwas(spike_pattern_generator_get_network()->layer_count);
+	for (i=0; i<spike_pattern_generator_get_network()->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];			
+		ptr_layer = spike_pattern_generator_get_network()->layers[i];			
 		firing_rate_submit_number_of_channels_in_mwa(i, ptr_layer->neuron_group_count);		
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{

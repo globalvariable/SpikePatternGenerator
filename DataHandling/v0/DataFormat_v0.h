@@ -13,6 +13,7 @@
 #include "./../../BlueSpike/Library/Misc/Misc.h"
 #include "./../../NeuroSim/Library/Network/Network.h"
 #include "../../Pattern/Pattern.h"
+#include "../../SpikePatternGenerator/SpikePatternGeneratorNetwork.h"
 
 int create_spike_pattern_generator_data_directory_v0(int num, ...);
 int save_spike_pattern_generator_data_directory_v0(int num, ...);

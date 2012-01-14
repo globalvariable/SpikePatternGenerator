@@ -15,6 +15,7 @@
 #include "../DataHandling/DataHandling.h"
 #include "FiringRateView.h"
 #include "Gui.h"
+#include "SpikePatternGeneratorNetwork.h"
 
 #define LINE 0
 #define SIN 1
