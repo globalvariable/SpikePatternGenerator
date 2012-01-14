@@ -1,41 +1,43 @@
 #include "DataFormat_v0.h"
 
 
-static int create_main_meta_file(char * main_dir_path);
+static int create_main_meta_file(Network *network, char * main_dir_path);
 static int save_notes(char* main_dir_path, GtkWidget *text_view);
-static int save_drawn_stimulus_current(char *main_dir_path);
-static int save_neuron_params(char *main_dir_path);
-static int save_injected_current_noise_params(char *main_dir_path);
-static int save_initial_membrane_voltage_params(char *main_dir_path);
-static int create_data_directory(char *main_dir_path, int pattern_num);
-static int save_data_files(char  *data_directory_path, int pattern_num);
-static int save_meta_data(char *data_directory_path, int pattern_num);
-static int save_raw_stimulus_current(char *data_directory_path, int pattern_num);
-static int save_noisy_stimulus_current(char *data_directory_path, int pattern_num);
+static int save_drawn_stimulus_current(Network *network, char *main_dir_path);
+static int save_neuron_params(Network * network, char *main_dir_path);
+static int save_injected_current_noise_params(Network *network, char *main_dir_path);
+static int save_initial_membrane_voltage_params(Network *network, char *main_dir_path);
+static int create_data_directory(Network *network, char *main_dir_path, int pattern_num);
+static int save_data_files(Network *network, char  *data_directory_path, int pattern_num);
+static int save_meta_data(Network *network, char *data_directory_path, int pattern_num);
+static int save_raw_stimulus_current(Network *network, char *data_directory_path, int pattern_num);
+static int save_noisy_stimulus_current(Network *network, char *data_directory_path, int pattern_num);
 static int save_spike_timestamps(char *data_directory_path, int pattern_num);
 
-static int read_main_meta_file(char * main_dir_path);
+static int read_main_meta_file(Network *network, char * main_dir_path);
 static int read_notes(char* main_dir_path, GtkWidget *text_view);
-static int read_drawn_stimulus_current(char *main_dir_path);
-static int read_neuron_params(char *main_dir_path);
-static int read_injected_current_noise_params(char *main_dir_path);
-static int read_initial_membrane_voltage_params(char *main_dir_path);
-static int read_data_directory(char *main_dir_path, int pattern_num);
-static int read_data_files(char  *data_directory_path, int pattern_num);
-static int read_meta_data(char *data_directory_path, int pattern_num);
-static int read_raw_stimulus_current(char *data_directory_path, int pattern_num);
-static int read_noisy_stimulus_current(char *data_directory_path, int pattern_num);
+static int read_drawn_stimulus_current(Network *network, char *main_dir_path);
+static int read_neuron_params(Network *network, char *main_dir_path);
+static int read_injected_current_noise_params(Network *network, char *main_dir_path);
+static int read_initial_membrane_voltage_params(Network *network, char *main_dir_path);
+static int read_data_directory(Network *network, char *main_dir_path, int pattern_num);
+static int read_data_files(Network *network, char  *data_directory_path, int pattern_num);
+static int read_meta_data(Network *network, char *data_directory_path, int pattern_num);
+static int read_raw_stimulus_current(Network *network, char *data_directory_path, int pattern_num);
+static int read_noisy_stimulus_current(Network *network, char *data_directory_path, int pattern_num);
 static int read_spike_timestamps(char *data_directory_path, int pattern_num);
 
 
 int create_spike_pattern_generator_data_directory_v0(int num, ...)
 {
 	char *path_chooser;
+	Network *network;
 	DIR	*dir_main_folder;
 	char main_dir_path[600];
   	va_list arguments;
 	va_start ( arguments, num );   
-    	path_chooser = va_arg ( arguments, char *);   	
+    	path_chooser = va_arg ( arguments, char *);
+     	network = va_arg ( arguments, Network *);   	
 	va_end ( arguments );
 	
 	strcpy(main_dir_path, path_chooser);	
@@ -52,13 +54,13 @@ int create_spike_pattern_generator_data_directory_v0(int num, ...)
         printf ("DataFormat_v0: INFO: Created SpikePatternGeneratorData folder in: %s.\n", path_chooser);
         printf ("DataFormat_v0: INFO: SpikePatternGeneratorData path is: %s.\n\n", main_dir_path); 
         
-	if (!create_main_meta_file(main_dir_path))
+	if (!create_main_meta_file(network, main_dir_path))
 		return 0;
 		
 	return 1;
 }
 
-int create_main_meta_file(char * main_dir_path)
+static int create_main_meta_file(Network *network, char * main_dir_path)
 {
 	char  temp_path[600];
 	time_t rawtime;
@@ -78,10 +80,10 @@ int create_main_meta_file(char * main_dir_path)
 	time ( &rawtime );
 	timeinfo = localtime (&rawtime);
 	fprintf(fp,"CREATION_DATE\t%s", asctime (timeinfo)); 	
-	fprintf(fp,"NUM_OF_LAYERS\t%d\n",	all_network->layer_count);
-	for (i=0; i<all_network->layer_count; i++)
+	fprintf(fp,"NUM_OF_LAYERS\t%d\n",	network->layer_count);
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];
+		ptr_layer = network->layers[i];
 		fprintf(fp,"NUM_OF_NEURON_GROUPS_IN_LAYER_%d\t%d\n",	i, ptr_layer->neuron_group_count);	
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
@@ -114,13 +116,15 @@ int save_spike_pattern_generator_data_directory_v0(int num, ...)
 {
 	int i;
 	char *path_chooser;
+	Network *network;
 	FILE *fp;	
 	DIR	*dir_main_folder;
 	char main_dir_path[600];
 	GtkWidget *text_view; 
   	va_list arguments;
 	va_start ( arguments, num );   
-    	path_chooser = va_arg ( arguments, char *);   	
+    	path_chooser = va_arg ( arguments, char *);  
+    	network = va_arg ( arguments, Network *);  	
     	text_view = va_arg ( arguments, GtkWidget *);   	
 	va_end ( arguments );
 	
@@ -135,21 +139,21 @@ int save_spike_pattern_generator_data_directory_v0(int num, ...)
         if(!save_notes(main_dir_path, text_view))
         	return 0;
         
-        if(!save_drawn_stimulus_current(main_dir_path))
+        if(!save_drawn_stimulus_current(network, main_dir_path))
         	return 0;   
         	
-	if(!save_neuron_params(main_dir_path))
+	if(!save_neuron_params(network, main_dir_path))
         	return 0;      
   
-  	if(!save_injected_current_noise_params(main_dir_path))
+  	if(!save_injected_current_noise_params(network, main_dir_path))
         	return 0;    
         	
-  	if(!save_initial_membrane_voltage_params(main_dir_path))
+  	if(!save_initial_membrane_voltage_params(network, main_dir_path))
         	return 0;          
         	 	    
 	for (i = 0; i < all_stimulus_patterns_info.num_of_patterns ; i++)
 	{
-		if(!create_data_directory(main_dir_path, i))
+		if(!create_data_directory(network, main_dir_path, i))
         		return 0;
         }
         
@@ -198,7 +202,7 @@ int save_notes(char* main_dir_path, GtkWidget *text_view)
 	return 1;
 }
 
-int save_drawn_stimulus_current(char *main_dir_path)
+static int save_drawn_stimulus_current(Network *network, char *main_dir_path)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -213,9 +217,9 @@ int save_drawn_stimulus_current(char *main_dir_path)
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	
 	fprintf(fp,"----------SpikePatternGenerator - DrawnStimulusCurrent File----------\n");		
-	for (k=0; k<all_network->layer_count; k++)
+	for (k=0; k<network->layer_count; k++)
 	{
-		ptr_layer = all_network->layers[k];			
+		ptr_layer = network->layers[k];			
 		for (m=0; m<ptr_layer->neuron_group_count; m++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
@@ -236,7 +240,7 @@ int save_drawn_stimulus_current(char *main_dir_path)
 	return 1;
 }
 
-int save_neuron_params(char *main_dir_path)
+static int save_neuron_params(Network * network, char *main_dir_path)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -268,9 +272,9 @@ int save_neuron_params(char *main_dir_path)
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	
 	fprintf(fp,"----------SpikePatternGenerator - NeuronParameters File----------\n");		
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];			
+		ptr_layer = network->layers[i];			
 		for (m=0; m<ptr_layer->neuron_group_count; m++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
@@ -302,7 +306,7 @@ int save_neuron_params(char *main_dir_path)
 	return 1;
 }
 
-int save_injected_current_noise_params(char *main_dir_path)
+static int save_injected_current_noise_params(Network *network, char *main_dir_path)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -318,9 +322,9 @@ int save_injected_current_noise_params(char *main_dir_path)
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	fprintf(fp,"----------SpikePatternGenerator - InjectedCurrentNoiseParams File----------\n");		
 	fprintf(fp,"INJECTED_CURRENT_NOISE_VARIANCES\n");	
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];
+		ptr_layer = network->layers[i];
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -331,9 +335,9 @@ int save_injected_current_noise_params(char *main_dir_path)
 		}			
 	}	
 	fprintf(fp,"INJECTED_CURRENT_NOISE_ADDITION_MS_INTERVALS\n");	
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];
+		ptr_layer = network->layers[i];
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -350,7 +354,7 @@ int save_injected_current_noise_params(char *main_dir_path)
 	return 1;
 }
         	
-int save_initial_membrane_voltage_params(char *main_dir_path)
+static int save_initial_membrane_voltage_params(Network *network, char *main_dir_path)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -365,9 +369,9 @@ int save_initial_membrane_voltage_params(char *main_dir_path)
 	if ((fp = fopen(temp_path, "w")) == NULL)  { printf ("ERROR: DataFormat_v0: Couldn't create file: %s\n\n", temp_path); return 0; }	
 	fprintf(fp,"----------SpikePatternGenerator - InitialMembraneVoltageParams File----------\n");		
 	fprintf(fp,"INITIAL_NEURON_MEMBRANE_VOLTAGE_MEANS\n");
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];
+		ptr_layer = network->layers[i];
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -378,9 +382,9 @@ int save_initial_membrane_voltage_params(char *main_dir_path)
 		}			
 	}	
 	fprintf(fp,"INITIAL_NEURON_MEMBRANE_VOLTAGE_VARIANCES\n");
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];
+		ptr_layer = network->layers[i];
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -398,7 +402,7 @@ int save_initial_membrane_voltage_params(char *main_dir_path)
 
 }
 
-int create_data_directory(char *main_dir_path, int pattern_num)
+static int create_data_directory(Network *network, char *main_dir_path, int pattern_num)
 {
 	char data_directory_name[10];
 	char data_directory_num[10];
@@ -454,25 +458,25 @@ int create_data_directory(char *main_dir_path, int pattern_num)
 	
 	printf("Created data directory: %s\n", data_directory_name);	
 								
-	if (save_data_files(data_directory_path, pattern_num))
+	if (save_data_files(network, data_directory_path, pattern_num))
 		return 1;
 	return 0;
 }
 
-int save_data_files(char  *data_directory_path, int pattern_num)
+static int save_data_files(Network *network, char  *data_directory_path, int pattern_num)
 {
-	if (!save_meta_data(data_directory_path, pattern_num))
+	if (!save_meta_data(network, data_directory_path, pattern_num))
 		return 0;
-	if (!save_raw_stimulus_current(data_directory_path, pattern_num))
+	if (!save_raw_stimulus_current(network,data_directory_path, pattern_num))
 		return 0;
-	if (!save_noisy_stimulus_current(data_directory_path, pattern_num))
+	if (!save_noisy_stimulus_current(network, data_directory_path, pattern_num))
 		return 0;		
 	if (!save_spike_timestamps(data_directory_path, pattern_num))
 		return 0;		
 	return 1;
 }
 
-int save_meta_data(char *data_directory_path, int pattern_num)
+static int save_meta_data(Network *network, char *data_directory_path, int pattern_num)
 {
 	char temp_path[600];
 	FILE *fp;
@@ -496,9 +500,9 @@ int save_meta_data(char *data_directory_path, int pattern_num)
 	fprintf(fp,"PATTERN_LENGTH_MS\t%d\n", all_stimulus_patterns_info.pattern_lengths_ms[pattern_num]);	
 	fprintf(fp,"NUM_OF_SPIKES_IN_PATTERN\t%d\n", all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]);		
 	fprintf(fp,"INITIAL_NEURON_MEMBRANE_VOLTAGES\n"); 	
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];			
+		ptr_layer = network->layers[i];			
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -517,7 +521,7 @@ int save_meta_data(char *data_directory_path, int pattern_num)
 	return 1;
 }
 
-int save_raw_stimulus_current(char *data_directory_path, int pattern_num)
+static int save_raw_stimulus_current(Network *network, char *data_directory_path, int pattern_num)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -533,9 +537,9 @@ int save_raw_stimulus_current(char *data_directory_path, int pattern_num)
 	
 	fprintf(fp,"----------SpikePatternGenerator - RawStimulusCurrent File----------\n");		
 		
-	for (k=0; k<all_network->layer_count; k++)
+	for (k=0; k<network->layer_count; k++)
 	{
-		ptr_layer = all_network->layers[k];			
+		ptr_layer = network->layers[k];			
 		for (m=0; m<ptr_layer->neuron_group_count; m++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
@@ -556,7 +560,7 @@ int save_raw_stimulus_current(char *data_directory_path, int pattern_num)
 	return 1;
 }
 
-int save_noisy_stimulus_current(char *data_directory_path, int pattern_num)
+static int save_noisy_stimulus_current(Network *network, char *data_directory_path, int pattern_num)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -572,9 +576,9 @@ int save_noisy_stimulus_current(char *data_directory_path, int pattern_num)
 	
 	fprintf(fp,"----------SpikePatternGenerator - NoisyStimulusCurrent File----------\n");		
 		
-	for (k=0; k<all_network->layer_count; k++)
+	for (k=0; k<network->layer_count; k++)
 	{
-		ptr_layer = all_network->layers[k];			
+		ptr_layer = network->layers[k];			
 		for (m=0; m<ptr_layer->neuron_group_count; m++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
@@ -630,12 +634,14 @@ int load_spike_pattern_generator_data_directory_v0(int num, ...)
 {
 	int i;
 	char *path_chooser;
+	Network *network;
 	DIR	*dir_main_folder;
 	char main_dir_path[600];
 	GtkWidget *text_view; 
   	va_list arguments;
 	va_start ( arguments, num );   
-    	path_chooser = va_arg ( arguments, char *);   	
+    	path_chooser = va_arg ( arguments, char *);   
+     	network = va_arg ( arguments, Network *);      		
     	text_view = va_arg ( arguments, GtkWidget *);   	
 	va_end ( arguments );
 	
@@ -650,27 +656,27 @@ int load_spike_pattern_generator_data_directory_v0(int num, ...)
                 return 0;
         }
 
-	if (!read_main_meta_file(main_dir_path))
+	if (!read_main_meta_file(network, main_dir_path))
 		return 0;
 		
         if(!read_notes(main_dir_path, text_view))
         	return 0;
         
-        if(!read_drawn_stimulus_current(main_dir_path))
+        if(!read_drawn_stimulus_current(network, main_dir_path))
         	return 0;   
         	
-	if(!read_neuron_params(main_dir_path))
+	if(!read_neuron_params(network, main_dir_path))
         	return 0;      
  
-	if(!read_injected_current_noise_params(main_dir_path))
+	if(!read_injected_current_noise_params(network, main_dir_path))
 		return 0;
  
-	if(!read_initial_membrane_voltage_params(main_dir_path))
+	if(!read_initial_membrane_voltage_params(network, main_dir_path))
 		return 0;
 		        	
  	for (i = 0; i < all_stimulus_patterns_info.num_of_patterns ; i++)
 	{
-		if(!read_data_directory(main_dir_path, i))
+		if(!read_data_directory(network, main_dir_path, i))
         		return 0;
         }
         
@@ -678,7 +684,7 @@ int load_spike_pattern_generator_data_directory_v0(int num, ...)
 	return 1;
 }
 
-int read_main_meta_file(char * main_dir_path)
+int read_main_meta_file(Network *network, char * main_dir_path)
 {
 	char  temp_path[600];
 	char line[1000];
@@ -705,7 +711,9 @@ int read_main_meta_file(char * main_dir_path)
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_LAYERS\t%d\n",
 	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 	num_of_layers = (int)atof(word);
-	
+//////////////////////////////////////////////////   EDIT THIS ////////////////////////////////////////
+//	neurosim_set_ext_network(allocate_external_network(neurosim_get_ext_network()));   
+	allocate_network(network);
 	for (i=0; i<num_of_layers; i++)
 	{
 		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURON_GROUPS_IN_LAYER_%d\t%d\n"
@@ -716,7 +724,7 @@ int read_main_meta_file(char * main_dir_path)
 			if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n"
 			if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 			num_of_neurons_in_neuron_group = (int)atof(word);
-			if (!add_neurons_to_layer(num_of_neurons_in_neuron_group, i, 0, 0, 0, 0, 0, 0, 100.0, 0, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 0))	// create neurons and neuron groups with no parameter.
+			if (!add_neurons_to_layer(network, num_of_neurons_in_neuron_group, i, 0, 0, 0, 0, 0, 0, 100.0, 0, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 0))	// create neurons and neuron groups with no parameter.
 				return 0;
 		}			
 	}
@@ -737,13 +745,13 @@ int read_main_meta_file(char * main_dir_path)
 		all_stimulus_patterns_info.pattern_lengths_ms[i] = (TimeStampMs)atof(word);		
 	}
 
-	if (!allocate_stimulus_currents())
+	if (!allocate_stimulus_currents(network))
 		return FALSE;
 		
-	if (!allocate_neuron_dynamics())	
+	if (!allocate_neuron_dynamics(network))	
 		return FALSE;
 		
-	if (!allocate_spike_patterns())		
+	if (!allocate_spike_patterns(network))		
 		return FALSE;
 	
 	for (i = 0 ; i < all_stimulus_patterns_info.num_of_patterns; i++)
@@ -761,7 +769,7 @@ int read_main_meta_file(char * main_dir_path)
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	PARKER_SOCHACKI_MAX_ORDER
 	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 	int ps_order = (int)atof(word);	
-	if (!parker_sochacki_set_order_tolerance(ps_order, ps_tol))
+	if (!parker_sochacki_set_order_tolerance(network, ps_order, ps_tol))
 		return 0;
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   
 	if (strcmp(line, "----------SpikePatternGenerator - End of Main Meta File----------\n") != 0)
@@ -823,7 +831,7 @@ int read_notes(char* main_dir_path, GtkWidget *text_view)
 	return 1;
 }
 
-int read_drawn_stimulus_current(char *main_dir_path)
+static int read_drawn_stimulus_current(Network *network, char *main_dir_path)
 {
 	char  temp_path[600];
 	char  line[1000];	
@@ -847,9 +855,9 @@ int read_drawn_stimulus_current(char *main_dir_path)
 		return 0;
 	}
 	  
-	for (k=0; k<all_network->layer_count; k++)
+	for (k=0; k<network->layer_count; k++)
 	{
-		ptr_layer = all_network->layers[k];			
+		ptr_layer = network->layers[k];			
 		for (m=0; m<ptr_layer->neuron_group_count; m++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
@@ -878,7 +886,7 @@ int read_drawn_stimulus_current(char *main_dir_path)
 	return 1;
 }
 
-int read_neuron_params(char *main_dir_path)
+static int read_neuron_params(Network *network, char *main_dir_path)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -918,9 +926,9 @@ int read_neuron_params(char *main_dir_path)
 		fclose(fp);
 		return 0;
 	}	
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];			
+		ptr_layer = network->layers[i];			
 		for (m=0; m<ptr_layer->neuron_group_count; m++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
@@ -956,7 +964,7 @@ int read_neuron_params(char *main_dir_path)
 				tau_excitatory = atof(line);						
 				if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}
 				tau_inhibitory = atof(line);																															
-				if (!submit_new_neuron_params(ptr_neuron, v_resting, a, b, c, d, k, C, v_resting, v_threshold, v_peak, 0, inhibitory, E_excitatory, E_inhibitory, tau_excitatory, tau_inhibitory))
+				if (!submit_new_neuron_params(network, ptr_neuron, v_resting, a, b, c, d, k, C, v_resting, v_threshold, v_peak, 0, inhibitory, E_excitatory, E_inhibitory, tau_excitatory, tau_inhibitory))
 					return 0; 
 			}
 		}			
@@ -974,7 +982,7 @@ int read_neuron_params(char *main_dir_path)
 	return 1;
 }
 
-int read_injected_current_noise_params(char *main_dir_path)
+static int read_injected_current_noise_params(Network *network, char *main_dir_path)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -997,9 +1005,9 @@ int read_injected_current_noise_params(char *main_dir_path)
 		return 0;
 	}	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];
+		ptr_layer = network->layers[i];
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -1011,9 +1019,9 @@ int read_injected_current_noise_params(char *main_dir_path)
 		}			
 	}	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i< network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];
+		ptr_layer = network->layers[i];
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -1038,7 +1046,7 @@ int read_injected_current_noise_params(char *main_dir_path)
 	return 1;
 }
         	
-int read_initial_membrane_voltage_params(char *main_dir_path)
+static int read_initial_membrane_voltage_params(Network *network, char *main_dir_path)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -1061,9 +1069,9 @@ int read_initial_membrane_voltage_params(char *main_dir_path)
 		return 0;
 	}		
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i< network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];
+		ptr_layer = network->layers[i];
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -1075,9 +1083,9 @@ int read_initial_membrane_voltage_params(char *main_dir_path)
 		}			
 	}	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];
+		ptr_layer = network->layers[i];
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -1103,7 +1111,7 @@ int read_initial_membrane_voltage_params(char *main_dir_path)
 }
 
 
-int read_data_directory(char *main_dir_path, int pattern_num)
+static int read_data_directory(Network *network, char *main_dir_path, int pattern_num)
 {
 	char data_directory_name[10];
 	char data_directory_num[10];
@@ -1158,25 +1166,25 @@ int read_data_directory(char *main_dir_path, int pattern_num)
 
        	printf("Reading data directory: %s\n", data_directory_name);							
 
-	if (read_data_files(data_directory_path, pattern_num))
+	if (read_data_files(network, data_directory_path, pattern_num))
 		return 1;
 	return 0;
 }
 
-int read_data_files(char  *data_directory_path, int pattern_num)
+static int read_data_files(Network *network, char  *data_directory_path, int pattern_num)
 {
-	if (!read_meta_data(data_directory_path, pattern_num))
+	if (!read_meta_data(network, data_directory_path, pattern_num))
 		return 0;
-	if (!read_raw_stimulus_current(data_directory_path, pattern_num))
+	if (!read_raw_stimulus_current(network, data_directory_path, pattern_num))
 		return 0;
-	if (!read_noisy_stimulus_current(data_directory_path, pattern_num))
+	if (!read_noisy_stimulus_current(network, data_directory_path, pattern_num))
 		return 0;		
 	if (!read_spike_timestamps(data_directory_path, pattern_num))
 		return 0;		
 	return 1;
 }
 
-int read_meta_data(char *data_directory_path, int pattern_num)
+static int read_meta_data(Network *network, char *data_directory_path, int pattern_num)
 {
 	char temp_path[600];
 	FILE *fp;
@@ -1204,9 +1212,9 @@ int read_meta_data(char *data_directory_path, int pattern_num)
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  // pattern_length	
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  // num_of_spikes_in_pattern
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  // INITIAL_NEURON_MEMBRANE_VOLTAGES
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i< network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];			
+		ptr_layer = network->layers[i];			
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -1231,7 +1239,7 @@ int read_meta_data(char *data_directory_path, int pattern_num)
 	return 1;
 }
 
-int read_raw_stimulus_current(char *data_directory_path, int pattern_num)
+static int read_raw_stimulus_current(Network *network, char *data_directory_path, int pattern_num)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -1253,9 +1261,9 @@ int read_raw_stimulus_current(char *data_directory_path, int pattern_num)
 		fclose(fp);
 		return 0;
 	}		
-	for (k=0; k<all_network->layer_count; k++)
+	for (k=0; k< network->layer_count; k++)
 	{
-		ptr_layer = all_network->layers[k];			
+		ptr_layer = network->layers[k];			
 		for (m=0; m<ptr_layer->neuron_group_count; m++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
@@ -1284,7 +1292,7 @@ int read_raw_stimulus_current(char *data_directory_path, int pattern_num)
 	return 1;
 }
 
-int read_noisy_stimulus_current(char *data_directory_path, int pattern_num)
+static int read_noisy_stimulus_current(Network *network, char *data_directory_path, int pattern_num)
 {
 	char  temp_path[600];
 	FILE *fp;
@@ -1307,9 +1315,9 @@ int read_noisy_stimulus_current(char *data_directory_path, int pattern_num)
 		return 0;
 	}		
 	
-	for (k=0; k<all_network->layer_count; k++)
+	for (k=0; k< network->layer_count; k++)
 	{
-		ptr_layer = all_network->layers[k];			
+		ptr_layer = network->layers[k];			
 		for (m=0; m<ptr_layer->neuron_group_count; m++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[m];

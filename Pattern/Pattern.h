@@ -50,15 +50,15 @@ struct SpikePatternTimeStamps
 	int					*num_of_time_stamps_in_pattern;		// num_of_pattern 
 } all_spike_patterns;
 
-bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns);
-bool allocate_stimulus_currents(void);
-bool allocate_neuron_dynamics(void);
-bool allocate_spike_patterns(void);
+bool allocate_patterns(Network *network, TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns);
+bool allocate_stimulus_currents(Network *network);
+bool allocate_neuron_dynamics(Network *network);
+bool allocate_spike_patterns(Network *network);
 bool increment_time_stamp_number_of_pattern(int pattern_num);
 bool add_time_stamp_to_spike_pattern_time_stamps(int pattern_num, int layer, int neuron_group, int neuron_num, TimeStamp spike_time);
 void clear_spike_pattern_time_stamps(void);
-bool deallocate_patterns(void);
-bool deallocate_stimulus_currents(void);
-bool deallocate_neuron_dynamics(void);
-bool deallocate_spike_patterns(void);
+bool deallocate_patterns(Network *network);
+bool deallocate_stimulus_currents(Network *network);
+bool deallocate_neuron_dynamics(Network *network);
+bool deallocate_spike_patterns(Network *network);
 #endif

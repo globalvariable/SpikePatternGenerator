@@ -1,6 +1,6 @@
 #include "Pattern.h"
 
-bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns)
+bool allocate_patterns(Network *network, TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns)
 {
 	int i;
 
@@ -18,7 +18,7 @@ bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_l
 		return FALSE;
 	}
 		
-	if (!is_network_allocated())
+	if (!is_network_allocated(network))
 		return FALSE;
 
 	all_stimulus_patterns_info.pattern_lengths_ms = g_new0(TimeStampMs, num_of_patterns);
@@ -32,13 +32,13 @@ bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_l
 
 	printf("Pattern: INFO: Allocated all stimulus pattern info struct.\n");
 
-	if (!allocate_stimulus_currents())
+	if (!allocate_stimulus_currents(network))
 		return FALSE;
 		
-	if (!allocate_neuron_dynamics())	
+	if (!allocate_neuron_dynamics(network))	
 		return FALSE;
 		
-	if (!allocate_spike_patterns())		
+	if (!allocate_spike_patterns(network))		
 		return FALSE;
 					
 	gtk_databox_set_total_limits (GTK_DATABOX (stimulus_box), 0, all_stimulus_patterns_info.max_pattern_length - 1, MAX_CURRENT_VALUE, MIN_CURRENT_VALUE);		
@@ -47,18 +47,18 @@ bool allocate_patterns(TimeStampMs min_pattern_length, TimeStampMs max_pattern_l
 	return TRUE;
 }
 
-bool deallocate_patterns(void)
+bool deallocate_patterns(Network *network)
 {
-	if (!is_network_allocated())
+	if (!is_network_allocated(network))
 		return FALSE;
 		
-	if (!deallocate_stimulus_currents())
+	if (!deallocate_stimulus_currents(network))
 		return FALSE;
 		
-	if (!deallocate_neuron_dynamics())	
+	if (!deallocate_neuron_dynamics(network))	
 		return FALSE;
 		
-	if (!deallocate_spike_patterns())		
+	if (!deallocate_spike_patterns(network))		
 		return FALSE;		
 		
 	g_free(all_stimulus_patterns_info.pattern_lengths_ms);
@@ -119,21 +119,21 @@ void clear_spike_pattern_time_stamps(void)
 	printf("Pattern: INFO: Cleared spike timestamps in memory.\n");
 }
 
-bool allocate_stimulus_currents(void)
+bool allocate_stimulus_currents(Network *network)
 {
 	int i, j, k,m;
 	Layer		*ptr_layer;
 	NeuronGroup	*ptr_neuron_group;
 
-	if (!is_network_allocated())
+	if (!is_network_allocated(network))
 		return FALSE;
 	
-	all_stimulus_currents.drawn_stimulus_currents = g_new0(double***, all_network->layer_count);
-	all_stimulus_currents.noise_variances = g_new0(double**, all_network->layer_count);	
-	all_stimulus_currents.noise_addition_ms_intervals = g_new0(TimeStampMs**, all_network->layer_count);			
-	for (i=0; i<all_network->layer_count; i++)
+	all_stimulus_currents.drawn_stimulus_currents = g_new0(double***, network->layer_count);
+	all_stimulus_currents.noise_variances = g_new0(double**, network->layer_count);	
+	all_stimulus_currents.noise_addition_ms_intervals = g_new0(TimeStampMs**, network->layer_count);			
+	for (i=0; i<network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];			
+		ptr_layer = network->layers[i];			
 		all_stimulus_currents.drawn_stimulus_currents[i] = g_new0(double**, ptr_layer->neuron_group_count);
 		all_stimulus_currents.noise_variances[i] = g_new0(double*,  ptr_layer->neuron_group_count);	
 		all_stimulus_currents.noise_addition_ms_intervals[i] = g_new0(TimeStampMs*,  ptr_layer->neuron_group_count);				
@@ -154,11 +154,11 @@ bool allocate_stimulus_currents(void)
 	all_stimulus_currents.noisy_stimulus_currents = g_new0(double****, all_stimulus_patterns_info.num_of_patterns);
 	for (i=0; i<all_stimulus_patterns_info.num_of_patterns; i++)
 	{
-		all_stimulus_currents.raw_stimulus_currents[i] = g_new0(double***, all_network->layer_count);
-		all_stimulus_currents.noisy_stimulus_currents[i] = g_new0(double***, all_network->layer_count);
-		for (j=0; j<all_network->layer_count; j++)
+		all_stimulus_currents.raw_stimulus_currents[i] = g_new0(double***, network->layer_count);
+		all_stimulus_currents.noisy_stimulus_currents[i] = g_new0(double***, network->layer_count);
+		for (j=0; j<network->layer_count; j++)
 		{			
-			ptr_layer = all_network->layers[j];			
+			ptr_layer = network->layers[j];			
 			all_stimulus_currents.raw_stimulus_currents[i][j] = g_new0(double**, ptr_layer->neuron_group_count);
 			all_stimulus_currents.noisy_stimulus_currents[i][j] = g_new0(double**, ptr_layer->neuron_group_count);	
 			for (k=0; k<ptr_layer->neuron_group_count; k++)
@@ -178,13 +178,13 @@ bool allocate_stimulus_currents(void)
 	return TRUE;
 }
 
-bool allocate_neuron_dynamics(void)
+bool allocate_neuron_dynamics(Network *network)
 {
 	int i, j, k,m;
 	Layer		*ptr_layer;
 	NeuronGroup	*ptr_neuron_group;
 
-	if (!is_network_allocated())
+	if (!is_network_allocated(network))
 		return FALSE;
 
 	neuron_dynamics.v = g_new0(double****, all_stimulus_patterns_info.num_of_patterns);
@@ -193,13 +193,13 @@ bool allocate_neuron_dynamics(void)
 	neuron_dynamics.initial_u = g_new0(double***,all_stimulus_patterns_info.num_of_patterns);		
 	for (i=0; i<all_stimulus_patterns_info.num_of_patterns; i++)
 	{	
-		neuron_dynamics.v[i] = g_new0(double***, all_network->layer_count);
-		neuron_dynamics.u[i] = g_new0(double***, all_network->layer_count);	
-		neuron_dynamics.initial_v[i] = g_new0(double**, all_network->layer_count);
-		neuron_dynamics.initial_u[i] = g_new0(double**, all_network->layer_count);			
-		for (j=0; j<all_network->layer_count; j++)
+		neuron_dynamics.v[i] = g_new0(double***, network->layer_count);
+		neuron_dynamics.u[i] = g_new0(double***, network->layer_count);	
+		neuron_dynamics.initial_v[i] = g_new0(double**, network->layer_count);
+		neuron_dynamics.initial_u[i] = g_new0(double**, network->layer_count);			
+		for (j=0; j< network->layer_count; j++)
 		{
-			ptr_layer = all_network->layers[j];			
+			ptr_layer = network->layers[j];			
 			neuron_dynamics.v[i][j] = g_new0(double**, ptr_layer->neuron_group_count);
 			neuron_dynamics.u[i][j] = g_new0(double**, ptr_layer->neuron_group_count);
 			neuron_dynamics.initial_v[i][j] = g_new0(double*, ptr_layer->neuron_group_count);
@@ -220,11 +220,11 @@ bool allocate_neuron_dynamics(void)
 		}
 	}
 	
-	neuron_dynamics.initial_v_means = g_new0(double**, all_network->layer_count);
-	neuron_dynamics.initial_v_variances = g_new0(double**, all_network->layer_count);	
-	for (i=0; i<all_network->layer_count; i++)
+	neuron_dynamics.initial_v_means = g_new0(double**, network->layer_count);
+	neuron_dynamics.initial_v_variances = g_new0(double**, network->layer_count);	
+	for (i=0; i< network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];			
+		ptr_layer = network->layers[i];			
 		neuron_dynamics.initial_v_means[i] = g_new0(double*, ptr_layer->neuron_group_count);
 		neuron_dynamics.initial_v_variances[i] = g_new0(double*, ptr_layer->neuron_group_count);
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
@@ -238,9 +238,9 @@ bool allocate_neuron_dynamics(void)
 	return TRUE;	
 }
 
-bool allocate_spike_patterns(void)
+bool allocate_spike_patterns(Network *network)
 {
-	if (!is_network_allocated())
+	if (!is_network_allocated(network))
 		return FALSE;
 
 	all_spike_patterns.pattern_time_stamps = g_new0(SpikeTimeStampItem*, all_stimulus_patterns_info.num_of_patterns);		// num_of_pattern * num_of_time_stamps_in_pattern
@@ -250,18 +250,18 @@ bool allocate_spike_patterns(void)
 }
 
 
-bool deallocate_stimulus_currents(void)
+bool deallocate_stimulus_currents(Network *network)
 {
 	int i, j, k,m;
 	Layer		*ptr_layer;
 	NeuronGroup	*ptr_neuron_group;
 
-	if (!is_network_allocated())
+	if (!is_network_allocated(network))
 		return FALSE;
 	
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i< network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];			
+		ptr_layer = network->layers[i];			
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -286,9 +286,9 @@ bool deallocate_stimulus_currents(void)
 
 	for (i=0; i<all_stimulus_patterns_info.num_of_patterns; i++)
 	{
-		for (j=0; j<all_network->layer_count; j++)
+		for (j=0; j< network->layer_count; j++)
 		{			
-			ptr_layer = all_network->layers[j];			
+			ptr_layer = network->layers[j];			
 
 			for (k=0; k<ptr_layer->neuron_group_count; k++)
 			{
@@ -317,20 +317,20 @@ bool deallocate_stimulus_currents(void)
 	return TRUE;
 }
 
-bool deallocate_neuron_dynamics(void)
+bool deallocate_neuron_dynamics(Network *network)
 {
 	int i, j, k,m;
 	Layer		*ptr_layer;
 	NeuronGroup	*ptr_neuron_group;
 
-	if (!is_network_allocated())
+	if (!is_network_allocated(network))
 		return FALSE;
 
 	for (i=0; i<all_stimulus_patterns_info.num_of_patterns; i++)
 	{	
-		for (j=0; j<all_network->layer_count; j++)
+		for (j=0; j< network->layer_count; j++)
 		{
-			ptr_layer = all_network->layers[j];			
+			ptr_layer = network->layers[j];			
 			for (k=0; k<ptr_layer->neuron_group_count; k++)
 			{
 				ptr_neuron_group = ptr_layer->neuron_groups[k];
@@ -363,9 +363,9 @@ bool deallocate_neuron_dynamics(void)
 	neuron_dynamics.initial_v = NULL;
 	neuron_dynamics.initial_u = NULL;	
 
-	for (i=0; i<all_network->layer_count; i++)
+	for (i=0; i< network->layer_count; i++)
 	{
-		ptr_layer = all_network->layers[i];			
+		ptr_layer = network->layers[i];			
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
@@ -383,11 +383,11 @@ bool deallocate_neuron_dynamics(void)
 	return TRUE;	
 }
 
-bool deallocate_spike_patterns(void)
+bool deallocate_spike_patterns(Network *network)
 {
 	int i;
 
-	if (!is_network_allocated())
+	if (!is_network_allocated(network))
 		return FALSE;
 	
 	for (i = 0; i < all_stimulus_patterns_info.num_of_patterns; i++)
