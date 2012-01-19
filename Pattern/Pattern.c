@@ -38,7 +38,7 @@ bool allocate_patterns(Network *network, TimeStampMs min_pattern_length, TimeSta
 	if (!allocate_neuron_dynamics(network))	
 		return FALSE;
 		
-	if (!allocate_spike_patterns(network))		
+	if (!allocate_spike_pattern_generator_spike_patterns(network))		
 		return FALSE;
 					
 	gtk_databox_set_total_limits (GTK_DATABOX (stimulus_box), 0, all_stimulus_patterns_info.max_pattern_length - 1, MAX_CURRENT_VALUE, MIN_CURRENT_VALUE);		
@@ -58,7 +58,7 @@ bool deallocate_patterns(Network *network)
 	if (!deallocate_neuron_dynamics(network))	
 		return FALSE;
 		
-	if (!deallocate_spike_patterns(network))		
+	if (!deallocate_spike_pattern_generator_spike_patterns(network))		
 		return FALSE;		
 		
 	g_free(all_stimulus_patterns_info.pattern_lengths_ms);
@@ -238,7 +238,7 @@ bool allocate_neuron_dynamics(Network *network)
 	return TRUE;	
 }
 
-bool allocate_spike_patterns(Network *network)
+bool allocate_spike_pattern_generator_spike_patterns(Network *network)
 {
 	if (!is_network_allocated(network))
 		return FALSE;
@@ -383,7 +383,7 @@ bool deallocate_neuron_dynamics(Network *network)
 	return TRUE;	
 }
 
-bool deallocate_spike_patterns(Network *network)
+bool deallocate_spike_pattern_generator_spike_patterns(Network *network)
 {
 	int i;
 
