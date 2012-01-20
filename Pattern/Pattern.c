@@ -35,7 +35,7 @@ bool allocate_patterns(Network *network, TimeStampMs min_pattern_length, TimeSta
 	if (!allocate_stimulus_currents(network))
 		return FALSE;
 		
-	if (!allocate_neuron_dynamics(network))	
+	if (!allocate_spike_pattern_generator_neuron_dynamics(network))	
 		return FALSE;
 		
 	if (!allocate_spike_pattern_generator_spike_patterns(network))		
@@ -55,7 +55,7 @@ bool deallocate_patterns(Network *network)
 	if (!deallocate_stimulus_currents(network))
 		return FALSE;
 		
-	if (!deallocate_neuron_dynamics(network))	
+	if (!deallocate_spike_pattern_generator_neuron_dynamics(network))	
 		return FALSE;
 		
 	if (!deallocate_spike_pattern_generator_spike_patterns(network))		
@@ -178,7 +178,7 @@ bool allocate_stimulus_currents(Network *network)
 	return TRUE;
 }
 
-bool allocate_neuron_dynamics(Network *network)
+bool allocate_spike_pattern_generator_neuron_dynamics(Network *network)
 {
 	int i, j, k,m;
 	Layer		*ptr_layer;
@@ -317,7 +317,7 @@ bool deallocate_stimulus_currents(Network *network)
 	return TRUE;
 }
 
-bool deallocate_neuron_dynamics(Network *network)
+bool deallocate_spike_pattern_generator_neuron_dynamics(Network *network)
 {
 	int i, j, k,m;
 	Layer		*ptr_layer;

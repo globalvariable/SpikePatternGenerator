@@ -747,7 +747,7 @@ int read_main_meta_file(Network *network, char * main_dir_path)
 	if (!allocate_stimulus_currents(network))
 		return FALSE;
 		
-	if (!allocate_neuron_dynamics(network))	
+	if (!allocate_spike_pattern_generator_neuron_dynamics(network))	
 		return FALSE;
 		
 	if (!allocate_spike_pattern_generator_spike_patterns(network))		
