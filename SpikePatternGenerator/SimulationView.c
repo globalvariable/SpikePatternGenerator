@@ -695,7 +695,6 @@ void add_neurons_to_layer_button_func()
 {
 	int num_of_neuron;
 	int layer; 
-	double v;
 	double a;
 	double b;
 	double c;
@@ -705,7 +704,6 @@ void add_neurons_to_layer_button_func()
 	double v_resting;
 	double v_threshold;
 	double v_peak;
-	double I_inject;
 	bool inhibitory;
 	double E_excitatory;
 	double E_inhibitory;
@@ -715,7 +713,6 @@ void add_neurons_to_layer_button_func()
 
  	num_of_neuron = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_num_of_neuron_for_group)));
 	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_add_neurons_to_layer))); 
-	v = atof(gtk_entry_get_text(GTK_ENTRY(entry_v)));
 	a = atof(gtk_entry_get_text(GTK_ENTRY(entry_a)));
 	b = atof(gtk_entry_get_text(GTK_ENTRY(entry_b)));
 	c = atof(gtk_entry_get_text(GTK_ENTRY(entry_c)));
@@ -725,7 +722,6 @@ void add_neurons_to_layer_button_func()
 	v_resting = atof(gtk_entry_get_text(GTK_ENTRY(entry_v_resting)));
 	v_threshold = atof(gtk_entry_get_text(GTK_ENTRY(entry_v_threshold)));
 	v_peak = atof(gtk_entry_get_text(GTK_ENTRY(entry_v_peak)));
-	I_inject = 0;		// injection is done by stimulus
 	inhibitory = (bool)atof(gtk_entry_get_text(GTK_ENTRY(entry_inhibitory)));
 	E_excitatory = atof(gtk_entry_get_text(GTK_ENTRY(entry_E_excitatory)));
 	E_inhibitory = atof(gtk_entry_get_text(GTK_ENTRY(entry_E_inhibitory)));
@@ -733,7 +729,7 @@ void add_neurons_to_layer_button_func()
 	tau_inhibitory = atof(gtk_entry_get_text(GTK_ENTRY(entry_tau_inhibitory)));
 	randomize_params = 0;
 							
-	if (add_neurons_to_layer(spike_pattern_generator_get_network(), num_of_neuron, layer, v, a, b, c, d, k, C, v_resting, v_threshold, v_peak, I_inject, inhibitory, E_excitatory, E_inhibitory, tau_excitatory, tau_inhibitory, randomize_params))
+	if (add_neurons_to_layer(spike_pattern_generator_get_network(), num_of_neuron, layer, a, b, c, d, k, C, v_resting, v_threshold, v_peak, inhibitory, E_excitatory, E_inhibitory, tau_excitatory, tau_inhibitory, randomize_params))
 	{
 		gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, TRUE);	
 	}

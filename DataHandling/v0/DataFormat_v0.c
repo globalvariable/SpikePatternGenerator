@@ -723,7 +723,7 @@ int read_main_meta_file(Network *network, char * main_dir_path)
 			if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n"
 			if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 			num_of_neurons_in_neuron_group = (int)atof(word);
-			if (!add_neurons_to_layer(spike_pattern_generator_get_network(), num_of_neurons_in_neuron_group, i, 0, 0, 0, 0, 0, 100.0, 0, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 0))	// create neurons and neuron groups with no parameter.
+			if (!add_neurons_to_layer(spike_pattern_generator_get_network(), num_of_neurons_in_neuron_group, i, 0, 0, 0, 0, 0, 100.0, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 0))	// create neurons and neuron groups with no parameter.
 				return 0;
 		}			
 	}

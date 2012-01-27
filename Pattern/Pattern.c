@@ -24,7 +24,8 @@ bool allocate_patterns(Network *network, TimeStampMs min_pattern_length, TimeSta
 	all_stimulus_patterns_info.pattern_lengths_ms = g_new0(TimeStampMs, num_of_patterns);
 	for (i = 0; i<num_of_patterns; i++)
 	{
-		all_stimulus_patterns_info.pattern_lengths_ms[i] = (TimeStampMs)((max_pattern_length - min_pattern_length)*(rand()/(double)RAND_MAX)) + min_pattern_length;
+		all_stimulus_patterns_info.pattern_starts_ms[i] = (TimeStampMs)((max_pattern_length - min_pattern_length)*(rand()/(double)RAND_MAX)) + min_pattern_length;
+		all_stimulus_patterns_info.pattern_lengths_ms[i] = (TimeStampMs)((max_pattern_length - min_pattern_length)*(rand()/(double)RAND_MAX)) + min_pattern_length;		
 	}
 	all_stimulus_patterns_info.max_pattern_length = max_pattern_length;
 	all_stimulus_patterns_info.min_pattern_length = min_pattern_length;	

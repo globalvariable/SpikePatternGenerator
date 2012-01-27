@@ -19,9 +19,10 @@
 
 struct StimulusPatternsInfo
 {
-	TimeStampMs	*pattern_lengths_ms;
-	TimeStampMs	max_pattern_length;
-	TimeStampMs	min_pattern_length;
+	TimeStamp	*pattern_starts_ms;
+	TimeStamp	*pattern_lengths_ms;
+	TimeStamp	max_pattern_length;                BURADA SPIKE PATTERN GENERATION U NS RESOLUTION LA YAP: BASLANGIC FILAN NS RESOLUTIONDA OLSUN. CURRENT REFRESHMENT I MS BAZLKI YAPABILIRISN YINE DE
+	TimeStamp	min_pattern_length;
 	int			num_of_patterns;	
 } all_stimulus_patterns_info;
 
