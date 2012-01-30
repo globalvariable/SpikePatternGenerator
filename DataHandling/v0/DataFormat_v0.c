@@ -91,19 +91,19 @@ static int create_main_meta_file(Network *network, char * main_dir_path)
 			fprintf(fp,"NUM_OF_NEURONS_IN_LAYER_%d_NEURON_GROUP_%d\t%d\n", i, j, ptr_neuron_group->neuron_count);		
 		}			
 	}
-	fprintf(fp,"MAX_PATTERN_LENGTH\t%d\n", all_stimulus_patterns_info.max_pattern_length);
-	fprintf(fp,"MIN_PATTERN_LENGTH\t%d\n", all_stimulus_patterns_info.min_pattern_length);	
+	fprintf(fp,"MAX_PATTERN_LENGTH\t%llu\n", all_stimulus_patterns_info.max_pattern_length);
+	fprintf(fp,"MIN_PATTERN_LENGTH\t%llu\n", all_stimulus_patterns_info.min_pattern_length);	
 	fprintf(fp,"NUM_OF_PATTERNS\t%d\n", all_stimulus_patterns_info.num_of_patterns);	
 	for (i = 0; i< all_stimulus_patterns_info.num_of_patterns; i++)
 	{
-		fprintf(fp,"PATTERN_%d_LENGTH_MS\t%d\n", i, all_stimulus_patterns_info.pattern_lengths_ms[i]);			
+		fprintf(fp,"PATTERN_%d_LENGTH\t%llu\n", i, all_stimulus_patterns_info.pattern_lengths[i]);			
 	}
 	for (i = 0; i< all_stimulus_patterns_info.num_of_patterns; i++)
 	{
 		fprintf(fp,"PATTERN_%d_NUM_OF_SPIKES\t%d\n", i, all_spike_patterns.num_of_time_stamps_in_pattern[i]);			
 	}		
-	fprintf(fp,"INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS\t%d\n", INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS);
-	fprintf(fp,"MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS\t%d\n",  MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS);
+	fprintf(fp,"INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS\t%llu\n", INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL);
+	fprintf(fp,"MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS\t%llu\n",  MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL);
 	fprintf(fp,"PARKER_SOCHACKI_ERROR_TOLERANCE\t%.16E\n", get_maximum_parker_sochacki_error_tolerance() );
 	fprintf(fp,"PARKER_SOCHACKI_MAX_ORDER\t%d\n", get_maximum_parker_sochacki_order());	
 	fprintf(fp,"----------SpikePatternGenerator - End of Main Meta File----------\n");
@@ -343,7 +343,7 @@ static int save_injected_current_noise_params(Network *network, char *main_dir_p
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
 			for (k=0; k<ptr_neuron_group ->neuron_count; k++)
 			{			
-				fprintf(fp,"%u\n", all_stimulus_currents.noise_addition_ms_intervals[i][j][k]);
+				fprintf(fp,"%llu\n", all_stimulus_currents.noise_addition_intervals[i][j][k]);
 			}	
 		}			
 	}
@@ -497,7 +497,7 @@ static int save_meta_data(Network *network, char *data_directory_path, int patte
 	time ( &rawtime );
 	timeinfo = localtime (&rawtime);
 	fprintf(fp,"CREATION_DATE\t%s", asctime (timeinfo)); 	
-	fprintf(fp,"PATTERN_LENGTH_MS\t%d\n", all_stimulus_patterns_info.pattern_lengths_ms[pattern_num]);	
+	fprintf(fp,"PATTERN_LENGTH\t%llu\n", all_stimulus_patterns_info.pattern_lengths[pattern_num]);	
 	fprintf(fp,"NUM_OF_SPIKES_IN_PATTERN\t%d\n", all_spike_patterns.num_of_time_stamps_in_pattern[pattern_num]);		
 	fprintf(fp,"INITIAL_NEURON_MEMBRANE_VOLTAGES\n"); 	
 	for (i=0; i<network->layer_count; i++)
@@ -545,7 +545,7 @@ static int save_raw_stimulus_current(Network *network, char *data_directory_path
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
 			for (n=0; n<ptr_neuron_group->neuron_count; n++)
 			{
-				for (j = 0; j < all_stimulus_patterns_info.pattern_lengths_ms[pattern_num]; j++)
+				for (j = 0; j < all_stimulus_patterns_info.pattern_lengths[pattern_num]; j++)
 				{				
 					fprintf(fp, "%.16E\n", all_stimulus_currents.raw_stimulus_currents[pattern_num][k][m][n][j]);						
 				}
@@ -584,7 +584,7 @@ static int save_noisy_stimulus_current(Network *network, char *data_directory_pa
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
 			for (n=0; n<ptr_neuron_group->neuron_count; n++)
 			{
-				for (j = 0; j < all_stimulus_patterns_info.pattern_lengths_ms[pattern_num]; j++)
+				for (j = 0; j < all_stimulus_patterns_info.pattern_lengths[pattern_num]; j++)
 				{
 					fprintf(fp, "%.16E\n", all_stimulus_currents.noisy_stimulus_currents[pattern_num][k][m][n][j]);						
 				}
@@ -688,7 +688,8 @@ int read_main_meta_file(Network *network, char * main_dir_path)
 {
 	char  temp_path[600];
 	char line[1000];
-	char word[100];	
+	char word[100];
+	char *end_ptr;	
 	FILE *fp;
 	int i,j;
 	int line_cntr = 0;
@@ -729,19 +730,19 @@ int read_main_meta_file(Network *network, char * main_dir_path)
 	}
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"MAX_PATTERN_LENGTH\t%d\n"
 	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
-	all_stimulus_patterns_info.max_pattern_length = (TimeStampMs)atof(word);
+	all_stimulus_patterns_info.max_pattern_length = (TimeStamp)strtoull(word, &end_ptr, 10);	// tested with llu max: 18446744073709551615
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"MIN_PATTERN_LENGTH\t%d\n"
 	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
-	all_stimulus_patterns_info.min_pattern_length = (TimeStampMs)atof(word);
+	all_stimulus_patterns_info.min_pattern_length = (TimeStamp)strtoull(word, &end_ptr, 10);	// tested with llu max: 18446744073709551615
 	if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	"NUM_OF_PATTERNS\t%d\n"
 	if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
 	all_stimulus_patterns_info.num_of_patterns = atoi(word);
-	all_stimulus_patterns_info.pattern_lengths_ms = g_new0(TimeStampMs, all_stimulus_patterns_info.num_of_patterns);
+	all_stimulus_patterns_info.pattern_lengths = g_new0(TimeStamp, all_stimulus_patterns_info.num_of_patterns);
 	for (i = 0 ; i < all_stimulus_patterns_info.num_of_patterns; i++)
 	{
 		if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}   //	
 		if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
-		all_stimulus_patterns_info.pattern_lengths_ms[i] = (TimeStampMs)atof(word);		
+		all_stimulus_patterns_info.pattern_lengths[i] = (TimeStamp)strtoull(word, &end_ptr, 10);	// tested with llu max: 18446744073709551615
 	}
 
 	if (!allocate_stimulus_currents(network))
@@ -988,7 +989,8 @@ static int read_injected_current_noise_params(Network *network, char *main_dir_p
 	int i, j, k;
 	Layer		*ptr_layer;
 	NeuronGroup	*ptr_neuron_group;
-	char  line[1000];	
+	char  line[1000];
+	char *end_ptr;	
 	int line_cntr = 0;
 	
        	printf("Reading InjectedCurrentNoiseParams file...\n");					
@@ -1027,7 +1029,7 @@ static int read_injected_current_noise_params(Network *network, char *main_dir_p
 			for (k=0; k<ptr_neuron_group ->neuron_count; k++)
 			{	
 				if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}					
-				all_stimulus_currents.noise_addition_ms_intervals[i][j][k] = (TimeStampMs)atof(line);
+				all_stimulus_currents.noise_addition_intervals[i][j][k] = (TimeStamp)strtoull(line, &end_ptr, 10);	// tested with llu max: 18446744073709551615
 			}	
 		}			
 	}
@@ -1268,7 +1270,7 @@ static int read_raw_stimulus_current(Network *network, char *data_directory_path
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
 			for (n=0; n<ptr_neuron_group->neuron_count; n++)
 			{
-				for (j = 0; j < all_stimulus_patterns_info.pattern_lengths_ms[pattern_num]; j++)
+				for (j = 0; j < all_stimulus_patterns_info.pattern_lengths[pattern_num]; j++)
 				{		
 					if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  						
 					all_stimulus_currents.raw_stimulus_currents[pattern_num][k][m][n][j] = atof(line);						
@@ -1322,7 +1324,7 @@ static int read_noisy_stimulus_current(Network *network, char *data_directory_pa
 			ptr_neuron_group = ptr_layer->neuron_groups[m];
 			for (n=0; n<ptr_neuron_group->neuron_count; n++)
 			{
-				for (j = 0; j < all_stimulus_patterns_info.pattern_lengths_ms[pattern_num]; j++)
+				for (j = 0; j < all_stimulus_patterns_info.pattern_lengths[pattern_num]; j++)
 				{
 					if (fgets(line, sizeof line, fp ) == NULL)   {  printf("ERROR: Couldn' t read %d th line of %s\n", line_cntr, temp_path);  fclose(fp); return 0; } else {line_cntr++;}  				
 					all_stimulus_currents.noisy_stimulus_currents[pattern_num][k][m][n][j] = atof(line);				
@@ -1670,19 +1672,20 @@ int spike_pattern_generator_data_get_pattern_length_v0(int num, ...)
 	char *path_chooser;
 	int pattern_num;
 	int num_of_patterns;	
-	TimeStampMs *pattern_length;	
+	TimeStamp *pattern_length;	
 	FILE *fp;	
 	DIR	*dir_main_folder;
 	char main_dir_path[600];
 	char temp_path[600];
 	char  line[1000];
 	int line_cntr = 0;
-	char word[100];					
+	char word[100];	
+	char *end_ptr;				
   	va_list arguments;
 	va_start ( arguments, num );   
     	path_chooser = va_arg ( arguments, char *);
     	pattern_num = va_arg ( arguments, int);   
-       	pattern_length = va_arg ( arguments, TimeStampMs *);    	    		
+       	pattern_length = va_arg ( arguments, TimeStamp *);    	    		
 	va_end ( arguments );
 	
 	strcpy(main_dir_path, path_chooser);						// SpikePatternGeneratorData should be selected to save 
@@ -1732,7 +1735,7 @@ int spike_pattern_generator_data_get_pattern_length_v0(int num, ...)
 		if (i == pattern_num)
 		{
 			if(!get_word_in_line('\t', 1, word, line, TRUE)) { fclose(fp); return 0; }
-			*pattern_length = (TimeStampMs)atof(word);
+			*pattern_length = (TimeStamp)strtoull(word, &end_ptr, 10);	// tested with llu max: 18446744073709551615
 			fclose(fp);
 			return 1;
 		}		

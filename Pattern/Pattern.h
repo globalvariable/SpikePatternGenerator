@@ -11,17 +11,17 @@
 #include <gtkdatabox_lines.h>
 #include <gtkdatabox_grid.h>
 
-#define INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS 			1
-#define MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS 			INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL_MS
+#define INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL 			1000000ULL
+#define MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL 			INJECTED_CURRENT_PATTERN_SAMPLING_INTERVAL
 
 #define MAX_CURRENT_VALUE 				500
 #define MIN_CURRENT_VALUE					-100
 
 struct StimulusPatternsInfo
 {
-	TimeStamp	*pattern_starts_ms;
-	TimeStamp	*pattern_lengths_ms;
-	TimeStamp	max_pattern_length;                BURADA SPIKE PATTERN GENERATION U NS RESOLUTION LA YAP: BASLANGIC FILAN NS RESOLUTIONDA OLSUN. CURRENT REFRESHMENT I MS BAZLKI YAPABILIRISN YINE DE
+	TimeStamp	*pattern_start_times;
+	TimeStamp	*pattern_lengths;
+	TimeStamp	max_pattern_length;               
 	TimeStamp	min_pattern_length;
 	int			num_of_patterns;	
 } all_stimulus_patterns_info;
@@ -32,7 +32,7 @@ struct StimulusCurrents
 	double 		*****raw_stimulus_currents;   /// num_of_patterns * num_of_layers * num_of_neuron_groups * num_of_neurons * pattern_lengths
 	double 		*****noisy_stimulus_currents;   /// num_of_patterns * num_of_layers * num_of_neuron_groups *num_of_neurons * pattern_lengths
 	double 		***noise_variances;   ///num_of_layers * num_of_neuron_groups *num_of_neurons
-	TimeStampMs	***noise_addition_ms_intervals;   ///num_of_layers * num_of_neuron_groups *num_of_neurons	
+	TimeStamp	***noise_addition_intervals;   ///num_of_layers * num_of_neuron_groups *num_of_neurons	
 } all_stimulus_currents;
 
 struct NeuronDynamics
@@ -51,7 +51,7 @@ struct SpikePatternTimeStamps
 	int					*num_of_time_stamps_in_pattern;		// num_of_pattern 
 } all_spike_patterns;
 
-bool allocate_patterns(Network *network, TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns);
+bool allocate_patterns(Network *network, TimeStamp min_pattern_length, TimeStamp max_pattern_length, int num_of_patterns);
 bool allocate_stimulus_currents(Network *network);
 bool allocate_spike_pattern_generator_neuron_dynamics(Network *network);
 bool allocate_spike_pattern_generator_spike_patterns(Network *network);

@@ -30,5 +30,5 @@ GdkColor color_neuron_dynamics_grid;
 // Functions
 
 void initialize_graphs(GtkWidget * table);
-void allocate_graphs(TimeStampMs arg_max_patt_len);
+void allocate_graphs(TimeStamp arg_max_patt_len);
 #endif

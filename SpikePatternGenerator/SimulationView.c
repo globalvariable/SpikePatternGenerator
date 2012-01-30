@@ -755,9 +755,10 @@ void interrogate_neuron_button_func(void)
 void allocate_patterns_button_func(void)
 {
 	int patterns;
-	int min_len, max_len;
-	min_len = (TimeStampMs)atof(gtk_entry_get_text(GTK_ENTRY(entry_min_length_of_pattern)));
-	max_len = (TimeStampMs)atof(gtk_entry_get_text(GTK_ENTRY(entry_max_length_of_pattern)));
+	TimeStamp min_len, max_len;
+	char *end_ptr;
+	min_len = (TimeStamp)strtoull(gtk_entry_get_text(GTK_ENTRY(entry_min_length_of_pattern)), &end_ptr, 10);
+	max_len = (TimeStamp)strtoull(gtk_entry_get_text(GTK_ENTRY(entry_max_length_of_pattern)), &end_ptr, 10);
 
 	patterns = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_num_of_patterns)));	
 
@@ -804,7 +805,7 @@ void draw_stimuli_button_func(void)
 	{
 		if (end_time >= all_stimulus_patterns_info.max_pattern_length )
 		{
-			printf("WARNING: End time entered is larger than maximum stimuli length %d\n", all_stimulus_patterns_info.max_pattern_length);
+			printf("WARNING: End time entered is larger than maximum stimuli length %llu\n", all_stimulus_patterns_info.max_pattern_length);
 			end_time = all_stimulus_patterns_info.max_pattern_length-1;
 		}
 		if (combo_idx == LINE)
@@ -866,7 +867,7 @@ void clear_stimuli_button_func(void)
 	{
 		if (end_time >= all_stimulus_patterns_info.max_pattern_length )
 		{
-			printf("WARNING: End time entered is larger than maximum stimuli length %d\n", all_stimulus_patterns_info.max_pattern_length);
+			printf("WARNING: End time entered is larger than maximum stimuli length %llu\n", all_stimulus_patterns_info.max_pattern_length);
 			end_time = all_stimulus_patterns_info.max_pattern_length-1;
 		}
 		for (i=start_time; i<end_time; i++)
@@ -900,11 +901,11 @@ void add_noise_button_func(void)
 	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 	
 	all_stimulus_currents.noise_variances[layer][group][neuron_num] = atof(gtk_entry_get_text(GTK_ENTRY(entry_noise_variance)));
-	all_stimulus_currents.noise_addition_ms_intervals[layer][group][neuron_num] = (TimeStampMs)atof(gtk_entry_get_text(GTK_ENTRY(entry_noise_period)));
+	all_stimulus_currents.noise_addition_intervals[layer][group][neuron_num] = (TimeStamp)atof(gtk_entry_get_text(GTK_ENTRY(entry_noise_period)));
 
-	if (all_stimulus_currents.noise_addition_ms_intervals[layer][group][neuron_num] < MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS)
+	if (all_stimulus_currents.noise_addition_intervals[layer][group][neuron_num] < MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL)
 	{
-		printf("ERROR: Noise insertion period cannot be smaller than %d ms\n", MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL_MS);
+		printf("ERROR: Noise insertion period cannot be smaller than %llu ns\n", MIN_INJECTED_CURRENT_NOISE_ADDITION_INTERVAL);
 		return;
 	}
 	
@@ -914,9 +915,9 @@ void add_noise_button_func(void)
 	
 	for (i = 0; i< all_stimulus_patterns_info.num_of_patterns; i++)
 	{
-		for (j = 0; j < all_stimulus_patterns_info.pattern_lengths_ms[i]; j++)
+		for (j = 0; j < all_stimulus_patterns_info.pattern_lengths[i]; j++)
 		{
-			if (noise_period_cntr == all_stimulus_currents.noise_addition_ms_intervals[layer][group][neuron_num])
+			if (noise_period_cntr == all_stimulus_currents.noise_addition_intervals[layer][group][neuron_num])
 			{
 				noise = randn_notrig(0, all_stimulus_currents.noise_variances[layer][group][neuron_num]);
 				noise_period_cntr = 0;		
@@ -961,7 +962,7 @@ void display_raw_stimuli_button_func(void)
 
 	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
 	{
-		for (i=0; i<all_stimulus_patterns_info.pattern_lengths_ms[pattern]; i++)
+		for (i=0; i<all_stimulus_patterns_info.pattern_lengths[pattern]; i++)
 		{
 			stimulus_graph_y_axis[i] = (float)all_stimulus_currents.raw_stimulus_currents[pattern][layer][group][neuron_num][i];
 		}
@@ -980,7 +981,7 @@ void display_noisy_stimuli_button_func(void)
 
 	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
 	{
-		for (i=0; i<all_stimulus_patterns_info.pattern_lengths_ms[pattern]; i++)
+		for (i=0; i<all_stimulus_patterns_info.pattern_lengths[pattern]; i++)
 		{
 			stimulus_graph_y_axis[i] = (float)all_stimulus_currents.noisy_stimulus_currents[pattern][layer][group][neuron_num][i];
 		}
@@ -996,7 +997,7 @@ void copy_drawn_to_raw_stimuli_button_func(void)
 		
 	for (i = 0; i< all_stimulus_patterns_info.num_of_patterns; i++)
 	{
-		for (j = 0; j < all_stimulus_patterns_info.pattern_lengths_ms[i]; j++)
+		for (j = 0; j < all_stimulus_patterns_info.pattern_lengths[i]; j++)
 		{
 			for (k=0; k<spike_pattern_generator_get_network()->layer_count; k++)
 			{
@@ -1062,7 +1063,6 @@ void simulate_button_func(void)
 	
 	TimeStamp start_time_ns, end_time_ns, time_ns;
 	ParkerSochackiStepSize step_size = 250000;
-	TimeStampMs time_ms_idx;
 	TimeStamp  spike_time;
 
 	clear_spike_pattern_time_stamps();
@@ -1070,10 +1070,9 @@ void simulate_button_func(void)
 	for (i = 0; i< all_stimulus_patterns_info.num_of_patterns; i++)
 	{
 		start_time_ns = 0;
-		end_time_ns = all_stimulus_patterns_info.pattern_lengths_ms[i] * 1000000;
+		end_time_ns = all_stimulus_patterns_info.pattern_lengths[i];
 		for (time_ns = start_time_ns; time_ns < end_time_ns; time_ns+=step_size)
 		{	
-			time_ms_idx = (TimeStampMs)(time_ns/1000000); // milliseconds scale
 			for (k=0; k<spike_pattern_generator_get_network()->layer_count; k++)
 			{
 				ptr_layer = spike_pattern_generator_get_network()->layers[k];			
@@ -1088,7 +1087,7 @@ void simulate_button_func(void)
 							ptr_neuron->v = neuron_dynamics.initial_v[i][k][m][n]; 
 							ptr_neuron->u = neuron_dynamics.initial_u[i][k][m][n];
 						} 
-						ptr_neuron -> I_inject = all_stimulus_currents.noisy_stimulus_currents[i][k][m][n][time_ms_idx];
+						ptr_neuron -> I_inject = all_stimulus_currents.noisy_stimulus_currents[i][k][m][n][time_ns/1000000];
 						spike_time = evaluate_neuron_dyn(ptr_neuron, time_ns, time_ns+step_size);
 						if (spike_time != MAX_TIME_STAMP)
 						{
@@ -1096,8 +1095,8 @@ void simulate_button_func(void)
 							if (!add_time_stamp_to_spike_pattern_time_stamps(i , k, m, n, spike_time))
 								return;
 						}
-						neuron_dynamics.v[i][k][m][n][time_ms_idx] = ptr_neuron->v;	
-						neuron_dynamics.u[i][k][m][n][time_ms_idx] = ptr_neuron->u;								
+						neuron_dynamics.v[i][k][m][n][time_ns/1000000] = ptr_neuron->v;	
+						neuron_dynamics.u[i][k][m][n][time_ns/1000000] = ptr_neuron->u;								
 					}
 				}
 			}
@@ -1124,7 +1123,7 @@ void display_neuron_dynamics(void)
 	active_neuron_dyn_to_disp = gtk_combo_box_get_active (GTK_COMBO_BOX(combo_dynamics_type));
 	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
 	{
-		for (i=0; i<all_stimulus_patterns_info.pattern_lengths_ms[pattern]; i++)
+		for (i=0; i<all_stimulus_patterns_info.pattern_lengths[pattern]; i++)
 		{
 			if (active_neuron_dyn_to_disp == 0)	// display v 
 			{
@@ -1328,8 +1327,9 @@ void set_neuron_param_entries(int neuron_type)
 
 void create_firing_rate_view_button_func(void)
 {
-	TimeStampMs bin_size = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_bin_size_ms)));
-	if (!create_firing_rate_view_gui(bin_size*1000000, all_stimulus_patterns_info.num_of_patterns, all_stimulus_patterns_info.min_pattern_length*1000000))
+	char *end_ptr;
+	TimeStamp bin_size = (TimeStamp)(1000000*strtoull(gtk_entry_get_text(GTK_ENTRY(entry_bin_size_ms)), &end_ptr, 10));
+	if (!create_firing_rate_view_gui(bin_size, all_stimulus_patterns_info.num_of_patterns, all_stimulus_patterns_info.min_pattern_length))
 	return;
 
 }

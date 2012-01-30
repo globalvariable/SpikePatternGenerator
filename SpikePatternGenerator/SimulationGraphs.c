@@ -35,7 +35,7 @@ void initialize_graphs(GtkWidget * table)
 
 }
 
-void allocate_graphs(TimeStampMs arg_max_patt_len)
+void allocate_graphs(TimeStamp arg_max_patt_len)
 {
 	int i;
 	stimulus_graph_y_axis = g_new0(float, arg_max_patt_len);    

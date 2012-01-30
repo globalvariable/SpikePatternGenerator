@@ -1,6 +1,6 @@
 #include "Pattern.h"
 
-bool allocate_patterns(Network *network, TimeStampMs min_pattern_length, TimeStampMs max_pattern_length, int num_of_patterns)
+bool allocate_patterns(Network *network, TimeStamp min_pattern_length, TimeStamp max_pattern_length, int num_of_patterns)
 {
 	int i;
 
@@ -21,11 +21,11 @@ bool allocate_patterns(Network *network, TimeStampMs min_pattern_length, TimeSta
 	if (!is_network_allocated(network))
 		return FALSE;
 
-	all_stimulus_patterns_info.pattern_lengths_ms = g_new0(TimeStampMs, num_of_patterns);
+	all_stimulus_patterns_info.pattern_lengths = g_new0(TimeStamp, num_of_patterns);
+	all_stimulus_patterns_info.pattern_start_times = g_new0(TimeStamp, num_of_patterns);	
 	for (i = 0; i<num_of_patterns; i++)
 	{
-		all_stimulus_patterns_info.pattern_starts_ms[i] = (TimeStampMs)((max_pattern_length - min_pattern_length)*(rand()/(double)RAND_MAX)) + min_pattern_length;
-		all_stimulus_patterns_info.pattern_lengths_ms[i] = (TimeStampMs)((max_pattern_length - min_pattern_length)*(rand()/(double)RAND_MAX)) + min_pattern_length;		
+		all_stimulus_patterns_info.pattern_lengths[i] = (TimeStamp)((max_pattern_length - min_pattern_length)*(rand()/(double)RAND_MAX)) + min_pattern_length;		
 	}
 	all_stimulus_patterns_info.max_pattern_length = max_pattern_length;
 	all_stimulus_patterns_info.min_pattern_length = min_pattern_length;	
@@ -62,8 +62,8 @@ bool deallocate_patterns(Network *network)
 	if (!deallocate_spike_pattern_generator_spike_patterns(network))		
 		return FALSE;		
 		
-	g_free(all_stimulus_patterns_info.pattern_lengths_ms);
-	all_stimulus_patterns_info.pattern_lengths_ms = NULL;		
+	g_free(all_stimulus_patterns_info.pattern_lengths);
+	all_stimulus_patterns_info.pattern_lengths = NULL;		
 	all_stimulus_patterns_info.max_pattern_length = 0;
 	all_stimulus_patterns_info.min_pattern_length = 0;	
 	all_stimulus_patterns_info.num_of_patterns = 0;		
@@ -131,19 +131,19 @@ bool allocate_stimulus_currents(Network *network)
 	
 	all_stimulus_currents.drawn_stimulus_currents = g_new0(double***, network->layer_count);
 	all_stimulus_currents.noise_variances = g_new0(double**, network->layer_count);	
-	all_stimulus_currents.noise_addition_ms_intervals = g_new0(TimeStampMs**, network->layer_count);			
+	all_stimulus_currents.noise_addition_intervals = g_new0(TimeStamp**, network->layer_count);			
 	for (i=0; i<network->layer_count; i++)
 	{
 		ptr_layer = network->layers[i];			
 		all_stimulus_currents.drawn_stimulus_currents[i] = g_new0(double**, ptr_layer->neuron_group_count);
 		all_stimulus_currents.noise_variances[i] = g_new0(double*,  ptr_layer->neuron_group_count);	
-		all_stimulus_currents.noise_addition_ms_intervals[i] = g_new0(TimeStampMs*,  ptr_layer->neuron_group_count);				
+		all_stimulus_currents.noise_addition_intervals[i] = g_new0(TimeStamp*,  ptr_layer->neuron_group_count);				
 		for (j=0; j<ptr_layer->neuron_group_count; j++)
 		{
 			ptr_neuron_group = ptr_layer->neuron_groups[j];
 			all_stimulus_currents.drawn_stimulus_currents[i][j] = g_new0(double*, ptr_neuron_group->neuron_count);
 			all_stimulus_currents.noise_variances[i][j] = g_new0(double, ptr_neuron_group->neuron_count);		
-			all_stimulus_currents.noise_addition_ms_intervals[i][j] = g_new0(TimeStampMs, ptr_neuron_group->neuron_count);		
+			all_stimulus_currents.noise_addition_intervals[i][j] = g_new0(TimeStamp, ptr_neuron_group->neuron_count);		
 			for (k=0; k<ptr_neuron_group->neuron_count; k++)
 			{
 				all_stimulus_currents.drawn_stimulus_currents[i][j][k] = g_new0(double, all_stimulus_patterns_info.max_pattern_length);
@@ -169,8 +169,8 @@ bool allocate_stimulus_currents(Network *network)
 				all_stimulus_currents.noisy_stimulus_currents[i][j][k] = g_new0(double*, ptr_neuron_group->neuron_count);	
 				for (m=0; m<ptr_neuron_group->neuron_count; m++)
 				{
-					all_stimulus_currents.raw_stimulus_currents[i][j][k][m] = g_new0(double, all_stimulus_patterns_info.pattern_lengths_ms[i]);
-					all_stimulus_currents.noisy_stimulus_currents[i][j][k][m] = g_new0(double, all_stimulus_patterns_info.pattern_lengths_ms[i]);
+					all_stimulus_currents.raw_stimulus_currents[i][j][k][m] = g_new0(double, all_stimulus_patterns_info.pattern_lengths[i]);
+					all_stimulus_currents.noisy_stimulus_currents[i][j][k][m] = g_new0(double, all_stimulus_patterns_info.pattern_lengths[i]);
 				}
 			}
 		}
@@ -214,8 +214,8 @@ bool allocate_spike_pattern_generator_neuron_dynamics(Network *network)
 				neuron_dynamics.initial_u[i][j][k] = g_new0(double, ptr_neuron_group->neuron_count);				
 				for (m=0; m<ptr_neuron_group->neuron_count; m++)
 				{
-					neuron_dynamics.v[i][j][k][m] = g_new0(double, all_stimulus_patterns_info.pattern_lengths_ms[i]);		
-					neuron_dynamics.u[i][j][k][m] = g_new0(double, all_stimulus_patterns_info.pattern_lengths_ms[i]);		
+					neuron_dynamics.v[i][j][k][m] = g_new0(double, all_stimulus_patterns_info.pattern_lengths[i]);		
+					neuron_dynamics.u[i][j][k][m] = g_new0(double, all_stimulus_patterns_info.pattern_lengths[i]);		
 				}
 			}
 		}
@@ -272,18 +272,18 @@ bool deallocate_stimulus_currents(Network *network)
 			}
 			g_free(all_stimulus_currents.drawn_stimulus_currents[i][j]);
 			g_free(all_stimulus_currents.noise_variances[i][j]);
-			g_free(all_stimulus_currents.noise_addition_ms_intervals[i][j]);	
+			g_free(all_stimulus_currents.noise_addition_intervals[i][j]);	
 		}
 		g_free(all_stimulus_currents.drawn_stimulus_currents[i]);
 		g_free(all_stimulus_currents.noise_variances[i]);
-		g_free(all_stimulus_currents.noise_addition_ms_intervals[i]);			
+		g_free(all_stimulus_currents.noise_addition_intervals[i]);			
 	}
 	g_free(all_stimulus_currents.drawn_stimulus_currents);
 	g_free(all_stimulus_currents.noise_variances);
-	g_free(all_stimulus_currents.noise_addition_ms_intervals);		
+	g_free(all_stimulus_currents.noise_addition_intervals);		
 	all_stimulus_currents.drawn_stimulus_currents = NULL;
 	all_stimulus_currents.noise_variances = NULL;
-	all_stimulus_currents.noise_addition_ms_intervals = NULL;		
+	all_stimulus_currents.noise_addition_intervals = NULL;		
 
 	for (i=0; i<all_stimulus_patterns_info.num_of_patterns; i++)
 	{
