@@ -29,18 +29,15 @@ static GtkWidget *entry_bin_size_ms;
 static GtkWidget *entry_parker_sochacki_err_tol;
 static GtkWidget *entry_parker_sochacki_max_order;
 static GtkWidget *btn_submit_parker_sochacki_params;
-static GtkWidget *entry_num_of_patterns;
-static GtkWidget *entry_min_length_of_pattern;
-static GtkWidget *entry_max_length_of_pattern;
-static GtkWidget *btn_allocate_patterns;
 
+static GtkWidget *entry_trial_type;
+static GtkWidget *entry_min_trial_length;
+static GtkWidget *entry_max_trial_length;
+static GtkWidget *btn_add_trial_type;
 
-// SECOND COLUMN
-// First Row
-static GtkWidget *entry_layer_num;
-static GtkWidget *entry_neuron_group_num;
-static GtkWidget *entry_neuron_num;
-static GtkWidget *entry_pattern_num;
+static LayerNrnGrpNeuronCombo *combos_select_neuron;
+static TrialTypesCombo *combo_trial_type;
+
 static GtkWidget *btn_interrogate_network;
 static GtkWidget *btn_interrogate_neuron;
 static GtkWidget *btn_display_drawn_stimuli;
@@ -75,6 +72,10 @@ static GtkWidget *btn_load;
 
 // THIRD COLUMN
 ///   at graphs.h
+
+
+static void add_trial_type_button_func(void);
+static void combos_select_neuron_func(GtkWidget *changed_combo);
 
 bool create_simulation_view_gui(void)
 {
@@ -336,72 +337,58 @@ bool create_simulation_view_gui(void)
   	hbox = gtk_hbox_new(TRUE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	lbl = gtk_label_new("Num of Patterns:");
+	lbl = gtk_label_new("Trial Type:");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
-        entry_num_of_patterns = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX(hbox),entry_num_of_patterns, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_num_of_patterns), "100");
-	gtk_widget_set_size_request(entry_num_of_patterns, 50, 25) ;
+        entry_trial_type = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(hbox),entry_trial_type, FALSE,FALSE,0);
+	gtk_entry_set_text(GTK_ENTRY(entry_trial_type), "0");
+	gtk_widget_set_size_request(entry_trial_type, 50, 25) ;
 
   	hbox = gtk_hbox_new(TRUE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	lbl = gtk_label_new("Min Patt Len(ms):");
+	lbl = gtk_label_new("Min Trial Len(ms):");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
-        entry_min_length_of_pattern = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX(hbox),entry_min_length_of_pattern, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_min_length_of_pattern), "500");
-	gtk_widget_set_size_request(entry_min_length_of_pattern, 50, 25) ;
+        entry_min_trial_length = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(hbox),entry_min_trial_length, FALSE,FALSE,0);
+	gtk_entry_set_text(GTK_ENTRY(entry_min_trial_length), "500");
+	gtk_widget_set_size_request(entry_min_trial_length, 50, 25) ;
 
   	hbox = gtk_hbox_new(TRUE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	lbl = gtk_label_new("Max Patt Len(ms):");
+	lbl = gtk_label_new("Max Trial Len(ms):");
         gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
-        entry_max_length_of_pattern = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX(hbox),entry_max_length_of_pattern, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_max_length_of_pattern), "500");
-	gtk_widget_set_size_request(entry_max_length_of_pattern, 50, 25) ;
+        entry_max_trial_length = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(hbox),entry_max_trial_length, FALSE,FALSE,0);
+	gtk_entry_set_text(GTK_ENTRY(entry_max_trial_length), "500");
+	gtk_widget_set_size_request(entry_max_trial_length, 50, 25) ;
 
   	hbox = gtk_hbox_new(TRUE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	btn_allocate_patterns = gtk_button_new_with_label("Allocate Patterns");
-	gtk_box_pack_start (GTK_BOX (hbox), btn_allocate_patterns, TRUE, TRUE, 0);
+	btn_add_trial_type = gtk_button_new_with_label("Add Trial Type");
+	gtk_box_pack_start (GTK_BOX (hbox), btn_add_trial_type, TRUE, TRUE, 0);
 
         gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
 
-  	hbox = gtk_hbox_new(TRUE, 0);
+	hbox = gtk_hbox_new(TRUE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
-
-	lbl = gtk_label_new("Layer #:");
-        gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
-        entry_layer_num = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX(hbox),entry_layer_num, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_layer_num), "0");
-	gtk_widget_set_size_request(entry_layer_num, 50, 25) ;	
-	
-  	hbox = gtk_hbox_new(TRUE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
-
-	lbl = gtk_label_new("Group #:");
-        gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
-        entry_neuron_group_num = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX(hbox),entry_neuron_group_num, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_neuron_group_num), "0");
-	gtk_widget_set_size_request(entry_neuron_group_num, 50, 25) ;	
+ 
+	combos_select_neuron = allocate_layer_neuron_group_neuron_combos();
+        gtk_box_pack_start(GTK_BOX(hbox),combos_select_neuron->combo_layer , TRUE,TRUE,0);
+        gtk_box_pack_start(GTK_BOX(hbox), combos_select_neuron->combo_neuron_group, TRUE,TRUE,0);
+        gtk_box_pack_start(GTK_BOX(hbox),combos_select_neuron->combo_neuron , TRUE,TRUE,0);
 
   	hbox = gtk_hbox_new(TRUE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	lbl = gtk_label_new("Neuron #:");
-        gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
-        entry_neuron_num = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX(hbox),entry_neuron_num, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_neuron_num), "0");
-	gtk_widget_set_size_request(entry_neuron_num, 50, 25) ;	
+	combo_trial_type = allocate_trial_types_combo();
+        gtk_box_pack_start(GTK_BOX(hbox),combo_trial_type->combo, TRUE,TRUE,0);
 
- 	hbox = gtk_hbox_new(FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
+
+  	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
 	btn_interrogate_network = gtk_button_new_with_label("Interrogate Network");
@@ -420,16 +407,6 @@ bool create_simulation_view_gui(void)
 
 	btn_display_drawn_stimuli = gtk_button_new_with_label("Display Drawn Stimuli");
 	gtk_box_pack_start (GTK_BOX (hbox), btn_display_drawn_stimuli, TRUE, TRUE, 0);
-
-  	hbox = gtk_hbox_new(TRUE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
-
-	lbl = gtk_label_new("Pattern #:");
-        gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
-        entry_pattern_num = gtk_entry_new();
-        gtk_box_pack_start(GTK_BOX(hbox),entry_pattern_num, FALSE,FALSE,0);
-	gtk_entry_set_text(GTK_ENTRY(entry_pattern_num), "0");
-	gtk_widget_set_size_request(entry_pattern_num, 50, 25) ;
 
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
@@ -646,12 +623,15 @@ bool create_simulation_view_gui(void)
 	gtk_box_pack_start (GTK_BOX (hbox), btn_load, TRUE, TRUE, 0);   
 	
 	g_signal_connect(G_OBJECT(combo_neuron_type), "changed", G_CALLBACK(combo_neuron_type_func), NULL);
-     	g_signal_connect(G_OBJECT(btn_add_neurons_to_layer), "clicked", G_CALLBACK(add_neurons_to_layer_button_func), NULL);	
+     	g_signal_connect(G_OBJECT(btn_add_neurons_to_layer), "clicked", G_CALLBACK(add_neurons_to_layer_button_func), NULL);
+	g_signal_connect(G_OBJECT(combos_select_neuron->combo_layer), "changed", G_CALLBACK(combos_select_neuron_func), combos_select_neuron->combo_layer);
+	g_signal_connect(G_OBJECT(combos_select_neuron->combo_neuron_group), "changed", G_CALLBACK(combos_select_neuron_func), combos_select_neuron->combo_neuron_group);	
+	g_signal_connect(G_OBJECT(combos_select_neuron->combo_neuron), "changed", G_CALLBACK(combos_select_neuron_func), combos_select_neuron->combo_neuron);		
      	g_signal_connect(G_OBJECT(btn_create_firing_rate_view), "clicked", G_CALLBACK(create_firing_rate_view_button_func), NULL);	     		  	
     	g_signal_connect(G_OBJECT(btn_interrogate_network), "clicked", G_CALLBACK(interrogate_network_button_func), NULL);		
       	g_signal_connect(G_OBJECT(btn_interrogate_neuron), "clicked", G_CALLBACK(interrogate_neuron_button_func), NULL); 
       	g_signal_connect(G_OBJECT(btn_submit_parker_sochacki_params), "clicked", G_CALLBACK(submit_parker_sochacki_params_button_func), NULL);
-      	g_signal_connect(G_OBJECT(btn_allocate_patterns), "clicked", G_CALLBACK(allocate_patterns_button_func ), NULL);       	
+      	g_signal_connect(G_OBJECT(btn_add_trial_type), "clicked", G_CALLBACK(add_trial_type_button_func ), NULL);       	
 	g_signal_connect(G_OBJECT(btn_draw_stimuli), "clicked", G_CALLBACK(draw_stimuli_button_func), NULL);
 	g_signal_connect(G_OBJECT(btn_clear_stimuli), "clicked", G_CALLBACK(clear_stimuli_button_func), NULL);	
 	g_signal_connect(G_OBJECT(btn_copy_drawn_to_raw_stimuli), "clicked", G_CALLBACK(copy_drawn_to_raw_stimuli_button_func), NULL);
@@ -665,8 +645,8 @@ bool create_simulation_view_gui(void)
 	g_signal_connect(G_OBJECT(btn_save), "clicked", G_CALLBACK(save_button_func), NULL);		
 	g_signal_connect(G_OBJECT(btn_load), "clicked", G_CALLBACK(load_button_func), NULL);	
 	
-	gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, FALSE);	
-	gtk_widget_set_sensitive(btn_allocate_patterns, FALSE);
+/*	gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, FALSE);	
+	gtk_widget_set_sensitive(btn_add_trial_type, FALSE);
 	gtk_widget_set_sensitive(btn_display_raw_stimuli, FALSE);
 	gtk_widget_set_sensitive(btn_display_noisy_stimuli, FALSE);
 	gtk_widget_set_sensitive(btn_draw_stimuli, FALSE);
@@ -675,9 +655,9 @@ bool create_simulation_view_gui(void)
 	gtk_widget_set_sensitive(btn_submit_initial_neuron_voltage, FALSE);
 	gtk_widget_set_sensitive(btn_create_directory, FALSE);	
 	gtk_widget_set_sensitive(btn_save, FALSE);		
-
+*/
  	initialize_graphs(table);
- 	spike_pattern_generator_set_network(allocate_network(spike_pattern_generator_get_network()));   // deallocates previously allocated external network and brings a new one.
+
  		
 	return TRUE;
 
@@ -729,17 +709,18 @@ void add_neurons_to_layer_button_func()
 	tau_inhibitory = atof(gtk_entry_get_text(GTK_ENTRY(entry_tau_inhibitory)));
 	randomize_params = 0;
 							
-	if (add_neurons_to_layer(spike_pattern_generator_get_network(), num_of_neuron, layer, a, b, c, d, k, C, v_resting, v_threshold, v_peak, inhibitory, E_excitatory, E_inhibitory, tau_excitatory, tau_inhibitory, randomize_params))
-	{
-		gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, TRUE);	
-	}
+	if (!add_neurons_to_layer(spike_pattern_generator_get_network(), num_of_neuron, layer, a, b, c, d, k, C, v_resting, v_threshold, v_peak, inhibitory, E_excitatory, E_inhibitory, tau_excitatory, tau_inhibitory, randomize_params))
+		return;
+	if(!update_texts_of_combos_when_add_remove(combos_select_neuron, spike_pattern_generator_get_network()))
+		return;
+	gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, TRUE);	
 	return;
 }
 
 void submit_parker_sochacki_params_button_func(void)
 {
 	if (parker_sochacki_set_order_tolerance(spike_pattern_generator_get_network(), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_max_order))), atof(gtk_entry_get_text(GTK_ENTRY(entry_parker_sochacki_err_tol)))))
-		gtk_widget_set_sensitive(btn_allocate_patterns, TRUE);
+		gtk_widget_set_sensitive(btn_add_trial_type, TRUE);
 }
 
 void interrogate_network_button_func(void)
@@ -749,25 +730,29 @@ void interrogate_network_button_func(void)
 
 void interrogate_neuron_button_func(void)
 {
-	interrogate_neuron(spike_pattern_generator_get_network(), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num))), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num))), (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num))));
+	interrogate_neuron	(	spike_pattern_generator_get_network(), gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_layer)), gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_neuron_group)), 
+						gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_neuron)) 
+					);
 }
 
-void allocate_patterns_button_func(void)
+static void add_trial_type_button_func(void)
 {
-	int patterns;
+	TrialType trial_type;
 	TimeStamp min_len, max_len;
 	char *end_ptr;
-	min_len = (TimeStamp)strtoull(gtk_entry_get_text(GTK_ENTRY(entry_min_length_of_pattern)), &end_ptr, 10);
-	max_len = (TimeStamp)strtoull(gtk_entry_get_text(GTK_ENTRY(entry_max_length_of_pattern)), &end_ptr, 10);
+	min_len = (TimeStamp) (1000000 * strtoull(gtk_entry_get_text(GTK_ENTRY(entry_min_trial_length)), &end_ptr, 10));
+	max_len = (TimeStamp) (1000000 * strtoull(gtk_entry_get_text(GTK_ENTRY(entry_max_trial_length)), &end_ptr, 10));
 
-	patterns = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_num_of_patterns)));	
+	trial_type = strtoull(gtk_entry_get_text(GTK_ENTRY(entry_trial_type)), &end_ptr, 10);
 
-	if (allocate_patterns(spike_pattern_generator_get_network(), min_len,max_len, patterns))
+	if (add_trial_type_to_trial_stats(spike_pattern_generator_get_trial_stats(), trial_type, max_len, min_len))
 	{
-		allocate_graphs(max_len);
+		if(! update_trial_types_combo(spike_pattern_generator_get_trial_stats(), combo_trial_type))
+			return (void)print_message(ERROR_MSG ,"SpikePatternGenerator", "SimulationView", "add_trial_type_button_func", "! update_trial_types_combo");
+		gtk_widget_set_size_request(combo_trial_type->combo, 50, 29) ;			
+/*		allocate_graphs(max_len);
 		gtk_widget_set_sensitive(btn_add_neurons_to_layer, FALSE);
 		gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, FALSE);			
-		gtk_widget_set_sensitive(btn_allocate_patterns, FALSE);
 		gtk_widget_set_sensitive(btn_display_raw_stimuli, TRUE);
 		gtk_widget_set_sensitive(btn_display_noisy_stimuli, TRUE);
 		gtk_widget_set_sensitive(btn_draw_stimuli, TRUE);
@@ -776,7 +761,7 @@ void allocate_patterns_button_func(void)
 		gtk_widget_set_sensitive(btn_submit_initial_neuron_voltage, TRUE);	
 		gtk_widget_set_sensitive(btn_create_directory, TRUE);	
 		gtk_widget_set_sensitive(btn_save, TRUE);	
-	}
+*/	}
 }
 
 void draw_stimuli_button_func(void)
@@ -787,9 +772,9 @@ void draw_stimuli_button_func(void)
 	float amplifier, initial_current, freq, starting_curr_val; 
 	int i;
 
-	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
+//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
+//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
+//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 
 	amplifier= atof(gtk_entry_get_text(GTK_ENTRY(entry_amplifier)));
 	freq= atof(gtk_entry_get_text(GTK_ENTRY(entry_freq)));
@@ -856,9 +841,9 @@ void clear_stimuli_button_func(void)
 	int start_time, end_time;
 	int i;
 
-	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
+//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
+//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
+//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 
 	start_time = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_start_time)));
 	end_time = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_end_time)));
@@ -896,9 +881,9 @@ void add_noise_button_func(void)
 	double noise;
 	int i,j;
 
-	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
+//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
+//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
+//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 	
 	all_stimulus_currents.noise_variances[layer][group][neuron_num] = atof(gtk_entry_get_text(GTK_ENTRY(entry_noise_variance)));
 	all_stimulus_currents.noise_addition_intervals[layer][group][neuron_num] = (TimeStamp)atof(gtk_entry_get_text(GTK_ENTRY(entry_noise_period)));
@@ -937,9 +922,9 @@ void display_drawn_stimuli_button_func(void)
 {
 	int layer, group, neuron_num;
 	int i;	
-	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
+//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
+//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
+//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 
 	if (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num))
 	{
@@ -955,10 +940,10 @@ void display_raw_stimuli_button_func(void)
 {
 	int pattern, layer, group, neuron_num;
 	int i;	
-	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
-	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
+//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
+//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
+//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
+//	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
 
 	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
 	{
@@ -974,10 +959,10 @@ void display_noisy_stimuli_button_func(void)
 {
 	int pattern, layer, group, neuron_num;
 	int i;	
-	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
-	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
+//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
+//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
+//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
+//	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
 
 	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
 	{
@@ -1024,9 +1009,9 @@ void submit_initial_neuron_voltage_button_func(void)
 	Neuron* nrn;
 	int i;
 
-	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
+//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
+//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
+//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
 
 	neuron_dynamics.initial_v_means[layer][group][neuron_num] = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_neuron_voltage)));
 	neuron_dynamics.initial_v_variances[layer][group][neuron_num] = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_neuron_voltage_variance)));
@@ -1115,10 +1100,10 @@ void display_neuron_dynamics(void)
 	int pattern, layer, group, neuron_num;
 	int i;
 	int active_neuron_dyn_to_disp;	
-	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
-	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
+//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
+//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
+//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
+//	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
 	
 	active_neuron_dyn_to_disp = gtk_combo_box_get_active (GTK_COMBO_BOX(combo_dynamics_type));
 	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
@@ -1185,7 +1170,6 @@ void load_button_func(void)
 			allocate_graphs(all_stimulus_patterns_info.max_pattern_length);
 			gtk_widget_set_sensitive(btn_add_neurons_to_layer, FALSE);
 			gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, FALSE);			
-			gtk_widget_set_sensitive(btn_allocate_patterns, FALSE);
 			gtk_widget_set_sensitive(btn_display_raw_stimuli, TRUE);
 			gtk_widget_set_sensitive(btn_display_noisy_stimuli, TRUE);
 			gtk_widget_set_sensitive(btn_draw_stimuli, TRUE);
@@ -1332,4 +1316,10 @@ void create_firing_rate_view_button_func(void)
 	if (!create_firing_rate_view_gui(bin_size, all_stimulus_patterns_info.num_of_patterns, all_stimulus_patterns_info.min_pattern_length))
 	return;
 
+}
+
+static void combos_select_neuron_func(GtkWidget *changed_combo)
+{
+	if(!update_texts_of_combos_when_change(combos_select_neuron, spike_pattern_generator_get_network(), changed_combo))
+		return;
 }

@@ -15,7 +15,11 @@
 #include "../DataHandling/DataHandling.h"
 #include "FiringRateView.h"
 #include "Gui.h"
-#include "SpikePatternGeneratorNetwork.h"
+#include "../../TrialControllers/Library/TrialStats/TrialStats.h"
+#include "../../TrialControllers/Library/Combos/TrialTypesCombo.h"
+#include "SpikePatternGenerator.h"
+#include "../../NeuroSim/Library/Combos/LayerNrnGrpNeuronCombo.h"
+
 
 #define LINE 0
 #define SIN 1
@@ -35,7 +39,8 @@ void create_firing_rate_view_button_func(void);
 void interrogate_network_button_func(void); 		
 void interrogate_neuron_button_func(void);
 void submit_parker_sochacki_params_button_func(void);
-void allocate_patterns_button_func(void);
+
+
 void draw_stimuli_button_func(void);
 void clear_stimuli_button_func(void);
 void add_noise_button_func(void);
