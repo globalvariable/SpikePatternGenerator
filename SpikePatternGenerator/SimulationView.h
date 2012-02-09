@@ -19,7 +19,7 @@
 #include "../../TrialControllers/Library/Combos/TrialTypesCombo.h"
 #include "SpikePatternGenerator.h"
 #include "../../NeuroSim/Library/Combos/LayerNrnGrpNeuronCombo.h"
-
+#include "../../NeuroSim/Library/Graphs/CurrentPatternGraph.h"
 
 #define LINE 0
 #define SIN 1
@@ -41,12 +41,8 @@ void interrogate_neuron_button_func(void);
 void submit_parker_sochacki_params_button_func(void);
 
 
-void draw_stimuli_button_func(void);
-void clear_stimuli_button_func(void);
+
 void add_noise_button_func(void);
-void display_drawn_stimuli_button_func(void);
-void display_raw_stimuli_button_func(void);
-void display_noisy_stimuli_button_func(void);
 void copy_drawn_to_raw_stimuli_button_func(void);
 void simulate_button_func(void);
 void display_neuron_dynamics_button_func(void);

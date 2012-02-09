@@ -1,5 +1,6 @@
 #include "SimulationView.h"
 
+
 // FIRST COLUMN
 static GtkWidget *combo_neuron_type;
 static GtkWidget *entry_v;
@@ -33,24 +34,33 @@ static GtkWidget *btn_submit_parker_sochacki_params;
 static GtkWidget *entry_trial_type;
 static GtkWidget *entry_min_trial_length;
 static GtkWidget *entry_max_trial_length;
+static GtkWidget *entry_current_sampling_interval;
 static GtkWidget *btn_add_trial_type;
 
 static LayerNrnGrpNeuronCombo *combos_select_neuron;
 static TrialTypesCombo *combo_trial_type;
 
+static GtkWidget *btn_refresh_screen;
+
+static GtkWidget *btn_display_current_template;
+static GtkWidget *btn_display_patterns_current;
+
 static GtkWidget *btn_interrogate_network;
 static GtkWidget *btn_interrogate_neuron;
-static GtkWidget *btn_display_drawn_stimuli;
-static GtkWidget *btn_display_raw_stimuli;
-static GtkWidget *btn_display_noisy_stimuli;
+static GtkWidget *btn_interrogate_neuron_current_params_in_pattern;
+
+static GtkWidget *entry_init_current_max;
+static GtkWidget *entry_init_current_duration;
+static GtkWidget *btn_submit_initial_current_params;
+
 static GtkWidget *combo_signal_type;
 static GtkWidget *entry_amplifier;
 static GtkWidget *entry_freq;
 static GtkWidget *entry_start_time;
 static GtkWidget *entry_end_time;
 static GtkWidget *entry_initial_current;
-static GtkWidget *btn_draw_stimuli;
-static GtkWidget *btn_clear_stimuli;
+static GtkWidget *btn_draw_template;
+static GtkWidget *btn_clear_template;
 static GtkWidget *btn_copy_drawn_to_raw_stimuli;
 static GtkWidget *btn_add_noise;
 static GtkWidget *entry_noise_variance;
@@ -75,7 +85,13 @@ static GtkWidget *btn_load;
 
 
 static void add_trial_type_button_func(void);
+static void submit_initial_current_params_button_func(void);
 static void combos_select_neuron_func(GtkWidget *changed_combo);
+static void refresh_screen_button_func(void);
+static void display_current_template_button_func(void);
+static void display_patterns_current_button_func(void);
+static void draw_template_button_func(void);
+static void clear_template_button_func(void);
 
 bool create_simulation_view_gui(void)
 {
@@ -364,6 +380,16 @@ bool create_simulation_view_gui(void)
 	gtk_entry_set_text(GTK_ENTRY(entry_max_trial_length), "500");
 	gtk_widget_set_size_request(entry_max_trial_length, 50, 25) ;
 
+  	hbox = gtk_hbox_new(FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
+
+	lbl = gtk_label_new("Current Sample Interval (us):");
+        gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
+       entry_current_sampling_interval = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(hbox),entry_current_sampling_interval, FALSE,FALSE,0);
+	gtk_entry_set_text(GTK_ENTRY(entry_current_sampling_interval), "1000");
+	gtk_widget_set_size_request(entry_current_sampling_interval, 50, 25) ;
+
   	hbox = gtk_hbox_new(TRUE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
@@ -391,6 +417,28 @@ bool create_simulation_view_gui(void)
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
+	btn_refresh_screen = gtk_button_new_with_label("Refresh Screen");
+	gtk_box_pack_start (GTK_BOX (hbox), btn_refresh_screen, TRUE, TRUE, 0);
+
+        gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
+
+  	hbox = gtk_hbox_new(FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
+
+	btn_display_current_template = gtk_button_new_with_label("Display Current Template");
+	gtk_box_pack_start (GTK_BOX (hbox), btn_display_current_template, TRUE, TRUE, 0);
+
+  	hbox = gtk_hbox_new(FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
+
+	btn_display_patterns_current = gtk_button_new_with_label("Display Pattern's Current");
+	gtk_box_pack_start (GTK_BOX (hbox), btn_display_patterns_current, TRUE, TRUE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
+
+  	hbox = gtk_hbox_new(FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
+
 	btn_interrogate_network = gtk_button_new_with_label("Interrogate Network");
 	gtk_box_pack_start (GTK_BOX (hbox), btn_interrogate_network, TRUE, TRUE, 0);	
 
@@ -400,27 +448,38 @@ bool create_simulation_view_gui(void)
 	btn_interrogate_neuron = gtk_button_new_with_label("Interrogate Neuron");
 	gtk_box_pack_start (GTK_BOX (hbox), btn_interrogate_neuron, TRUE, TRUE, 0);
 
+ 	hbox = gtk_hbox_new(FALSE, 0);
+        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
+
+	btn_interrogate_neuron_current_params_in_pattern = gtk_button_new_with_label("Interrogate Current Params");
+	gtk_box_pack_start (GTK_BOX (hbox), btn_interrogate_neuron_current_params_in_pattern, TRUE, TRUE, 0);
+
         gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
 
-  	hbox = gtk_hbox_new(FALSE, 0);
+ 	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	btn_display_drawn_stimuli = gtk_button_new_with_label("Display Drawn Stimuli");
-	gtk_box_pack_start (GTK_BOX (hbox), btn_display_drawn_stimuli, TRUE, TRUE, 0);
+	lbl = gtk_label_new("Init Cur Max:");
+        gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
+        entry_init_current_max = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(hbox), entry_init_current_max, FALSE,FALSE,0);
+	gtk_entry_set_text(GTK_ENTRY(entry_init_current_max), "0");
+	gtk_widget_set_size_request(entry_init_current_max, 50, 25) ;
 
-  	hbox = gtk_hbox_new(FALSE, 0);
+	lbl = gtk_label_new("Dur(ms):");
+        gtk_box_pack_start(GTK_BOX(hbox),lbl, FALSE,FALSE,0);
+        entry_init_current_duration = gtk_entry_new();
+        gtk_box_pack_start(GTK_BOX(hbox),entry_init_current_duration, FALSE,FALSE,0);
+	gtk_entry_set_text(GTK_ENTRY(entry_init_current_duration), "0");
+	gtk_widget_set_size_request(entry_init_current_duration, 50, 25) ;
+
+ 	hbox = gtk_hbox_new(TRUE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
 
-	btn_display_raw_stimuli = gtk_button_new_with_label("Display Raw Stimuli");
-	gtk_box_pack_start (GTK_BOX (hbox), btn_display_raw_stimuli, TRUE, TRUE, 0);
-	
-  	hbox = gtk_hbox_new(FALSE, 0);
-        gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);	
+	btn_submit_initial_current_params = gtk_button_new_with_label("Submit Initial Current Params");
+	gtk_box_pack_start (GTK_BOX (hbox), btn_submit_initial_current_params, TRUE, TRUE, 0);
 
-	btn_display_noisy_stimuli = gtk_button_new_with_label("Display Noisy Stimuli");
-	gtk_box_pack_start (GTK_BOX (hbox), btn_display_noisy_stimuli, TRUE, TRUE, 0);
-	
-	gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
+        gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
 
   	hbox = gtk_hbox_new(FALSE, 0);
         gtk_box_pack_start(GTK_BOX(vbox),hbox, FALSE,FALSE,0);
@@ -477,14 +536,13 @@ bool create_simulation_view_gui(void)
 	gtk_combo_box_append_text(GTK_COMBO_BOX(combo_signal_type), "Line");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(combo_signal_type), "Sin");
 	gtk_combo_box_append_text(GTK_COMBO_BOX(combo_signal_type), "Cos");
-	gtk_combo_box_append_text(GTK_COMBO_BOX(combo_signal_type), "Clear");	
  	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_signal_type), 0);
  	
-	btn_draw_stimuli = gtk_button_new_with_label("Draw Stimuli");
-	gtk_box_pack_start (GTK_BOX (hbox), btn_draw_stimuli, TRUE, TRUE, 0);
+	btn_draw_template = gtk_button_new_with_label("Draw");
+	gtk_box_pack_start (GTK_BOX (hbox), btn_draw_template, TRUE, TRUE, 0);
 	
-	btn_clear_stimuli = gtk_button_new_with_label("Clear");
-	gtk_box_pack_start (GTK_BOX (hbox), btn_clear_stimuli, TRUE, TRUE, 0);	
+	btn_clear_template = gtk_button_new_with_label("Clear");
+	gtk_box_pack_start (GTK_BOX (hbox), btn_clear_template, TRUE, TRUE, 0);	
 
 	gtk_box_pack_start(GTK_BOX(vbox),gtk_hseparator_new(), FALSE,FALSE,5);
 	
@@ -573,6 +631,12 @@ bool create_simulation_view_gui(void)
  	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_dynamics_type), 0);
  	gtk_widget_set_size_request(combo_dynamics_type, 45, 25) ;
 
+///	GRAPHS
+
+ 	hbox = gtk_hbox_new(TRUE, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), hbox, 2,7, 0, 3);
+	spike_pattern_generator_set_current_pattern_graph( allocate_current_pattern_graph(hbox, spike_pattern_generator_get_current_pattern_graph()));
+
 /////// LAST COLUMN
 
  	vbox = gtk_vbox_new(FALSE, 0);
@@ -626,19 +690,20 @@ bool create_simulation_view_gui(void)
      	g_signal_connect(G_OBJECT(btn_add_neurons_to_layer), "clicked", G_CALLBACK(add_neurons_to_layer_button_func), NULL);
 	g_signal_connect(G_OBJECT(combos_select_neuron->combo_layer), "changed", G_CALLBACK(combos_select_neuron_func), combos_select_neuron->combo_layer);
 	g_signal_connect(G_OBJECT(combos_select_neuron->combo_neuron_group), "changed", G_CALLBACK(combos_select_neuron_func), combos_select_neuron->combo_neuron_group);	
-	g_signal_connect(G_OBJECT(combos_select_neuron->combo_neuron), "changed", G_CALLBACK(combos_select_neuron_func), combos_select_neuron->combo_neuron);		
+	g_signal_connect(G_OBJECT(combos_select_neuron->combo_neuron), "changed", G_CALLBACK(combos_select_neuron_func), combos_select_neuron->combo_neuron);
+     	g_signal_connect(G_OBJECT(btn_refresh_screen), "clicked", G_CALLBACK(refresh_screen_button_func), NULL);
+     	g_signal_connect(G_OBJECT(btn_submit_initial_current_params), "clicked", G_CALLBACK(submit_initial_current_params_button_func), NULL);	     		  	
      	g_signal_connect(G_OBJECT(btn_create_firing_rate_view), "clicked", G_CALLBACK(create_firing_rate_view_button_func), NULL);	     		  	
     	g_signal_connect(G_OBJECT(btn_interrogate_network), "clicked", G_CALLBACK(interrogate_network_button_func), NULL);		
       	g_signal_connect(G_OBJECT(btn_interrogate_neuron), "clicked", G_CALLBACK(interrogate_neuron_button_func), NULL); 
       	g_signal_connect(G_OBJECT(btn_submit_parker_sochacki_params), "clicked", G_CALLBACK(submit_parker_sochacki_params_button_func), NULL);
       	g_signal_connect(G_OBJECT(btn_add_trial_type), "clicked", G_CALLBACK(add_trial_type_button_func ), NULL);       	
-	g_signal_connect(G_OBJECT(btn_draw_stimuli), "clicked", G_CALLBACK(draw_stimuli_button_func), NULL);
-	g_signal_connect(G_OBJECT(btn_clear_stimuli), "clicked", G_CALLBACK(clear_stimuli_button_func), NULL);	
+	g_signal_connect(G_OBJECT(btn_draw_template), "clicked", G_CALLBACK(draw_template_button_func), NULL);
+	g_signal_connect(G_OBJECT(btn_clear_template), "clicked", G_CALLBACK(clear_template_button_func), NULL);	
 	g_signal_connect(G_OBJECT(btn_copy_drawn_to_raw_stimuli), "clicked", G_CALLBACK(copy_drawn_to_raw_stimuli_button_func), NULL);
 	g_signal_connect(G_OBJECT(btn_add_noise), "clicked", G_CALLBACK(add_noise_button_func), NULL);
-	g_signal_connect(G_OBJECT(btn_display_drawn_stimuli), "clicked", G_CALLBACK(display_drawn_stimuli_button_func), NULL);	
-	g_signal_connect(G_OBJECT(btn_display_raw_stimuli), "clicked", G_CALLBACK(display_raw_stimuli_button_func), NULL);
-	g_signal_connect(G_OBJECT(btn_display_noisy_stimuli), "clicked", G_CALLBACK(display_noisy_stimuli_button_func), NULL);
+	g_signal_connect(G_OBJECT(btn_display_current_template), "clicked", G_CALLBACK(display_current_template_button_func), NULL);	
+	g_signal_connect(G_OBJECT(btn_display_patterns_current), "clicked", G_CALLBACK(display_patterns_current_button_func), NULL);
 	g_signal_connect(G_OBJECT(btn_simulate), "clicked", G_CALLBACK(simulate_button_func), NULL);
 	g_signal_connect(G_OBJECT(btn_display_neuron_dynamics), "clicked", G_CALLBACK(display_neuron_dynamics_button_func), NULL);		
 	g_signal_connect(G_OBJECT(btn_create_directory), "clicked", G_CALLBACK(create_directory_button_func), NULL);
@@ -656,7 +721,7 @@ bool create_simulation_view_gui(void)
 	gtk_widget_set_sensitive(btn_create_directory, FALSE);	
 	gtk_widget_set_sensitive(btn_save, FALSE);		
 */
- 	initialize_graphs(table);
+// 	initialize_graphs(table);
 
  		
 	return TRUE;
@@ -739,16 +804,21 @@ static void add_trial_type_button_func(void)
 {
 	TrialType trial_type;
 	TimeStamp min_len, max_len;
+	TimeStamp sampling_interval;
 	char *end_ptr;
-	min_len = (TimeStamp) (1000000 * strtoull(gtk_entry_get_text(GTK_ENTRY(entry_min_trial_length)), &end_ptr, 10));
-	max_len = (TimeStamp) (1000000 * strtoull(gtk_entry_get_text(GTK_ENTRY(entry_max_trial_length)), &end_ptr, 10));
 
 	trial_type = strtoull(gtk_entry_get_text(GTK_ENTRY(entry_trial_type)), &end_ptr, 10);
+	min_len = (TimeStamp) (1000000 * strtoull(gtk_entry_get_text(GTK_ENTRY(entry_min_trial_length)), &end_ptr, 10));
+	max_len = (TimeStamp) (1000000 * strtoull(gtk_entry_get_text(GTK_ENTRY(entry_max_trial_length)), &end_ptr, 10));
+	sampling_interval = (TimeStamp) (1000 * strtoull(gtk_entry_get_text(GTK_ENTRY(entry_current_sampling_interval)), &end_ptr, 10));
+
 
 	if (add_trial_type_to_trial_stats(spike_pattern_generator_get_trial_stats(), trial_type, max_len, min_len))
 	{
 		if(! update_trial_types_combo(spike_pattern_generator_get_trial_stats(), combo_trial_type))
 			return (void)print_message(ERROR_MSG ,"SpikePatternGenerator", "SimulationView", "add_trial_type_button_func", "! update_trial_types_combo");
+		if(!  increment_current_template_types_in_current_pattern_templates(spike_pattern_generator_get_current_patterns(), sampling_interval))
+			return (void)print_message(ERROR_MSG ,"SpikePatternGenerator", "SimulationView", "add_trial_type_button_func", "!  increment_current_template_types_in_current_pattern_templates");					
 		gtk_widget_set_size_request(combo_trial_type->combo, 50, 29) ;			
 /*		allocate_graphs(max_len);
 		gtk_widget_set_sensitive(btn_add_neurons_to_layer, FALSE);
@@ -764,78 +834,68 @@ static void add_trial_type_button_func(void)
 */	}
 }
 
-void draw_stimuli_button_func(void)
+static void draw_template_button_func(void)
 {
-	int layer, group, neuron_num;
-	int start_time, end_time;
-	int combo_idx;
-	float amplifier, initial_current, freq, starting_curr_val; 
-	int i;
+	char *end_ptr;
+	unsigned int i;
 
-//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
+	unsigned int trial_type = gtk_combo_box_get_active (GTK_COMBO_BOX(combo_trial_type->combo));
+	unsigned int layer = gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_layer));
+	unsigned int neuron_group = gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_neuron_group));
+	unsigned int neuron = gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_neuron));
+	double amplifier= atof(gtk_entry_get_text(GTK_ENTRY(entry_amplifier)));
+	double freq= atof(gtk_entry_get_text(GTK_ENTRY(entry_freq)));
+	TimeStamp start_time = 1000000*strtoull(gtk_entry_get_text(GTK_ENTRY(entry_start_time)), &end_ptr, 10);
+	TimeStamp end_time = 1000000*strtoull(gtk_entry_get_text(GTK_ENTRY(entry_end_time)), &end_ptr, 10);
+	double initial_current = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_current)));
+	TimeStamp sampling_interval = spike_pattern_generator_get_current_patterns()->current_pattern_templates[trial_type].sampling_interval;
+	double starting_curr_val = spike_pattern_generator_get_current_patterns()->current_pattern_templates[trial_type].neuron_current_templates[layer][neuron_group][neuron].pattern_template.pattern[start_time/sampling_interval];
+	double *pattern = spike_pattern_generator_get_current_patterns()->current_pattern_templates[trial_type].neuron_current_templates[layer][neuron_group][neuron].pattern_template.pattern;
+	TimeStamp template_length = spike_pattern_generator_get_current_patterns()->trial_stats->trial_type_stats[trial_type].max_trial_type_length_assigned;
+	int combo_idx = gtk_combo_box_get_active (GTK_COMBO_BOX(combo_signal_type));
 
-	amplifier= atof(gtk_entry_get_text(GTK_ENTRY(entry_amplifier)));
-	freq= atof(gtk_entry_get_text(GTK_ENTRY(entry_freq)));
-	start_time = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_start_time)));
-	end_time = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_end_time)));
-	initial_current = atof(gtk_entry_get_text(GTK_ENTRY(entry_initial_current)));
-
-	starting_curr_val = all_stimulus_currents.drawn_stimulus_currents[layer][group][neuron_num][start_time];
-
-	combo_idx=gtk_combo_box_get_active (GTK_COMBO_BOX(combo_signal_type));
-
-	if ((start_time <= end_time) && (start_time >= 0) && (end_time >= 0) && (start_time < all_stimulus_patterns_info.max_pattern_length))
+	if (start_time > end_time)
+		return (void)print_message(ERROR_MSG ,"SpikePatternGenerator", "SimulationView", "draw_template_button_func", "start_time > end_time");	
+	if (start_time > template_length)
+		return (void)print_message(ERROR_MSG ,"SpikePatternGenerator", "SimulationView", "draw_template_button_func", "start_time > max_trial_type_length_assigned.");		
+	
+	if (end_time >= template_length)
 	{
-		if (end_time >= all_stimulus_patterns_info.max_pattern_length )
-		{
-			printf("WARNING: End time entered is larger than maximum stimuli length %llu\n", all_stimulus_patterns_info.max_pattern_length);
-			end_time = all_stimulus_patterns_info.max_pattern_length-1;
-		}
-		if (combo_idx == LINE)
-		{
-			for (i=start_time; i<end_time; i++)
-			{
-				all_stimulus_currents.drawn_stimulus_currents[layer][group][neuron_num][i] = amplifier * ((i-start_time)/1000.0) + initial_current+ starting_curr_val;
-			}
-		}
-		else if (combo_idx == SIN)
-		{
-			for (i=start_time; i<end_time; i++)
-			{
-				all_stimulus_currents.drawn_stimulus_currents[layer][group][neuron_num][i] = amplifier * sin (2*pi*freq* ((i-start_time)/1000.0)) + initial_current + starting_curr_val;
-			}
-		}	
-		else if (combo_idx == COS)
-		{
-			for (i=start_time; i<end_time; i++)
-			{
-				all_stimulus_currents.drawn_stimulus_currents[layer][group][neuron_num][i] = amplifier * cos (2*pi*freq* ((i-start_time)/1000.0) ) + initial_current + starting_curr_val;
-			}
-		}
-		else if (combo_idx == CLEAR)
-		{
-			for (i=start_time; i<end_time; i++)
-			{
-				all_stimulus_currents.drawn_stimulus_currents[layer][group][neuron_num][i] = 0;
-			}
-		}		
-		for (i=0; i<all_stimulus_patterns_info.max_pattern_length; i++)
-		{
-			stimulus_graph_y_axis[i] = (float)all_stimulus_currents.drawn_stimulus_currents[layer][group][neuron_num][i];
-		}
-		gtk_databox_set_total_limits (GTK_DATABOX (stimulus_box), 0, all_stimulus_patterns_info.max_pattern_length - 1, MAX_CURRENT_VALUE, MIN_CURRENT_VALUE);		
+		print_message(WARNING_MSG ,"SpikePatternGenerator", "SimulationView", "draw_template_button_func", "end_time >= template_length.");	
+		print_message(INFO_MSG ,"SpikePatternGenerator", "SimulationView", "draw_template_button_func", "end_time >= template_length.");	
+		end_time = template_length;
 	}
-	else
+	if (combo_idx == LINE)
 	{
-		printf ("ERROR: Submitted Start/End time is invalid to draw stimuli\n");
+		for (i=start_time; i<end_time; i+= sampling_interval)
+		{
+			pattern[i/sampling_interval] = amplifier * ((i-start_time)/1.0E+9) + initial_current+ starting_curr_val;
+		}
 	}
-
+	else if (combo_idx == SIN)
+	{
+		for (i=start_time; i<end_time; i+= sampling_interval)
+		{
+			pattern[i/sampling_interval] = amplifier * sin (2*pi*freq* ((i-start_time)/1.0E+9)) + initial_current + starting_curr_val;
+		}
+	}	
+	else if (combo_idx == COS)
+	{
+		for (i=start_time; i<end_time; i+= sampling_interval)
+		{
+			pattern[i/sampling_interval] = amplifier * cos (2*pi*freq* ((i-start_time)/1.0E+9) ) + initial_current + starting_curr_val;
+		}
+	}
+	for (i=0; i < template_length; i+= sampling_interval)
+	{
+		stimulus_graph_y_axis[i/sampling_interval] = (float)all_stimulus_currents.drawn_stimulus_currents[layer][neuron_group][neuron][i];
+	}
+	gtk_databox_set_total_limits (GTK_DATABOX (stimulus_box), 0, all_stimulus_patterns_info.max_pattern_length - 1, MAX_CURRENT_VALUE, MIN_CURRENT_VALUE);		
+	return;
 }
 
 
-void clear_stimuli_button_func(void)
+void clear_template_button_func(void)
 {
 	int layer, group, neuron_num;
 	int start_time, end_time;
@@ -918,7 +978,7 @@ void add_noise_button_func(void)
 }
 
 
-void display_drawn_stimuli_button_func(void)
+void display_current_template_button_func(void)
 {
 	int layer, group, neuron_num;
 	int i;	
@@ -936,7 +996,7 @@ void display_drawn_stimuli_button_func(void)
 	}
 }
 
-void display_raw_stimuli_button_func(void)
+void display_patterns_current_button_func(void)
 {
 	int pattern, layer, group, neuron_num;
 	int i;	
@@ -950,25 +1010,6 @@ void display_raw_stimuli_button_func(void)
 		for (i=0; i<all_stimulus_patterns_info.pattern_lengths[pattern]; i++)
 		{
 			stimulus_graph_y_axis[i] = (float)all_stimulus_currents.raw_stimulus_currents[pattern][layer][group][neuron_num][i];
-		}
-		gtk_databox_set_total_limits (GTK_DATABOX (stimulus_box), 0, all_stimulus_patterns_info.max_pattern_length - 1, MAX_CURRENT_VALUE, MIN_CURRENT_VALUE);		
-	}
-}
-
-void display_noisy_stimuli_button_func(void)
-{
-	int pattern, layer, group, neuron_num;
-	int i;	
-//	layer = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_layer_num)));
-//	group = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_group_num)));
-//	neuron_num = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_neuron_num)));
-//	pattern = (int)atof(gtk_entry_get_text(GTK_ENTRY(entry_pattern_num)));
-
-	if ((pattern < all_stimulus_patterns_info.num_of_patterns) && (is_neuron(spike_pattern_generator_get_network(), layer, group, neuron_num)))
-	{
-		for (i=0; i<all_stimulus_patterns_info.pattern_lengths[pattern]; i++)
-		{
-			stimulus_graph_y_axis[i] = (float)all_stimulus_currents.noisy_stimulus_currents[pattern][layer][group][neuron_num][i];
 		}
 		gtk_databox_set_total_limits (GTK_DATABOX (stimulus_box), 0, all_stimulus_patterns_info.max_pattern_length - 1, MAX_CURRENT_VALUE, MIN_CURRENT_VALUE);		
 	}
@@ -1170,9 +1211,7 @@ void load_button_func(void)
 			allocate_graphs(all_stimulus_patterns_info.max_pattern_length);
 			gtk_widget_set_sensitive(btn_add_neurons_to_layer, FALSE);
 			gtk_widget_set_sensitive(btn_submit_parker_sochacki_params, FALSE);			
-			gtk_widget_set_sensitive(btn_display_raw_stimuli, TRUE);
-			gtk_widget_set_sensitive(btn_display_noisy_stimuli, TRUE);
-			gtk_widget_set_sensitive(btn_draw_stimuli, TRUE);
+			gtk_widget_set_sensitive(btn_draw_template, TRUE);
 			gtk_widget_set_sensitive(btn_simulate, TRUE);
 			gtk_widget_set_sensitive(btn_add_noise, TRUE);
 			gtk_widget_set_sensitive(btn_submit_initial_neuron_voltage, TRUE);	
@@ -1322,4 +1361,41 @@ static void combos_select_neuron_func(GtkWidget *changed_combo)
 {
 	if(!update_texts_of_combos_when_change(combos_select_neuron, spike_pattern_generator_get_network(), changed_combo))
 		return;
+}
+
+static void submit_initial_current_params_button_func(void)
+{
+	TimeStamp init_current_duration;
+	double init_current_max;
+	char *end_ptr;
+
+	init_current_duration = (TimeStamp) (1000000 * strtoull(gtk_entry_get_text(GTK_ENTRY(entry_init_current_duration)), &end_ptr, 10));
+	init_current_max = atof(gtk_entry_get_text(GTK_ENTRY(entry_init_current_max)));	
+
+	if(! submit_initialization_current(	spike_pattern_generator_get_current_patterns(), 
+							gtk_combo_box_get_active (GTK_COMBO_BOX(combo_trial_type->combo)), 
+							gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_layer)), 
+							gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_neuron_group)), 
+							gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_neuron)), 
+							init_current_duration, 
+							init_current_max)
+	)
+		return (void)print_message(ERROR_MSG ,"SpikePatternGenerator", "SimulationView", "submit_initial_current_params_button_func", "! submit_initialization_current().");		
+	return;
+}
+
+
+static void refresh_screen_button_func(void)
+{
+	unsigned int trial_type = gtk_combo_box_get_active (GTK_COMBO_BOX(combo_trial_type->combo));
+	unsigned int layer = gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_layer));
+	unsigned int neuron_group = gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_neuron_group));
+	unsigned int neuron = gtk_combo_box_get_active (GTK_COMBO_BOX(combos_select_neuron->combo_neuron));
+	unsigned int init_current_duration = spike_pattern_generator_get_current_patterns()->current_pattern_templates[trial_type].neuron_current_templates[layer][neuron_group][neuron].init_params.duration/1000000;
+	double init_current_max =  spike_pattern_generator_get_current_patterns()->current_pattern_templates[trial_type].neuron_current_templates[layer][neuron_group][neuron].init_params.max_current;
+	char temp_str[40];
+      	sprintf(temp_str, "%.2f", init_current_max);
+	gtk_entry_set_text(GTK_ENTRY(entry_init_current_max), temp_str);	
+      	sprintf(temp_str, "%u", init_current_duration);
+	gtk_entry_set_text(GTK_ENTRY(entry_init_current_duration), temp_str);
 }
